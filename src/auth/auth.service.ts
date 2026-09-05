@@ -76,7 +76,7 @@ export class AuthService {
       loginDto.username,
     );
 
-    if (!user) {
+    if (!user || user.status !== 'ACTIVE') {
       throw new UnauthorizedException(
         '아이디 또는 비밀번호가 올바르지 않습니다.',
       );
