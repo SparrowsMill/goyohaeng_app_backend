@@ -8,6 +8,8 @@ import { PrismaModule } from './prisma/prisma.module';
 import { AuthModule } from './auth/auth.module';
 import { UsersModule } from './users/users.module';
 
+import { TourModule } from './external-api/tour/tour.module';
+
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -18,6 +20,8 @@ import { UsersModule } from './users/users.module';
 
     AuthModule,
     UsersModule,
+
+    TourModule,
   ],
 
   controllers: [AppController],
