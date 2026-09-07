@@ -7,6 +7,10 @@ import { AppService } from './app.service';
 import { PrismaModule } from './prisma/prisma.module';
 import { AuthModule } from './auth/auth.module';
 import { UsersModule } from './users/users.module';
+import { RegionsModule } from './regions/regions.module';
+import { PlacesModule } from './places/places.module';
+import { CategoriesModule } from './categories/categories.module';
+import { VisitVerificationsModule } from './visit-verifications/visit-verifications.module';
 
 import { TourModule } from './external-api/tour/tour.module';
 import { SmallBusinessModule } from './external-api/small-business/small-business.module';
@@ -25,6 +29,10 @@ import { ConcentrationForecastModule } from './external-api/concentration-foreca
 
     AuthModule,
     UsersModule,
+    RegionsModule,
+    PlacesModule,
+    CategoriesModule,
+    VisitVerificationsModule,
 
     TourModule,
     SmallBusinessModule,
