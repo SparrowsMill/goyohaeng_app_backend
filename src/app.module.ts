@@ -9,6 +9,11 @@ import { AuthModule } from './auth/auth.module';
 import { UsersModule } from './users/users.module';
 
 import { TourModule } from './external-api/tour/tour.module';
+import { SmallBusinessModule } from './external-api/small-business/small-business.module';
+import { RegionVisitorModule } from './external-api/region-visitor/region-visitor.module';
+import { TourismResourceDemandModule } from './external-api/tourism-resource-demand/tourism-resource-demand.module';
+import { TourismDemandStrengthModule } from './external-api/tourism-demand-strength/tourism-demand-strength.module';
+import { ConcentrationForecastModule } from './external-api/concentration-forecast/concentration-forecast.module';
 
 @Module({
   imports: [
@@ -22,6 +27,11 @@ import { TourModule } from './external-api/tour/tour.module';
     UsersModule,
 
     TourModule,
+    SmallBusinessModule,
+    RegionVisitorModule,
+    TourismResourceDemandModule,
+    TourismDemandStrengthModule,
+    ConcentrationForecastModule,
   ],
 
   controllers: [AppController],
