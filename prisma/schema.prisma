@@ -1,0 +1,876 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// ============================================================
+// 1. RAW / EXTERNAL API
+// ============================================================
+
+model ExternalSource {
+  id           BigInt   @id @default(autoincrement())
+  code         String   @unique @db.VarChar(80)
+  name         String   @db.VarChar(200)
+  baseUrl      String?  @map("base_url")
+  refreshCycle String?  @map("refresh_cycle") @db.VarChar(100)
+  createdAt    DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  rawTourApis                  RawTourApi[]
+  rawSmallBusinessApis         RawSmallBusinessApi[]
+  rawRegionVisitorApis         RawRegionVisitorApi[]
+  rawTourismResourceDemandApis RawTourismResourceDemandApi[]
+  rawTourismDemandStrengthApis RawTourismDemandStrengthApi[]
+  rawConcentrationForecastApis RawConcentrationForecastApi[]
+  rawNaverDatalabApis          RawNaverDatalabApi[]
+  regionExternalCodes          RegionExternalCode[]
+  categoryMappings             CategoryMapping[]
+  placeExternalIds             PlaceExternalId[]
+  placeImages                  PlaceImage[]
+  regionMetrics                RegionMetric[]
+  externalSyncRuns             ExternalSyncRun[]
+
+  @@map("external_sources")
+}
+
+model RawTourApi {
+  id               BigInt    @id @default(autoincrement())
+  sourceId         BigInt    @map("source_id")
+  endpoint         String    @db.VarChar(100)
+  contentId        String?   @map("content_id") @db.VarChar(100)
+  contentTypeId    String?   @map("content_type_id") @db.VarChar(30)
+  requestPayload   Json?     @map("request_payload")
+  responsePayload  Json      @map("response_payload")
+  sourceModifiedAt DateTime? @map("source_modified_at") @db.Timestamptz(6)
+  fetchedAt        DateTime  @default(now()) @map("fetched_at") @db.Timestamptz(6)
+
+  source ExternalSource @relation(fields: [sourceId], references: [id])
+
+  @@index([endpoint, contentId])
+  @@index([fetchedAt])
+  @@map("raw_tour_api")
+}
+
+model RawSmallBusinessApi {
+  id               BigInt    @id @default(autoincrement())
+  sourceId         BigInt    @map("source_id")
+  endpoint         String    @db.VarChar(100)
+  businessId       String?   @map("business_id") @db.VarChar(100)
+  requestPayload   Json?     @map("request_payload")
+  responsePayload  Json      @map("response_payload")
+  sourceChangeType String?   @map("source_change_type") @db.VarChar(10)
+  sourceChangeDate DateTime? @map("source_change_date") @db.Date
+  fetchedAt        DateTime  @default(now()) @map("fetched_at") @db.Timestamptz(6)
+
+  source ExternalSource @relation(fields: [sourceId], references: [id])
+
+  @@index([endpoint, businessId])
+  @@index([fetchedAt])
+  @@map("raw_small_business_api")
+}
+
+model RawRegionVisitorApi {
+  id              BigInt    @id @default(autoincrement())
+  sourceId        BigInt    @map("source_id")
+  endpoint        String    @db.VarChar(100)
+  areaCode        String?   @map("area_code") @db.VarChar(50)
+  signguCode      String?   @map("signgu_code") @db.VarChar(50)
+  baseDate        DateTime? @map("base_date") @db.Date
+  requestPayload  Json?     @map("request_payload")
+  responsePayload Json      @map("response_payload")
+  fetchedAt       DateTime  @default(now()) @map("fetched_at") @db.Timestamptz(6)
+
+  source ExternalSource @relation(fields: [sourceId], references: [id])
+
+  @@index([endpoint, areaCode, signguCode, baseDate])
+  @@map("raw_region_visitor_api")
+}
+
+model RawTourismResourceDemandApi {
+  id              BigInt   @id @default(autoincrement())
+  sourceId        BigInt   @map("source_id")
+  endpoint        String   @db.VarChar(100)
+  areaCode        String?  @map("area_code") @db.VarChar(50)
+  signguCode      String?  @map("signgu_code") @db.VarChar(50)
+  baseMonth       String?  @map("base_month") @db.Char(6)
+  requestPayload  Json?    @map("request_payload")
+  responsePayload Json     @map("response_payload")
+  fetchedAt       DateTime @default(now()) @map("fetched_at") @db.Timestamptz(6)
+
+  source ExternalSource @relation(fields: [sourceId], references: [id])
+
+  @@index([endpoint, areaCode, signguCode, baseMonth])
+  @@map("raw_tourism_resource_demand_api")
+}
+
+model RawTourismDemandStrengthApi {
+  id              BigInt   @id @default(autoincrement())
+  sourceId        BigInt   @map("source_id")
+  endpoint        String   @db.VarChar(100)
+  areaCode        String?  @map("area_code") @db.VarChar(50)
+  signguCode      String?  @map("signgu_code") @db.VarChar(50)
+  baseMonth       String?  @map("base_month") @db.Char(6)
+  requestPayload  Json?    @map("request_payload")
+  responsePayload Json     @map("response_payload")
+  fetchedAt       DateTime @default(now()) @map("fetched_at") @db.Timestamptz(6)
+
+  source ExternalSource @relation(fields: [sourceId], references: [id])
+
+  @@index([endpoint, areaCode, signguCode, baseMonth])
+  @@map("raw_tourism_demand_strength_api")
+}
+
+model RawConcentrationForecastApi {
+  id              BigInt   @id @default(autoincrement())
+  sourceId        BigInt   @map("source_id")
+  endpoint        String   @db.VarChar(100)
+  areaCode        String?  @map("area_code") @db.VarChar(50)
+  signguCode      String?  @map("signgu_code") @db.VarChar(50)
+  attractionName  String?  @map("attraction_name") @db.VarChar(300)
+  requestPayload  Json?    @map("request_payload")
+  responsePayload Json     @map("response_payload")
+  fetchedAt       DateTime @default(now()) @map("fetched_at") @db.Timestamptz(6)
+
+  source ExternalSource @relation(fields: [sourceId], references: [id])
+
+  @@index([areaCode, signguCode, attractionName, fetchedAt])
+  @@map("raw_concentration_forecast_api")
+}
+
+model RawNaverDatalabApi {
+  id              BigInt   @id @default(autoincrement())
+  sourceId        BigInt   @map("source_id")
+  startDate       DateTime @map("start_date") @db.Date
+  endDate         DateTime @map("end_date") @db.Date
+  timeUnit        String   @map("time_unit") @db.VarChar(10)
+  requestPayload  Json     @map("request_payload")
+  responsePayload Json     @map("response_payload")
+  fetchedAt       DateTime @default(now()) @map("fetched_at") @db.Timestamptz(6)
+
+  source         ExternalSource        @relation(fields: [sourceId], references: [id])
+  searchInterest NaverSearchInterest[]
+
+  @@index([startDate, endDate, fetchedAt])
+  @@map("raw_naver_datalab_api")
+}
+
+// ============================================================
+// 2. REGION / CATEGORY / PLACE CORE
+// ============================================================
+
+model Region {
+  id         BigInt    @id @default(autoincrement())
+  parentId   BigInt?   @map("parent_id")
+  regionType String    @map("region_type") @db.VarChar(30)
+  name       String    @db.VarChar(150)
+  createdAt  DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt  DateTime? @map("updated_at") @db.Timestamptz(6)
+
+  parent   Region?  @relation("RegionHierarchy", fields: [parentId], references: [id])
+  children Region[] @relation("RegionHierarchy")
+
+  externalCodes     RegionExternalCode[]
+  districtPlaces    Place[]              @relation("PlaceDistrictRegion")
+  adminDongPlaces   Place[]              @relation("PlaceAdminDongRegion")
+  legalDongPlaces   Place[]              @relation("PlaceLegalDongRegion")
+  metrics           RegionMetric[]
+  comparedGapScores GapScoreHistory[]    @relation("GapComparisonRegion")
+  ingredients       Ingredient[]
+  foods             Food[]
+
+  @@index([parentId])
+  @@index([name, regionType])
+  @@map("regions")
+}
+
+model RegionExternalCode {
+  id            BigInt    @id @default(autoincrement())
+  regionId      BigInt    @map("region_id")
+  sourceId      BigInt    @map("source_id")
+  codeType      String    @map("code_type") @db.VarChar(80)
+  externalCode  String    @map("external_code") @db.VarChar(100)
+  externalName  String?   @map("external_name") @db.VarChar(150)
+  effectiveFrom DateTime? @map("effective_from") @db.Date
+  effectiveTo   DateTime? @map("effective_to") @db.Date
+  createdAt     DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  region Region         @relation(fields: [regionId], references: [id])
+  source ExternalSource @relation(fields: [sourceId], references: [id])
+
+  @@unique([sourceId, codeType, externalCode])
+  @@map("region_external_codes")
+}
+
+model Category {
+  id        BigInt   @id @default(autoincrement())
+  parentId  BigInt?  @map("parent_id")
+  code      String   @unique @db.VarChar(80)
+  name      String   @db.VarChar(150)
+  level     Int?
+  isActive  Boolean  @default(true) @map("is_active")
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  parent   Category?  @relation("CategoryHierarchy", fields: [parentId], references: [id])
+  children Category[] @relation("CategoryHierarchy")
+
+  mappings          CategoryMapping[]
+  places            Place[]
+  comparedGapScores GapScoreHistory[] @relation("GapComparisonCategory")
+
+  @@map("categories")
+}
+
+model CategoryMapping {
+  id            BigInt   @id @default(autoincrement())
+  sourceId      BigInt   @map("source_id")
+  scheme        String   @db.VarChar(80)
+  externalLevel Int?     @map("external_level")
+  externalCode  String   @map("external_code") @db.VarChar(100)
+  externalName  String   @map("external_name") @db.VarChar(200)
+  categoryId    BigInt   @map("category_id")
+  mappingType   String?  @map("mapping_type") @db.VarChar(20)
+  confidence    Decimal? @db.Decimal(5, 4)
+  createdAt     DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  source   ExternalSource @relation(fields: [sourceId], references: [id])
+  category Category       @relation(fields: [categoryId], references: [id])
+
+  @@unique([sourceId, scheme, externalLevel, externalCode])
+  @@map("category_mappings")
+}
+
+model Place {
+  id                BigInt    @id @default(autoincrement())
+  name              String    @db.VarChar(300)
+  categoryId        BigInt?   @map("category_id")
+  districtRegionId  BigInt?   @map("district_region_id")
+  adminDongRegionId BigInt?   @map("admin_dong_region_id")
+  legalDongRegionId BigInt?   @map("legal_dong_region_id")
+  roadAddress       String?   @map("road_address") @db.VarChar(500)
+  lotAddress        String?   @map("lot_address") @db.VarChar(500)
+  postalCode        String?   @map("postal_code") @db.VarChar(20)
+  latitude          Decimal?  @db.Decimal(10, 7)
+  longitude         Decimal?  @db.Decimal(10, 7)
+  phone             String?   @db.VarChar(100)
+  homepage          String?
+  ownerIntro        String?   @map("owner_intro")
+  status            String    @default("ACTIVE") @db.VarChar(20)
+  createdAt         DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt         DateTime? @map("updated_at") @db.Timestamptz(6)
+
+  category        Category? @relation(fields: [categoryId], references: [id])
+  districtRegion  Region?   @relation("PlaceDistrictRegion", fields: [districtRegionId], references: [id])
+  adminDongRegion Region?   @relation("PlaceAdminDongRegion", fields: [adminDongRegionId], references: [id])
+  legalDongRegion Region?   @relation("PlaceLegalDongRegion", fields: [legalDongRegionId], references: [id])
+
+  externalIds         PlaceExternalId[]
+  images              PlaceImage[]
+  naverSearchTerms    NaverSearchTerm[]
+  gapScoreHistory     GapScoreHistory[]
+  businessAccount     BusinessAccount?
+  operatingHours      PlaceOperatingHour[]
+  specialHours        PlaceSpecialHour[]
+  benefits            PlaceBenefit[]
+  verificationSetting PlaceVerificationSetting?
+  verificationHours   PlaceVerificationHour[]
+  visitVerifications  VisitVerification[]
+  ingredientRewards   PlaceIngredientReward[]
+  specialSourceFoods  UserFood[]                @relation("UserFoodSpecialSourcePlace")
+  ingredientTxs       IngredientTransaction[]
+  posts               Post[]
+  trendSnapshots      PlaceTrendSnapshot[]
+  externalContents    PlaceExternalContent[]
+  issueReports        PlaceIssueReport[]
+  analyticsEvents     AnalyticsEvent[]
+
+  @@index([districtRegionId, categoryId])
+  @@index([name])
+  @@map("places")
+}
+
+model PlaceExternalId {
+  id          BigInt    @id @default(autoincrement())
+  placeId     BigInt    @map("place_id")
+  sourceId    BigInt    @map("source_id")
+  idType      String    @map("id_type") @db.VarChar(50)
+  externalId  String    @map("external_id") @db.VarChar(150)
+  firstSeenAt DateTime? @map("first_seen_at") @db.Timestamptz(6)
+  lastSeenAt  DateTime? @map("last_seen_at") @db.Timestamptz(6)
+
+  place  Place          @relation(fields: [placeId], references: [id], onDelete: Cascade)
+  source ExternalSource @relation(fields: [sourceId], references: [id])
+
+  @@unique([sourceId, idType, externalId])
+  @@index([placeId, sourceId])
+  @@map("place_external_ids")
+}
+
+// ============================================================
+// 3. REGIONAL METRICS / NAVER / GAP
+// ============================================================
+
+model RegionMetric {
+  id              BigInt    @id @default(autoincrement())
+  regionId        BigInt    @map("region_id")
+  sourceId        BigInt    @map("source_id")
+  metricFamily    String    @map("metric_family") @db.VarChar(50)
+  metricCode      String    @map("metric_code") @db.VarChar(50)
+  metricName      String?   @map("metric_name") @db.VarChar(200)
+  dayOfWeekCode   String?   @map("day_of_week_code") @db.VarChar(20)
+  dayOfWeekName   String?   @map("day_of_week_name") @db.VarChar(50)
+  visitorTypeCode String?   @map("visitor_type_code") @db.VarChar(20)
+  visitorTypeName String?   @map("visitor_type_name") @db.VarChar(100)
+  periodDate      DateTime? @map("period_date") @db.Date
+  periodMonth     String?   @map("period_month") @db.Char(6)
+  metricValue     Decimal   @map("metric_value") @db.Decimal(20, 6)
+  fetchedAt       DateTime  @map("fetched_at") @db.Timestamptz(6)
+  createdAt       DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  region Region         @relation(fields: [regionId], references: [id])
+  source ExternalSource @relation(fields: [sourceId], references: [id])
+
+  @@index([regionId, metricFamily, metricCode, periodDate, periodMonth])
+  @@map("region_metrics")
+}
+
+model NaverSearchTerm {
+  id         BigInt    @id @default(autoincrement())
+  placeId    BigInt    @map("place_id")
+  searchTerm String    @map("search_term") @db.VarChar(300)
+  version    Int       @default(1)
+  isActive   Boolean   @default(true) @map("is_active")
+  createdAt  DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt  DateTime? @map("updated_at") @db.Timestamptz(6)
+
+  place    Place                 @relation(fields: [placeId], references: [id], onDelete: Cascade)
+  interest NaverSearchInterest[]
+
+  @@unique([placeId, version])
+  @@map("naver_search_terms")
+}
+
+model NaverSearchInterest {
+  id                BigInt   @id @default(autoincrement())
+  rawNaverDatalabId BigInt   @map("raw_naver_datalab_id")
+  naverSearchTermId BigInt   @map("naver_search_term_id")
+  periodStart       DateTime @map("period_start") @db.Date
+  ratio             Decimal  @db.Decimal(10, 4)
+  createdAt         DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  rawNaverDatalab RawNaverDatalabApi @relation(fields: [rawNaverDatalabId], references: [id], onDelete: Cascade)
+  naverSearchTerm NaverSearchTerm    @relation(fields: [naverSearchTermId], references: [id])
+
+  @@unique([rawNaverDatalabId, naverSearchTermId, periodStart])
+  @@map("naver_search_interest")
+}
+
+model GapScoreHistory {
+  id                        BigInt   @id @default(autoincrement())
+  placeId                   BigInt   @map("place_id")
+  calculatedAt              DateTime @map("calculated_at") @db.Timestamptz(6)
+  formulaVersion            String   @map("formula_version") @db.VarChar(50)
+  dataStage                 String   @map("data_stage") @db.VarChar(20)
+  comparisonRegionId        BigInt?  @map("comparison_region_id")
+  comparisonCategoryId      BigInt?  @map("comparison_category_id")
+  naverPercentile           Decimal? @map("naver_percentile") @db.Decimal(8, 6)
+  snsPercentile             Decimal? @map("sns_percentile") @db.Decimal(8, 6)
+  navigationPercentile      Decimal? @map("navigation_percentile") @db.Decimal(8, 6)
+  visitorPercentile         Decimal? @map("visitor_percentile") @db.Decimal(8, 6)
+  expenditurePercentile     Decimal? @map("expenditure_percentile") @db.Decimal(8, 6)
+  nonlocalVisitorPercentile Decimal? @map("nonlocal_visitor_percentile") @db.Decimal(8, 6)
+  onlineScore               Decimal? @map("online_score") @db.Decimal(8, 6)
+  offlineScore              Decimal? @map("offline_score") @db.Decimal(8, 6)
+  gapScore                  Decimal  @map("gap_score") @db.Decimal(8, 4)
+  explanationText           String?  @map("explanation_text")
+  createdAt                 DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  place              Place     @relation(fields: [placeId], references: [id], onDelete: Cascade)
+  comparisonRegion   Region?   @relation("GapComparisonRegion", fields: [comparisonRegionId], references: [id])
+  comparisonCategory Category? @relation("GapComparisonCategory", fields: [comparisonCategoryId], references: [id])
+
+  @@index([placeId, calculatedAt])
+  @@map("gap_score_history")
+}
+
+// ============================================================
+// 4. USER
+// ============================================================
+
+model User {
+  id                           BigInt    @id @default(autoincrement())
+  username                     String    @unique @db.VarChar(100)
+  passwordHash                 String    @map("password_hash")
+  email                        String?   @unique @db.VarChar(320)
+  phone                        String?   @db.VarChar(50)
+  realName                     String?   @map("real_name") @db.VarChar(100)
+  birthDate                    DateTime? @map("birth_date") @db.Date
+  gender                       String?   @db.VarChar(30)
+  role                         String    @default("USER") @db.VarChar(30)
+  status                       String    @default("ACTIVE") @db.VarChar(30)
+  promotionNotificationEnabled Boolean   @default(false) @map("promotion_notification_enabled")
+  nearbyNotificationEnabled    Boolean   @default(false) @map("nearby_notification_enabled")
+  recordNotificationEnabled    Boolean   @default(false) @map("record_notification_enabled")
+  rankingCategoryFilter        String    @default("ALL") @map("ranking_category_filter") @db.VarChar(20)
+  rankingSortOrder             String    @default("DESC") @map("ranking_sort_order") @db.VarChar(10)
+  createdAt                    DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt                    DateTime? @map("updated_at") @db.Timestamptz(6)
+  deletedAt                    DateTime? @map("deleted_at") @db.Timestamptz(6)
+
+  socialAccounts              UserSocialAccount[]
+  uploadedPlaceImages         PlaceImage[]               @relation("PlaceImageUploader")
+  businessAccount             BusinessAccount?           @relation("BusinessOwner")
+  reviewedBusinessAccounts    BusinessAccount[]          @relation("BusinessReviewer")
+  updatedOperatingHours       PlaceOperatingHour[]       @relation("OperatingHoursUpdater")
+  updatedSpecialHours         PlaceSpecialHour[]         @relation("SpecialHoursUpdater")
+  createdBenefits             PlaceBenefit[]             @relation("BenefitCreator")
+  updatedVerificationSettings PlaceVerificationSetting[] @relation("VerificationSettingsUpdater")
+  visitVerifications          VisitVerification[]
+  ingredientBalances          UserIngredient[]
+  userFoods                   UserFood[]
+  ingredientTransactions      IngredientTransaction[]
+  posts                       Post[]
+  submittedIssueReports       PlaceIssueReport[]         @relation("IssueReporter")
+  resolvedIssueReports        PlaceIssueReport[]         @relation("IssueResolver")
+  analyticsEvents             AnalyticsEvent[]
+
+  @@map("users")
+}
+
+model UserSocialAccount {
+  id           BigInt   @id @default(autoincrement())
+  userId       BigInt   @map("user_id")
+  platform     String   @db.VarChar(50)
+  socialUserId String   @map("social_user_id") @db.VarChar(200)
+  createdAt    DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, platform, socialUserId])
+  @@map("user_social_accounts")
+}
+
+model PlaceImage {
+  id               BigInt   @id @default(autoincrement())
+  placeId          BigInt   @map("place_id")
+  sourceId         BigInt?  @map("source_id")
+  uploadedByUserId BigInt?  @map("uploaded_by_user_id")
+  imageName        String?  @map("image_name") @db.VarChar(300)
+  originalUrl      String   @map("original_url")
+  thumbnailUrl     String?  @map("thumbnail_url")
+  copyrightType    String?  @map("copyright_type") @db.VarChar(50)
+  serialNo         String?  @map("serial_no") @db.VarChar(100)
+  displayOrder     Int?     @map("display_order")
+  isActive         Boolean  @default(true) @map("is_active")
+  createdAt        DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  place          Place           @relation(fields: [placeId], references: [id], onDelete: Cascade)
+  source         ExternalSource? @relation(fields: [sourceId], references: [id])
+  uploadedByUser User?           @relation("PlaceImageUploader", fields: [uploadedByUserId], references: [id])
+
+  @@map("place_images")
+}
+
+// ============================================================
+// 5. BUSINESS / PLACE MANAGEMENT
+// ============================================================
+
+model BusinessAccount {
+  id                     BigInt    @id @default(autoincrement())
+  userId                 BigInt    @unique @map("user_id")
+  placeId                BigInt    @unique @map("place_id")
+  businessName           String    @map("business_name") @db.VarChar(300)
+  businessRegistrationNo String    @map("business_registration_no") @db.VarChar(100)
+  submittedStoreAddress  String    @map("submitted_store_address") @db.VarChar(500)
+  status                 String    @default("PENDING") @db.VarChar(20)
+  rejectionReason        String?   @map("rejection_reason")
+  reviewedByUserId       BigInt?   @map("reviewed_by_user_id")
+  reviewedAt             DateTime? @map("reviewed_at") @db.Timestamptz(6)
+  approvedAt             DateTime? @map("approved_at") @db.Timestamptz(6)
+  createdAt              DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt              DateTime? @map("updated_at") @db.Timestamptz(6)
+
+  user       User  @relation("BusinessOwner", fields: [userId], references: [id])
+  place      Place @relation(fields: [placeId], references: [id])
+  reviewedBy User? @relation("BusinessReviewer", fields: [reviewedByUserId], references: [id])
+
+  @@map("business_accounts")
+}
+
+model PlaceOperatingHour {
+  id              BigInt    @id @default(autoincrement())
+  placeId         BigInt    @map("place_id")
+  dayOfWeek       Int       @map("day_of_week")
+  isClosed        Boolean   @default(false) @map("is_closed")
+  openTime        DateTime? @map("open_time") @db.Time(6)
+  closeTime       DateTime? @map("close_time") @db.Time(6)
+  breakStartTime  DateTime? @map("break_start_time") @db.Time(6)
+  breakEndTime    DateTime? @map("break_end_time") @db.Time(6)
+  updatedByUserId BigInt?   @map("updated_by_user_id")
+  updatedAt       DateTime? @map("updated_at") @db.Timestamptz(6)
+
+  place     Place @relation(fields: [placeId], references: [id], onDelete: Cascade)
+  updatedBy User? @relation("OperatingHoursUpdater", fields: [updatedByUserId], references: [id])
+
+  @@unique([placeId, dayOfWeek])
+  @@map("place_operating_hours")
+}
+
+model PlaceSpecialHour {
+  id              BigInt    @id @default(autoincrement())
+  placeId         BigInt    @map("place_id")
+  targetDate      DateTime  @map("target_date") @db.Date
+  scheduleType    String    @map("schedule_type") @db.VarChar(20)
+  openTime        DateTime? @map("open_time") @db.Time(6)
+  closeTime       DateTime? @map("close_time") @db.Time(6)
+  breakStartTime  DateTime? @map("break_start_time") @db.Time(6)
+  breakEndTime    DateTime? @map("break_end_time") @db.Time(6)
+  reason          String?   @db.VarChar(500)
+  updatedByUserId BigInt?   @map("updated_by_user_id")
+  createdAt       DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  place     Place @relation(fields: [placeId], references: [id], onDelete: Cascade)
+  updatedBy User? @relation("SpecialHoursUpdater", fields: [updatedByUserId], references: [id])
+
+  @@unique([placeId, targetDate])
+  @@map("place_special_hours")
+}
+
+model PlaceBenefit {
+  id              BigInt    @id @default(autoincrement())
+  placeId         BigInt    @map("place_id")
+  title           String    @db.VarChar(300)
+  description     String?
+  validFrom       DateTime? @map("valid_from") @db.Timestamptz(6)
+  validUntil      DateTime? @map("valid_until") @db.Timestamptz(6)
+  isActive        Boolean   @default(true) @map("is_active")
+  createdByUserId BigInt?   @map("created_by_user_id")
+  createdAt       DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt       DateTime? @map("updated_at") @db.Timestamptz(6)
+
+  place     Place @relation(fields: [placeId], references: [id], onDelete: Cascade)
+  createdBy User? @relation("BenefitCreator", fields: [createdByUserId], references: [id])
+
+  @@map("place_benefits")
+}
+
+// ============================================================
+// 6. VISIT VERIFICATION
+// ============================================================
+
+model PlaceVerificationSetting {
+  placeId          BigInt    @id @map("place_id")
+  enabled          Boolean   @default(false)
+  controlMode      String    @default("AUTO") @map("control_mode") @db.VarChar(20)
+  hoursMode        String    @default("SAME_AS_OPERATING") @map("hours_mode") @db.VarChar(30)
+  manualAvailable  Boolean?  @map("manual_available")
+  codeValidMinutes Int       @default(30) @map("code_valid_minutes")
+  updatedByUserId  BigInt?   @map("updated_by_user_id")
+  updatedAt        DateTime? @map("updated_at") @db.Timestamptz(6)
+
+  place     Place @relation(fields: [placeId], references: [id], onDelete: Cascade)
+  updatedBy User? @relation("VerificationSettingsUpdater", fields: [updatedByUserId], references: [id])
+
+  @@map("place_verification_settings")
+}
+
+model PlaceVerificationHour {
+  id        BigInt    @id @default(autoincrement())
+  placeId   BigInt    @map("place_id")
+  dayOfWeek Int       @map("day_of_week")
+  enabled   Boolean   @default(true)
+  startTime DateTime? @map("start_time") @db.Time(6)
+  endTime   DateTime? @map("end_time") @db.Time(6)
+  updatedAt DateTime? @map("updated_at") @db.Timestamptz(6)
+
+  place Place @relation(fields: [placeId], references: [id], onDelete: Cascade)
+
+  @@unique([placeId, dayOfWeek])
+  @@map("place_verification_hours")
+}
+
+model VisitVerification {
+  id                   BigInt    @id @default(autoincrement())
+  userId               BigInt    @map("user_id")
+  placeId              BigInt    @map("place_id")
+  arrivalOptionMinutes Int?      @map("arrival_option_minutes")
+  expectedArrivalAt    DateTime? @map("expected_arrival_at") @db.Timestamptz(6)
+  verificationCode     String    @map("verification_code") @db.Char(6)
+  issuedAt             DateTime  @default(now()) @map("issued_at") @db.Timestamptz(6)
+  expiresAt            DateTime  @map("expires_at") @db.Timestamptz(6)
+  status               String    @default("ISSUED") @db.VarChar(20)
+  verifiedAt           DateTime? @map("verified_at") @db.Timestamptz(6)
+  failReason           String?   @map("fail_reason") @db.VarChar(500)
+  createdAt            DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  user                   User                    @relation(fields: [userId], references: [id])
+  place                  Place                   @relation(fields: [placeId], references: [id])
+  ingredientTransactions IngredientTransaction[]
+  posts                  Post[]
+
+  @@index([userId, placeId, createdAt])
+  @@index([placeId, status, expiresAt])
+  @@map("visit_verifications")
+}
+
+// ============================================================
+// 7. INGREDIENT / FOOD
+// ============================================================
+
+model Ingredient {
+  id              BigInt   @id @default(autoincrement())
+  name            String   @db.VarChar(200)
+  description     String?
+  ingredientType  String   @map("ingredient_type") @db.VarChar(20)
+  regionId        BigInt?  @map("region_id")
+  imageUrl        String?  @map("image_url")
+  illustrationUrl String?  @map("illustration_url")
+  rarity          String?  @db.VarChar(50)
+  isActive        Boolean  @default(true) @map("is_active")
+  createdAt       DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  region             Region?                 @relation(fields: [regionId], references: [id])
+  placeRewards       PlaceIngredientReward[]
+  userBalances       UserIngredient[]
+  recipes            FoodRecipeIngredient[]
+  specialInUserFoods UserFood[]              @relation("UserFoodSpecialIngredient")
+  transactions       IngredientTransaction[]
+
+  @@map("ingredients")
+}
+
+model PlaceIngredientReward {
+  id           BigInt    @id @default(autoincrement())
+  placeId      BigInt    @map("place_id")
+  ingredientId BigInt    @map("ingredient_id")
+  rewardRule   String    @map("reward_rule") @db.VarChar(40)
+  quantity     Int
+  validFrom    DateTime? @map("valid_from") @db.Timestamptz(6)
+  validUntil   DateTime? @map("valid_until") @db.Timestamptz(6)
+  isActive     Boolean   @default(true) @map("is_active")
+
+  place      Place      @relation(fields: [placeId], references: [id], onDelete: Cascade)
+  ingredient Ingredient @relation(fields: [ingredientId], references: [id])
+
+  @@index([placeId, ingredientId, rewardRule])
+  @@map("place_ingredient_rewards")
+}
+
+model UserIngredient {
+  userId          BigInt    @map("user_id")
+  ingredientId    BigInt    @map("ingredient_id")
+  quantity        Int       @default(0)
+  firstAcquiredAt DateTime? @map("first_acquired_at") @db.Timestamptz(6)
+  updatedAt       DateTime? @map("updated_at") @db.Timestamptz(6)
+
+  user       User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  ingredient Ingredient @relation(fields: [ingredientId], references: [id])
+
+  @@id([userId, ingredientId])
+  @@map("user_ingredients")
+}
+
+model Food {
+  id              BigInt   @id @default(autoincrement())
+  name            String   @db.VarChar(200)
+  description     String?
+  regionId        BigInt?  @map("region_id")
+  imageUrl        String?  @map("image_url")
+  illustrationUrl String?  @map("illustration_url")
+  isActive        Boolean  @default(true) @map("is_active")
+  createdAt       DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  region      Region?                @relation(fields: [regionId], references: [id])
+  recipeItems FoodRecipeIngredient[]
+  userFoods   UserFood[]
+
+  @@map("foods")
+}
+
+model FoodRecipeIngredient {
+  foodId           BigInt @map("food_id")
+  ingredientId     BigInt @map("ingredient_id")
+  requiredQuantity Int    @map("required_quantity")
+
+  food       Food       @relation(fields: [foodId], references: [id], onDelete: Cascade)
+  ingredient Ingredient @relation(fields: [ingredientId], references: [id])
+
+  @@id([foodId, ingredientId])
+  @@map("food_recipe_ingredients")
+}
+
+model UserFood {
+  id                   BigInt   @id @default(autoincrement())
+  userId               BigInt   @map("user_id")
+  foodId               BigInt   @map("food_id")
+  madeAt               DateTime @map("made_at") @db.Timestamptz(6)
+  specialIngredientId  BigInt?  @map("special_ingredient_id")
+  specialSourcePlaceId BigInt?  @map("special_source_place_id")
+  illustrationUrl      String?  @map("illustration_url")
+  createdAt            DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  user               User                    @relation(fields: [userId], references: [id])
+  food               Food                    @relation(fields: [foodId], references: [id])
+  specialIngredient  Ingredient?             @relation("UserFoodSpecialIngredient", fields: [specialIngredientId], references: [id])
+  specialSourcePlace Place?                  @relation("UserFoodSpecialSourcePlace", fields: [specialSourcePlaceId], references: [id])
+  transactions       IngredientTransaction[]
+  posts              Post[]
+
+  @@index([userId, madeAt])
+  @@map("user_foods")
+}
+
+model IngredientTransaction {
+  id                  BigInt   @id @default(autoincrement())
+  userId              BigInt   @map("user_id")
+  ingredientId        BigInt   @map("ingredient_id")
+  quantityChange      Int      @map("quantity_change")
+  transactionType     String   @map("transaction_type") @db.VarChar(40)
+  placeId             BigInt?  @map("place_id")
+  visitVerificationId BigInt?  @map("visit_verification_id")
+  userFoodId          BigInt?  @map("user_food_id")
+  createdAt           DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  user              User               @relation(fields: [userId], references: [id])
+  ingredient        Ingredient         @relation(fields: [ingredientId], references: [id])
+  place             Place?             @relation(fields: [placeId], references: [id])
+  visitVerification VisitVerification? @relation(fields: [visitVerificationId], references: [id])
+  userFood          UserFood?          @relation(fields: [userFoodId], references: [id])
+
+  @@index([userId, ingredientId, createdAt])
+  @@index([userId, placeId, transactionType])
+  @@map("ingredient_transactions")
+}
+
+// ============================================================
+// 8. RECORD PLATFORM
+// ============================================================
+
+model Post {
+  id                  BigInt    @id @default(autoincrement())
+  userId              BigInt    @map("user_id")
+  placeId             BigInt?   @map("place_id")
+  userFoodId          BigInt?   @map("user_food_id")
+  visitVerificationId BigInt?   @map("visit_verification_id")
+  visitedAt           DateTime? @map("visited_at") @db.Timestamptz(6)
+  title               String    @db.VarChar(50)
+  body                String    @db.VarChar(200)
+  status              String    @default("PUBLISHED") @db.VarChar(20)
+  createdAt           DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt           DateTime? @map("updated_at") @db.Timestamptz(6)
+
+  user              User               @relation(fields: [userId], references: [id])
+  place             Place?             @relation(fields: [placeId], references: [id])
+  userFood          UserFood?          @relation(fields: [userFoodId], references: [id])
+  visitVerification VisitVerification? @relation(fields: [visitVerificationId], references: [id])
+  images            PostImage[]
+
+  @@map("posts")
+}
+
+model PostImage {
+  id           BigInt   @id @default(autoincrement())
+  postId       BigInt   @map("post_id")
+  imageUrl     String   @map("image_url")
+  displayOrder Int      @map("display_order")
+  createdAt    DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  post Post @relation(fields: [postId], references: [id], onDelete: Cascade)
+
+  @@unique([postId, displayOrder])
+  @@map("post_images")
+}
+
+// ============================================================
+// 9. TREND / REPORT / ANALYTICS / OPERATIONS
+// ============================================================
+
+model PlaceTrendSnapshot {
+  id           BigInt    @id @default(autoincrement())
+  placeId      BigInt    @map("place_id")
+  summaryText  String?   @map("summary_text")
+  keywords     Json?
+  periodStart  DateTime? @map("period_start") @db.Date
+  periodEnd    DateTime? @map("period_end") @db.Date
+  generatedAt  DateTime  @map("generated_at") @db.Timestamptz(6)
+  modelVersion String?   @map("model_version") @db.VarChar(100)
+  createdAt    DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  place Place @relation(fields: [placeId], references: [id], onDelete: Cascade)
+
+  @@index([placeId, generatedAt])
+  @@map("place_trend_snapshots")
+}
+
+model PlaceExternalContent {
+  id          BigInt    @id @default(autoincrement())
+  placeId     BigInt    @map("place_id")
+  contentType String    @map("content_type") @db.VarChar(30)
+  title       String?   @db.VarChar(500)
+  url         String
+  author      String?   @db.VarChar(300)
+  publishedAt DateTime? @map("published_at") @db.Timestamptz(6)
+  collectedAt DateTime? @map("collected_at") @db.Timestamptz(6)
+
+  place        Place              @relation(fields: [placeId], references: [id], onDelete: Cascade)
+  issueReports PlaceIssueReport[]
+
+  @@index([placeId, collectedAt])
+  @@map("place_external_contents")
+}
+
+model PlaceIssueReport {
+  id                BigInt    @id @default(autoincrement())
+  placeId           BigInt    @map("place_id")
+  reporterUserId    BigInt    @map("reporter_user_id")
+  externalContentId BigInt?   @map("external_content_id")
+  reportType        String    @map("report_type") @db.VarChar(30)
+  description       String?
+  status            String    @default("OPEN") @db.VarChar(20)
+  resolvedByUserId  BigInt?   @map("resolved_by_user_id")
+  resolvedAt        DateTime? @map("resolved_at") @db.Timestamptz(6)
+  createdAt         DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  place           Place                 @relation(fields: [placeId], references: [id])
+  reporter        User                  @relation("IssueReporter", fields: [reporterUserId], references: [id])
+  externalContent PlaceExternalContent? @relation(fields: [externalContentId], references: [id])
+  resolvedBy      User?                 @relation("IssueResolver", fields: [resolvedByUserId], references: [id])
+
+  @@map("place_issue_reports")
+}
+
+model AnalyticsEvent {
+  id         BigInt   @id @default(autoincrement())
+  userId     BigInt?  @map("user_id")
+  placeId    BigInt?  @map("place_id")
+  eventType  String   @map("event_type") @db.VarChar(80)
+  sessionId  String?  @map("session_id") @db.VarChar(200)
+  occurredAt DateTime @default(now()) @map("occurred_at") @db.Timestamptz(6)
+  metadata   Json?
+
+  user  User?  @relation(fields: [userId], references: [id])
+  place Place? @relation(fields: [placeId], references: [id])
+
+  @@index([eventType, occurredAt])
+  @@index([placeId, occurredAt])
+  @@index([userId, occurredAt])
+  @@map("analytics_events")
+}
+
+model ExternalSyncRun {
+  id           BigInt    @id @default(autoincrement())
+  sourceId     BigInt    @map("source_id")
+  endpoint     String    @db.VarChar(100)
+  syncType     String?   @map("sync_type") @db.VarChar(20)
+  startedAt    DateTime  @default(now()) @map("started_at") @db.Timestamptz(6)
+  finishedAt   DateTime? @map("finished_at") @db.Timestamptz(6)
+  status       String    @db.VarChar(20)
+  resultCount  Int?      @map("result_count")
+  errorMessage String?   @map("error_message")
+
+  source ExternalSource @relation(fields: [sourceId], references: [id])
+
+  @@map("external_sync_runs")
+}
