@@ -1,46 +1,53 @@
 import { Injectable } from '@nestjs/common';
 
-export interface Category {
+import { PrismaService } from '../prisma/prisma.service';
+
+export interface CategoryResponse {
   id: number;
   parentId: number | null;
   code: string;
   name: string;
-  level: number;
+  level: number | null;
   isActive: boolean;
 }
 
 @Injectable()
 export class CategoriesService {
-  private readonly categories: Category[] = [
-    {
-      id: 1,
-      parentId: null,
-      code: 'FOOD',
-      name: '식당',
-      level: 1,
-      isActive: true,
-    },
-    {
-      id: 2,
-      parentId: null,
-      code: 'CAFE',
-      name: '카페',
-      level: 1,
-      isActive: true,
-    },
-    {
-      id: 3,
-      parentId: null,
-      code: 'ACTIVITY',
-      name: '액티비티',
-      level: 1,
-      isActive: true,
-    },
-  ];
+  constructor(
+    private readonly prisma: PrismaService,
+  ) {}
 
-  findAll(): Category[] {
-    return this.categories.filter(
-      (category) => category.isActive,
-    );
+  async findAll(): Promise<CategoryResponse[]> {
+    const categories =
+      await this.prisma.category.findMany({
+        where: {
+          isActive: true,
+        },
+        select: {
+          id: true,
+          parentId: true,
+          code: true,
+          name: true,
+          level: true,
+          isActive: true,
+        },
+        orderBy: {
+          id: 'asc',
+        },
+      });
+
+    return categories.map((category) => ({
+      id: Number(category.id),
+
+      parentId:
+        category.parentId === null
+          ? null
+          : Number(category.parentId),
+
+      code: category.code,
+      name: category.name,
+      level: category.level,
+      isActive: category.isActive,
+    }));
   }
 }

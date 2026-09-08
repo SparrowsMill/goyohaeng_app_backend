@@ -1,27 +1,27 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+} from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
+
+import { PrismaService } from '../prisma/prisma.service';
 
 export interface User {
   id: number;
   username: string;
   passwordHash: string;
-  realName: string;
-  email: string;
-  phone: string;
-  birthDate: string;
-  gender?: 'MALE' | 'FEMALE';
+
+  realName: string | null;
+  email: string | null;
+  phone: string | null;
+  birthDate: string | null;
+  gender: string | null;
 
   promotionNotificationEnabled: boolean;
   nearbyNotificationEnabled: boolean;
   recordNotificationEnabled: boolean;
 
-  status:
-    | 'ACTIVE'
-    | 'PENDING'
-    | 'SUSPENDED'
-    | 'DISABLED'
-    | 'DELETED';
-
+  status: string;
   deletedAt: Date | null;
 }
 
@@ -35,74 +35,180 @@ interface CreateUserData {
   gender?: 'MALE' | 'FEMALE';
 }
 
+interface UpdateUserData {
+  realName?: string;
+  birthDate?: string;
+  gender?: 'MALE' | 'FEMALE';
+
+  promotionNotificationEnabled?: boolean;
+  nearbyNotificationEnabled?: boolean;
+  recordNotificationEnabled?: boolean;
+}
+
 @Injectable()
 export class UsersService {
-  private readonly users: User[] = [];
-  private nextId = 1;
+  constructor(
+    private readonly prisma: PrismaService,
+  ) {}
 
-  findByUsername(username: string): User | undefined {
-    return this.users.find((user) => user.username === username);
+  async findByUsername(
+    username: string,
+  ): Promise<User | undefined> {
+    const user =
+      await this.prisma.user.findUnique({
+        where: {
+          username,
+        },
+      });
+
+    return user
+      ? this.toUser(user)
+      : undefined;
   }
 
-  findById(id: number): User | undefined {
-    return this.users.find(
-      (user) => user.id === id && user.status === 'ACTIVE',
-    );
-  }
-
-  findByEmail(email: string): User | undefined {
-    return this.users.find((user) => user.email === email);
-  }
-
-  create(data: CreateUserData): User {
-    const user: User = {
-      id: this.nextId++,
-      ...data,
-
-      promotionNotificationEnabled: true,
-      nearbyNotificationEnabled: true,
-      recordNotificationEnabled: true,
-
-      status: 'ACTIVE',
-      deletedAt: null,
-    };
-
-    this.users.push(user);
-
-    return user;
-  }
-
-  update(
+  async findById(
     id: number,
-    data: Partial<Omit<User, 'id' | 'username' | 'passwordHash'>>,
-  ): User | undefined {
-    const user = this.findById(id);
+  ): Promise<User | undefined> {
+    const user =
+      await this.prisma.user.findFirst({
+        where: {
+          id: BigInt(id),
+          status: 'ACTIVE',
+        },
+      });
 
-    if (!user) {
+    return user
+      ? this.toUser(user)
+      : undefined;
+  }
+
+  async findByEmail(
+    email: string,
+  ): Promise<User | undefined> {
+    const user =
+      await this.prisma.user.findUnique({
+        where: {
+          email,
+        },
+      });
+
+    return user
+      ? this.toUser(user)
+      : undefined;
+  }
+
+  async create(
+    data: CreateUserData,
+  ): Promise<User> {
+    const user =
+      await this.prisma.user.create({
+        data: {
+          username: data.username,
+          passwordHash:
+            data.passwordHash,
+
+          realName: data.realName,
+          email: data.email,
+          phone: data.phone,
+
+          birthDate:
+            this.stringToDate(
+              data.birthDate,
+            ),
+
+          gender: data.gender,
+
+          status: 'ACTIVE',
+        },
+      });
+
+    return this.toUser(user);
+  }
+
+  async update(
+    id: number,
+    data: UpdateUserData,
+  ): Promise<User | undefined> {
+    const existingUser =
+      await this.findById(id);
+
+    if (!existingUser) {
       return undefined;
     }
 
-    Object.assign(user, data);
+    const user =
+      await this.prisma.user.update({
+        where: {
+          id: BigInt(id),
+        },
 
-    return user;
+        data: {
+          ...(data.realName !==
+            undefined && {
+            realName: data.realName,
+          }),
+
+          ...(data.birthDate !==
+            undefined && {
+            birthDate:
+              this.stringToDate(
+                data.birthDate,
+              ),
+          }),
+
+          ...(data.gender !==
+            undefined && {
+            gender: data.gender,
+          }),
+
+          ...(data
+            .promotionNotificationEnabled !==
+            undefined && {
+            promotionNotificationEnabled:
+              data
+                .promotionNotificationEnabled,
+          }),
+
+          ...(data
+            .nearbyNotificationEnabled !==
+            undefined && {
+            nearbyNotificationEnabled:
+              data
+                .nearbyNotificationEnabled,
+          }),
+
+          ...(data
+            .recordNotificationEnabled !==
+            undefined && {
+            recordNotificationEnabled:
+              data
+                .recordNotificationEnabled,
+          }),
+
+          updatedAt: new Date(),
+        },
+      });
+
+    return this.toUser(user);
   }
 
-  // 비밀번호 변경
   async changePassword(
     id: number,
     currentPassword: string,
     newPassword: string,
   ): Promise<boolean> {
-    const user = this.findById(id);
+    const user =
+      await this.findById(id);
 
     if (!user) {
       return false;
     }
 
-    const passwordMatches = await bcrypt.compare(
-      currentPassword,
-      user.passwordHash,
-    );
+    const passwordMatches =
+      await bcrypt.compare(
+        currentPassword,
+        user.passwordHash,
+      );
 
     if (!passwordMatches) {
       throw new BadRequestException(
@@ -110,22 +216,121 @@ export class UsersService {
       );
     }
 
-    user.passwordHash = await bcrypt.hash(newPassword, 10);
+    const newPasswordHash =
+      await bcrypt.hash(
+        newPassword,
+        10,
+      );
+
+    await this.prisma.user.update({
+      where: {
+        id: BigInt(id),
+      },
+
+      data: {
+        passwordHash:
+          newPasswordHash,
+        updatedAt: new Date(),
+      },
+    });
 
     return true;
   }
 
-  // 회원탈퇴
-  softDelete(id: number): boolean {
-    const user = this.users.find((user) => user.id === id);
+  async softDelete(
+    id: number,
+  ): Promise<boolean> {
+    const user =
+      await this.findById(id);
 
-    if (!user || user.status === 'DELETED') {
+    if (!user) {
       return false;
     }
 
-    user.status = 'DELETED';
-    user.deletedAt = new Date();
+    await this.prisma.user.update({
+      where: {
+        id: BigInt(id),
+      },
+
+      data: {
+        status: 'DELETED',
+        deletedAt: new Date(),
+        updatedAt: new Date(),
+      },
+    });
 
     return true;
+  }
+
+  private stringToDate(
+    date: string,
+  ): Date {
+    return new Date(
+      `${date}T00:00:00.000Z`,
+    );
+  }
+
+  private dateToString(
+    date: Date | null,
+  ): string | null {
+    if (!date) {
+      return null;
+    }
+
+    return date
+      .toISOString()
+      .slice(0, 10);
+  }
+
+  private toUser(user: {
+    id: bigint;
+    username: string;
+    passwordHash: string;
+    realName: string | null;
+    email: string | null;
+    phone: string | null;
+    birthDate: Date | null;
+    gender: string | null;
+
+    promotionNotificationEnabled: boolean;
+    nearbyNotificationEnabled: boolean;
+    recordNotificationEnabled: boolean;
+
+    status: string;
+    deletedAt: Date | null;
+  }): User {
+    return {
+      id: Number(user.id),
+
+      username: user.username,
+      passwordHash:
+        user.passwordHash,
+
+      realName: user.realName,
+      email: user.email,
+      phone: user.phone,
+
+      birthDate:
+        this.dateToString(
+          user.birthDate,
+        ),
+
+      gender: user.gender,
+
+      promotionNotificationEnabled:
+        user
+          .promotionNotificationEnabled,
+
+      nearbyNotificationEnabled:
+        user
+          .nearbyNotificationEnabled,
+
+      recordNotificationEnabled:
+        user
+          .recordNotificationEnabled,
+
+      status: user.status,
+      deletedAt: user.deletedAt,
+    };
   }
 }
