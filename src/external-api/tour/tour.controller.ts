@@ -41,4 +41,14 @@ export class TourController {
   async syncSeoulPlaces() {
     return this.tourService.syncAllSeoulPlaces();
   }
+
+  @Post('sync-seoul-place-details')
+  async syncSeoulPlaceDetails() {
+    return this.tourService.syncSeoulPlaceDetails();
+  }
+
+  @Post('sync-seoul-place-details-test')
+  async syncSeoulPlaceDetailsTest() {
+    return this.tourService.syncSeoulPlaceDetails(10);
+  }
 }
