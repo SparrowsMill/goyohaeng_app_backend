@@ -402,6 +402,37 @@ export class TourService {
       ),
     );
   }
+  private normalizeHomepage(
+    value?: string | null,
+  ): string | null {
+    if (!value) {
+      return null;
+    }
+
+    const raw = value.trim();
+
+    if (!raw) {
+      return null;
+    }
+
+    const hrefMatch = raw.match(
+      /href\s*=\s*["']([^"']+)["']/i,
+    );
+
+    if (hrefMatch?.[1]) {
+      return hrefMatch[1].trim();
+    }
+
+    const urlMatch = raw.match(
+      /https?:\/\/[^\s<>"']+/i,
+    );
+
+    if (urlMatch?.[0]) {
+      return urlMatch[0].trim();
+    }
+
+    return null;
+  }
   async syncAllSeoulPlaces() {
     const source = await this.getTourApiSource();
 
@@ -510,6 +541,272 @@ export class TourService {
       fetchedCount,
       insertedCount,
       skippedCount,
+    };
+  }
+
+    /**
+   * TourAPI detailCommon2 응답에서 item 배열 추출
+   */
+  private extractDetailCommonItems(data: any): any[] {
+    const item = data?.response?.body?.items?.item;
+
+    if (!item) {
+      return [];
+    }
+
+    return Array.isArray(item) ? item : [item];
+  }
+
+  /**
+   * TourAPI 장소 상세 공통정보 enrichment
+   *
+   * - place_external_ids의 TOUR_API / CONTENT_ID 대상
+   * - 이미 detailCommon2 RAW가 존재하면 skip
+   * - detailCommon2 응답을 raw_tour_api에 저장
+   * - homepage가 있으면 places.homepage 업데이트
+   */
+  async syncSeoulPlaceDetails(limit?: number) {
+    const source = await this.getTourApiSource();
+
+    const tourPlaceExternalIds =
+      await this.prisma.placeExternalId.findMany({
+        where: {
+          sourceId: source.id,
+          idType: 'CONTENT_ID',
+        },
+        select: {
+          placeId: true,
+          externalId: true,
+        },
+        orderBy: {
+          placeId: 'asc',
+        },
+      });
+
+    let targets = tourPlaceExternalIds;
+
+    if (limit && limit > 0) {
+      targets = targets.slice(0, limit);
+    }
+
+    let processedCount = 0;
+    let fetchedCount = 0;
+    let skippedCount = 0;
+    let rawInsertedCount = 0;
+    let homepageUpdatedCount = 0;
+    let noHomepageCount = 0;
+    let failedCount = 0;
+    let quotaExceeded = false;
+
+    const failures: Array<{
+      placeId: string;
+      contentId: string;
+      error: string;
+    }> = [];
+
+    for (const target of targets) {
+      const placeId = target.placeId;
+      const contentId = target.externalId;
+
+      try {
+        const existingRaw =
+          await this.prisma.rawTourApi.findFirst({
+            where: {
+              sourceId: source.id,
+              endpoint: 'detailCommon2',
+              contentId,
+            },
+            orderBy: {
+              fetchedAt: 'desc',
+            },
+          });
+
+        if (existingRaw) {
+          skippedCount++;
+          processedCount++;
+
+          const payload =
+            existingRaw.responsePayload as Record<
+              string,
+              unknown
+            >;
+
+          const homepage =
+            this.normalizeHomepage(
+              typeof payload?.homepage === 'string'
+                ? payload.homepage
+                : null,
+            );
+
+          if (homepage) {
+            const place =
+              await this.prisma.place.findUnique({
+                where: {
+                  id: placeId,
+                },
+                select: {
+                  homepage: true,
+                },
+              });
+
+            if (place?.homepage !== homepage) {
+              await this.prisma.place.update({
+                where: {
+                  id: placeId,
+                },
+                data: {
+                  homepage,
+                },
+              });
+
+              homepageUpdatedCount++;
+            }
+          } else {
+            noHomepageCount++;
+          }
+
+          continue;
+        }
+
+        const params = {
+          contentId,
+          numOfRows: 1,
+          pageNo: 1,
+        };
+
+        const data = await this.request(
+          'detailCommon2',
+          params,
+        );
+
+        fetchedCount++;
+        processedCount++;
+
+        const items =
+          this.extractDetailCommonItems(data);
+
+        if (items.length === 0) {
+          throw new Error(
+            `detailCommon2 returned no items: ${JSON.stringify(data)}`,
+          );
+        }
+
+        const item = items[0];
+
+        await this.prisma.rawTourApi.create({
+          data: {
+            sourceId: source.id,
+            endpoint: 'detailCommon2',
+
+            contentId: item.contentid
+              ? String(item.contentid)
+              : contentId,
+
+            contentTypeId: item.contenttypeid
+              ? String(item.contenttypeid)
+              : null,
+
+            requestPayload: params,
+            responsePayload: item,
+
+            sourceModifiedAt:
+              this.parseTourDateTime(
+                item.modifiedtime
+                  ? String(item.modifiedtime)
+                  : undefined,
+              ),
+          },
+        });
+
+        rawInsertedCount++;
+
+        const homepage =
+          this.normalizeHomepage(
+            item.homepage
+              ? String(item.homepage)
+              : null,
+          );
+
+        if (homepage) {
+          const place =
+            await this.prisma.place.findUnique({
+              where: {
+                id: placeId,
+              },
+              select: {
+                homepage: true,
+              },
+            });
+
+          if (place?.homepage !== homepage) {
+            await this.prisma.place.update({
+              where: {
+                id: placeId,
+              },
+              data: {
+                homepage,
+              },
+            });
+
+            homepageUpdatedCount++;
+          }
+        } else {
+          noHomepageCount++;
+        }
+      } catch (error) {
+        const message =
+          error instanceof Error
+            ? error.message
+            : String(error);
+
+        if (
+          message.includes('429') ||
+          message.includes(
+            'LIMITED_NUMBER_OF_SERVICE_REQUESTS_EXCEEDS_ERROR',
+          )
+        ) {
+          quotaExceeded = true;
+
+          console.warn(
+            `[TourAPI] Daily quota exceeded. Stopping detailCommon2 sync at placeId=${placeId.toString()}, contentId=${contentId}`,
+          );
+
+          break;
+        }
+
+        failedCount++;
+        processedCount++;
+
+        failures.push({
+          placeId: placeId.toString(),
+          contentId,
+          error: message,
+        });
+
+        console.error(
+          `[TourAPI] detailCommon2 failed - placeId=${placeId.toString()}, contentId=${contentId}`,
+          error,
+        );
+      }
+
+      if (processedCount % 50 === 0) {
+        console.log(
+          `[TourAPI] detailCommon2 progress ${processedCount}/${targets.length}`,
+        );
+      }
+    }
+
+    return {
+      targetCount: targets.length,
+      processedCount,
+      fetchedCount,
+      skippedCount,
+      rawInsertedCount,
+      homepageUpdatedCount,
+      noHomepageCount,
+      failedCount,
+      quotaExceeded,
+      failures,
     };
   }
 }
