@@ -605,6 +605,293 @@ export class PlacesService {
     return `${hour}:${minute}`;
   }
 
+  async getTrendSummary(
+  placeId: number,
+) {
+  const place =
+    await this.prisma.place.findFirst({
+      where: {
+        id: BigInt(placeId),
+        status: 'ACTIVE',
+      },
+
+      select: {
+        id: true,
+        name: true,
+
+        trendSnapshots: {
+          orderBy: {
+            generatedAt: 'desc',
+          },
+          take: 1,
+
+          select: {
+            summaryText: true,
+            keywords: true,
+            periodStart: true,
+            periodEnd: true,
+            generatedAt: true,
+          },
+        },
+
+        externalContents: {
+          orderBy: {
+            publishedAt: 'desc',
+          },
+          take: 10,
+
+          select: {
+            id: true,
+            contentType: true,
+            title: true,
+            url: true,
+            author: true,
+            publishedAt: true,
+          },
+        },
+
+        naverSearchTerms: {
+          where: {
+            isActive: true,
+          },
+
+          orderBy: {
+            version: 'desc',
+          },
+
+          take: 1,
+
+          select: {
+            searchTerm: true,
+
+            interest: {
+              orderBy: {
+                periodStart: 'desc',
+              },
+
+              take: 30,
+
+              select: {
+                periodStart: true,
+                ratio: true,
+              },
+            },
+          },
+        },
+      },
+    });
+
+  if (!place) {
+    return undefined;
+  }
+
+  const trend =
+    place.trendSnapshots[0] ?? null;
+
+  const searchTerm =
+    place.naverSearchTerms[0] ?? null;
+
+  return {
+    placeId: Number(place.id),
+    placeName: place.name,
+
+    summaryText:
+      trend?.summaryText ?? null,
+
+    keywords:
+      trend?.keywords ?? [],
+
+    periodStart:
+      trend?.periodStart ?? null,
+
+    periodEnd:
+      trend?.periodEnd ?? null,
+
+    generatedAt:
+      trend?.generatedAt ?? null,
+
+    contents:
+      place.externalContents.map(
+        (content) => ({
+          id: Number(content.id),
+
+          contentType:
+            content.contentType,
+
+          title:
+            content.title,
+
+          url:
+            content.url,
+
+          author:
+            content.author,
+
+          publishedAt:
+            content.publishedAt,
+        }),
+      ),
+
+    searchTerm:
+      searchTerm?.searchTerm ?? null,
+
+    searchInterest:
+      searchTerm?.interest.map(
+        (item) => ({
+          periodStart:
+            item.periodStart,
+
+          ratio:
+            Number(item.ratio),
+        }),
+      ) ?? [],
+
+  
+  };
+}
+
+async rewardTrendFirstView(
+  userId: number,
+  placeId: number,
+): Promise<
+  | {
+      firstView: boolean;
+      rewarded: boolean;
+      ingredient: {
+        id: number;
+        name: string;
+        quantity: number;
+      } | null;
+    }
+  | undefined
+> {
+  // 1. 존재하는 활성 장소인지 확인
+  const place =
+    await this.prisma.place.findFirst({
+      where: {
+        id: BigInt(placeId),
+        status: 'ACTIVE',
+      },
+      select: {
+        id: true,
+      },
+    });
+
+  if (!place) {
+    return undefined;
+  }
+
+  return this.prisma.$transaction(
+    async (tx) => {
+      // 2. 이 사용자가 이 장소의 트렌드 보상을
+      // 이미 받은 적이 있는지 확인
+      const existingReward =
+        await tx.ingredientTransaction.findFirst({
+          where: {
+            userId: BigInt(userId),
+            placeId: BigInt(placeId),
+            transactionType:
+              'TREND_FIRST_VIEW',
+          },
+          select: {
+            id: true,
+          },
+        });
+
+      if (existingReward) {
+        return {
+          firstView: false,
+          rewarded: false,
+          ingredient: null,
+        };
+      }
+
+      // 3. 활성화된 BASIC 재료 조회
+      const basicIngredients =
+        await tx.ingredient.findMany({
+          where: {
+            ingredientType: 'BASIC',
+            isActive: true,
+          },
+          select: {
+            id: true,
+            name: true,
+          },
+        });
+
+      if (basicIngredients.length === 0) {
+        throw new Error(
+          '지급 가능한 BASIC 재료가 없습니다.',
+        );
+      }
+
+      // 4. BASIC 재료 중 랜덤 1개 선택
+      const randomIngredient =
+        basicIngredients[
+          Math.floor(
+            Math.random() *
+              basicIngredients.length,
+          )
+        ];
+
+      const now = new Date();
+
+      // 5. 사용자 재료 수량 +1
+      await tx.userIngredient.upsert({
+        where: {
+          userId_ingredientId: {
+            userId: BigInt(userId),
+            ingredientId:
+              randomIngredient.id,
+          },
+        },
+
+        update: {
+          quantity: {
+            increment: 1,
+          },
+          updatedAt: now,
+        },
+
+        create: {
+          userId: BigInt(userId),
+          ingredientId:
+            randomIngredient.id,
+          quantity: 1,
+          firstAcquiredAt: now,
+          updatedAt: now,
+        },
+      });
+
+      // 6. 지급 이력 기록
+      await tx.ingredientTransaction.create({
+        data: {
+          userId: BigInt(userId),
+          ingredientId:
+            randomIngredient.id,
+          quantityChange: 1,
+          transactionType:
+            'TREND_FIRST_VIEW',
+          placeId: BigInt(placeId),
+        },
+      });
+
+      return {
+        firstView: true,
+        rewarded: true,
+        ingredient: {
+          id: Number(
+            randomIngredient.id,
+          ),
+          name:
+            randomIngredient.name,
+          quantity: 1,
+        },
+      };
+    },
+  );
+}
+
   async getVisitStatus(
   userId: number,
   placeId: number,
