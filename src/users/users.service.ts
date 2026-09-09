@@ -447,6 +447,326 @@ export class UsersService {
     };
   }
 
+
+  async getFavorites(
+  userId: number,
+  page: number = 1,
+  limit: number = 20,
+) {
+  const safePage = Math.max(page, 1);
+  const safeLimit = Math.min(
+    Math.max(limit, 1),
+    100,
+  );
+
+  const skip =
+    (safePage - 1) * safeLimit;
+
+  const where = {
+    userId: BigInt(userId),
+
+    place: {
+      status: 'ACTIVE',
+    },
+  };
+
+  const [favorites, total] =
+    await Promise.all([
+      this.prisma.placeFavorite.findMany({
+        where,
+
+        orderBy: {
+          createdAt: 'desc',
+        },
+
+        skip,
+        take: safeLimit,
+
+        select: {
+          createdAt: true,
+
+          place: {
+            select: {
+              id: true,
+              name: true,
+              categoryId: true,
+              districtRegionId: true,
+              roadAddress: true,
+              latitude: true,
+              longitude: true,
+
+              images: {
+                where: {
+                  isActive: true,
+                },
+
+                orderBy: {
+                  displayOrder: 'asc',
+                },
+
+                take: 1,
+
+                select: {
+                  originalUrl: true,
+                  thumbnailUrl: true,
+                },
+              },
+            },
+          },
+        },
+      }),
+
+      this.prisma.placeFavorite.count({
+        where,
+      }),
+    ]);
+
+  return {
+    items: favorites.map(
+      (favorite) => ({
+        id: Number(favorite.place.id),
+        name: favorite.place.name,
+
+        categoryId:
+          favorite.place.categoryId
+            ? Number(
+                favorite.place.categoryId,
+              )
+            : null,
+
+        districtRegionId:
+          favorite.place
+            .districtRegionId
+            ? Number(
+                favorite.place
+                  .districtRegionId,
+              )
+            : null,
+
+        roadAddress:
+          favorite.place.roadAddress,
+
+        latitude:
+          favorite.place.latitude
+            ? Number(
+                favorite.place.latitude,
+              )
+            : null,
+
+        longitude:
+          favorite.place.longitude
+            ? Number(
+                favorite.place.longitude,
+              )
+            : null,
+
+        imageUrl:
+          favorite.place.images[0]
+            ?.thumbnailUrl ??
+          favorite.place.images[0]
+            ?.originalUrl ??
+          null,
+
+        isFavorite: true,
+
+        favoritedAt:
+          favorite.createdAt,
+      }),
+    ),
+
+    page: safePage,
+    limit: safeLimit,
+    total,
+    totalPages:
+      Math.ceil(total / safeLimit),
+  };
+}
+
+async getIngredients(userId: number) {
+  const userIngredients =
+    await this.prisma.userIngredient.findMany({
+      where: {
+        userId: BigInt(userId),
+        quantity: {
+          gt: 0,
+        },
+      },
+
+      include: {
+        ingredient: true,
+      },
+
+      orderBy: {
+        updatedAt: 'desc',
+      },
+    });
+
+  const items = userIngredients.map(
+    (item) => ({
+      id: Number(item.ingredient.id),
+
+      name: item.ingredient.name,
+
+      description:
+        item.ingredient.description,
+
+      ingredientType:
+        item.ingredient.ingredientType,
+
+      quantity: item.quantity,
+
+      imageUrl:
+        item.ingredient.imageUrl,
+
+      illustrationUrl:
+        item.ingredient.illustrationUrl,
+
+      rarity:
+        item.ingredient.rarity,
+
+      regionId:
+        item.ingredient.regionId === null
+          ? null
+          : Number(
+              item.ingredient.regionId,
+            ),
+
+      firstAcquiredAt:
+        item.firstAcquiredAt,
+
+      updatedAt:
+        item.updatedAt,
+    }),
+  );
+
+  return {
+    items,
+    totalTypes: items.length,
+    totalQuantity: items.reduce(
+      (sum, item) =>
+        sum + item.quantity,
+      0,
+    ),
+  };
+}
+
+async getMyFoods(
+  userId: number,
+  page: number = 1,
+  limit: number = 20,
+) {
+  const safePage = Math.max(page, 1);
+
+  const safeLimit = Math.min(
+    Math.max(limit, 1),
+    100,
+  );
+
+  const skip =
+    (safePage - 1) * safeLimit;
+
+  const where = {
+    userId: BigInt(userId),
+  };
+
+  const [userFoods, total] =
+    await Promise.all([
+      this.prisma.userFood.findMany({
+        where,
+
+        orderBy: {
+          madeAt: 'desc',
+        },
+
+        skip,
+        take: safeLimit,
+
+        include: {
+          food: true,
+
+          specialIngredient: true,
+
+          specialSourcePlace: {
+            select: {
+              id: true,
+              name: true,
+            },
+          },
+        },
+      }),
+
+      this.prisma.userFood.count({
+        where,
+      }),
+    ]);
+
+  return {
+    items: userFoods.map(
+      (userFood) => ({
+        id: Number(userFood.id),
+
+        foodId:
+          Number(userFood.foodId),
+
+        name:
+          userFood.food.name,
+
+        description:
+          userFood.food.description,
+
+        imageUrl:
+          userFood.food.imageUrl,
+
+        illustrationUrl:
+          userFood.illustrationUrl ??
+          userFood.food.illustrationUrl,
+
+        madeAt:
+          userFood.madeAt,
+
+        specialIngredient:
+          userFood.specialIngredient
+            ? {
+                id: Number(
+                  userFood
+                    .specialIngredient.id,
+                ),
+
+                name:
+                  userFood
+                    .specialIngredient.name,
+
+                rarity:
+                  userFood
+                    .specialIngredient.rarity,
+              }
+            : null,
+
+        specialSourcePlace:
+          userFood.specialSourcePlace
+            ? {
+                id: Number(
+                  userFood
+                    .specialSourcePlace.id,
+                ),
+
+                name:
+                  userFood
+                    .specialSourcePlace.name,
+              }
+            : null,
+      }),
+    ),
+
+    page: safePage,
+    limit: safeLimit,
+    total,
+
+    totalPages:
+      Math.ceil(total / safeLimit),
+  };
+}
+
   async changePassword(
     id: number,
     currentPassword: string,

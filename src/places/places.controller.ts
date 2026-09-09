@@ -2,6 +2,7 @@ import {
   Post,
   Controller,
   Get,
+  Delete,
   NotFoundException,
   Param,
   ParseIntPipe,
@@ -25,8 +26,6 @@ import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 
 import { GetPlacesQueryDto } from './dto/get-places-query.dto';
 import { PlacesService } from './places.service';
-
-import { AuthGuard } from '@nestjs/passport';
 
 interface AuthenticatedUser {
   userId: number;
@@ -105,91 +104,186 @@ export class PlacesController {
     }
   }
 
+  // 장소 트렌드 요약 조회
+  @ApiOperation({
+    summary: '장소 트렌드 요약 조회',
+  })
+  @ApiOkResponse({
+    description: '장소 트렌드 요약 조회 성공',
+  })
+  @ApiNotFoundResponse({
+    description: '장소를 찾을 수 없음',
+  })
+  @Get(':id/trends')
+  async getTrendSummary(
+    @Param('id', ParseIntPipe)
+    id: number,
+  ) {
+    const trend =
+      await this.placesService.getTrendSummary(
+        id,
+      );
+
+    if (!trend) {
+      throw new NotFoundException(
+        '장소를 찾을 수 없습니다.',
+      );
+    }
+
+    return trend;
+  }
+
+  // 트렌드 최초 조회 보상
+  @ApiBearerAuth()
+  @ApiOperation({
+    summary: '트렌드 최초 조회 보상 지급',
+  })
+  @ApiOkResponse({
+    description:
+      '트렌드 최초 조회 보상 처리 성공',
+  })
+  @ApiUnauthorizedResponse({
+    description: '로그인이 필요함',
+  })
+  @ApiNotFoundResponse({
+    description: '장소를 찾을 수 없음',
+  })
+  @UseGuards(JwtAuthGuard)
+  @Post(':id/trends/first-view')
+  async rewardTrendFirstView(
+    @Req()
+    req: {
+      user: AuthenticatedUser;
+    },
+
+    @Param('id', ParseIntPipe)
+    id: number,
+  ) {
+    const result =
+      await this.placesService.rewardTrendFirstView(
+        req.user.userId,
+        id,
+      );
+
+    if (!result) {
+      throw new NotFoundException(
+        '장소를 찾을 수 없습니다.',
+      );
+    }
+
+    return result;
+  }
+
+  // 장소 즐겨찾기 추가
+  @ApiBearerAuth()
+  @ApiOperation({
+    summary: '장소 즐겨찾기 추가',
+  })
+  @ApiOkResponse({
+    description: '즐겨찾기 추가 성공',
+  })
+  @ApiUnauthorizedResponse({
+    description: '로그인이 필요함',
+  })
+  @ApiNotFoundResponse({
+    description: '장소를 찾을 수 없음',
+  })
+  @UseGuards(JwtAuthGuard)
+  @Post(':id/favorite')
+  async addFavorite(
+    @Req()
+    req: {
+      user: AuthenticatedUser;
+    },
+
+    @Param('id', ParseIntPipe)
+    id: number,
+  ) {
+    const result =
+      await this.placesService.addFavorite(
+        req.user.userId,
+        id,
+      );
+
+    if (!result) {
+      throw new NotFoundException(
+        '장소를 찾을 수 없습니다.',
+      );
+    }
+
+    return result;
+  }
+
+  // 장소 즐겨찾기 해제
+  @ApiBearerAuth()
+  @ApiOperation({
+    summary: '장소 즐겨찾기 해제',
+  })
+  @ApiOkResponse({
+    description: '즐겨찾기 해제 성공',
+  })
+  @ApiUnauthorizedResponse({
+    description: '로그인이 필요함',
+  })
+  @ApiNotFoundResponse({
+    description: '장소를 찾을 수 없음',
+  })
+  @UseGuards(JwtAuthGuard)
+  @Delete(':id/favorite')
+  async removeFavorite(
+    @Req()
+    req: {
+      user: AuthenticatedUser;
+    },
+
+    @Param('id', ParseIntPipe)
+    id: number,
+  ) {
+    const result =
+      await this.placesService.removeFavorite(
+        req.user.userId,
+        id,
+      );
+
+    if (!result) {
+      throw new NotFoundException(
+        '장소를 찾을 수 없습니다.',
+      );
+    }
+
+    return result;
+  }
+
   // 장소 상세 조회
+  @ApiBearerAuth()
   @ApiOperation({
     summary: '장소 상세 조회',
   })
   @ApiOkResponse({
     description: '장소 상세 조회 성공',
   })
+  @ApiUnauthorizedResponse({
+    description: '로그인이 필요함',
+  })
   @ApiNotFoundResponse({
     description: '장소를 찾을 수 없음',
   })
-
-  @ApiOperation({
-  summary: '장소 트렌드 요약 조회',
-})
-@ApiOkResponse({
-  description: '장소 트렌드 요약 조회 성공',
-})
-@ApiNotFoundResponse({
-  description: '장소를 찾을 수 없음',
-})
-@Get(':id/trends')
-async getTrendSummary(
-  @Param('id', ParseIntPipe)
-  id: number,
-) {
-  const trend =
-    await this.placesService.getTrendSummary(
-      id,
-    );
-
-  if (!trend) {
-    throw new NotFoundException(
-      '장소를 찾을 수 없습니다.',
-    );
-  }
-
-  return trend;
-}
-
-@ApiBearerAuth()
-@ApiOperation({
-  summary: '트렌드 최초 조회 보상 지급',
-})
-@ApiOkResponse({
-  description:
-    '트렌드 최초 조회 보상 처리 성공',
-})
-@ApiNotFoundResponse({
-  description:
-    '장소를 찾을 수 없음',
-})
-@UseGuards(AuthGuard('jwt'))
-@Post(':id/trends/first-view')
-async rewardTrendFirstView(
-  @Req()
-  req: {
-    user: AuthenticatedUser;
-  },
-
-  @Param('id', ParseIntPipe)
-  id: number,
-) {
-  const result =
-    await this.placesService.rewardTrendFirstView(
-      req.user.userId,
-      id,
-    );
-
-  if (!result) {
-    throw new NotFoundException(
-      '장소를 찾을 수 없습니다.',
-    );
-  }
-
-  return result;
-}
-
-
+  @UseGuards(JwtAuthGuard)
   @Get(':id')
   async findById(
+    @Req()
+    req: {
+      user: AuthenticatedUser;
+    },
+
     @Param('id', ParseIntPipe)
     id: number,
   ) {
     const place =
-      await this.placesService.findById(id);
+      await this.placesService.findById(
+        id,
+        req.user.userId,
+      );
 
     if (!place) {
       throw new NotFoundException(
