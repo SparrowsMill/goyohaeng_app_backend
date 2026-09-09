@@ -84,6 +84,8 @@ export interface PlaceDetail extends Place {
   availableIngredients: AvailableIngredient[];
 
   verification: VerificationSetting | null;
+
+  isFavorite: boolean;
 }
 
 export interface PaginatedPlacesResponse {
@@ -195,6 +197,7 @@ export class PlacesService {
 
   async findById(
     id: number,
+    userId: number,
   ): Promise<PlaceDetail | undefined> {
     const place = await this.prisma.place.findFirst({
       where: {
@@ -242,6 +245,20 @@ export class PlacesService {
     if (!place) {
       return undefined;
     }
+const favorite =
+  await this.prisma.placeFavorite.findUnique({
+    where: {
+      userId_placeId: {
+        userId: BigInt(userId),
+        placeId: BigInt(id),
+      },
+    },
+    select: {
+      userId: true,
+    },
+  });
+
+const isFavorite = !!favorite;
 
     const operatingHours: PlaceOperatingHour[] =
       place.operatingHours.map((hours) => ({
@@ -376,6 +393,7 @@ export class PlacesService {
                 place.verificationSetting
                   .codeValidMinutes,
             },
+            isFavorite,
     };
   }
 
@@ -891,6 +909,96 @@ async rewardTrendFirstView(
     },
   );
 }
+
+async addFavorite(
+  userId: number,
+  placeId: number,
+): Promise<
+  | {
+      placeId: number;
+      isFavorite: boolean;
+    }
+  | undefined
+> {
+  // 활성 장소인지 확인
+  const place =
+    await this.prisma.place.findFirst({
+      where: {
+        id: BigInt(placeId),
+        status: 'ACTIVE',
+      },
+      select: {
+        id: true,
+      },
+    });
+
+  if (!place) {
+    return undefined;
+  }
+
+  // 이미 즐겨찾기한 장소여도 중복 생성하지 않음
+  await this.prisma.placeFavorite.upsert({
+    where: {
+      userId_placeId: {
+        userId: BigInt(userId),
+        placeId: BigInt(placeId),
+      },
+    },
+
+    update: {},
+
+    create: {
+      userId: BigInt(userId),
+      placeId: BigInt(placeId),
+    },
+  });
+
+  return {
+    placeId,
+    isFavorite: true,
+  };
+}
+
+async removeFavorite(
+  userId: number,
+  placeId: number,
+): Promise<
+  | {
+      placeId: number;
+      isFavorite: boolean;
+    }
+  | undefined
+> {
+  // 활성 장소인지 확인
+  const place =
+    await this.prisma.place.findFirst({
+      where: {
+        id: BigInt(placeId),
+        status: 'ACTIVE',
+      },
+      select: {
+        id: true,
+      },
+    });
+
+  if (!place) {
+    return undefined;
+  }
+
+  // 즐겨찾기가 없더라도 에러 없이 처리
+  await this.prisma.placeFavorite.deleteMany({
+    where: {
+      userId: BigInt(userId),
+      placeId: BigInt(placeId),
+    },
+  });
+
+  return {
+    placeId,
+    isFavorite: false,
+  };
+}
+
 
   async getVisitStatus(
   userId: number,

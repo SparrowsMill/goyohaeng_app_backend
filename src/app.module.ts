@@ -19,6 +19,8 @@ import { TourismResourceDemandModule } from './external-api/tourism-resource-dem
 import { TourismDemandStrengthModule } from './external-api/tourism-demand-strength/tourism-demand-strength.module';
 import { ConcentrationForecastModule } from './external-api/concentration-forecast/concentration-forecast.module';
 
+import { FoodsModule } from './foods/foods.module';
+
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -40,6 +42,8 @@ import { ConcentrationForecastModule } from './external-api/concentration-foreca
     TourismResourceDemandModule,
     TourismDemandStrengthModule,
     ConcentrationForecastModule,
+
+    FoodsModule,
   ],
 
   controllers: [AppController],

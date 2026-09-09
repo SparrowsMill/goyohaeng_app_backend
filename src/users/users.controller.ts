@@ -7,6 +7,9 @@ import {
   Patch,
   Req,
   UseGuards,
+  Query,
+  DefaultValuePipe,
+  ParseIntPipe,
 } from '@nestjs/common';
 
 import {
@@ -121,6 +124,107 @@ export class UsersController {
 
     return dashboard;
   }
+
+  @ApiBearerAuth()
+@ApiOperation({
+  summary: '내 즐겨찾기 장소 목록 조회',
+})
+@ApiOkResponse({
+  description:
+    '즐겨찾기 장소 목록 조회 성공',
+})
+@UseGuards(JwtAuthGuard)
+@Get('me/favorites')
+async getFavorites(
+  @Req()
+  req: {
+    user: AuthenticatedUser;
+  },
+  
+  @Query(
+    'page',
+    new DefaultValuePipe(1),
+    ParseIntPipe,
+  )
+  page: number,
+
+  @Query(
+    'limit',
+    new DefaultValuePipe(20),
+    ParseIntPipe,
+  )
+  limit: number,
+) {
+  return this.usersService.getFavorites(
+    req.user.userId,
+    page,
+    limit,
+  );
+}
+
+@ApiBearerAuth()
+@ApiOperation({
+  summary: '내 보유 재료 목록 조회',
+})
+@ApiOkResponse({
+  description:
+    '보유 재료 목록 조회 성공',
+})
+@ApiUnauthorizedResponse({
+  description: '로그인이 필요함',
+})
+@UseGuards(JwtAuthGuard)
+@Get('me/ingredients')
+async getIngredients(
+  @Req()
+  req: {
+    user: AuthenticatedUser;
+  },
+) {
+  return this.usersService.getIngredients(
+    req.user.userId,
+  );
+}
+
+@ApiBearerAuth()
+@ApiOperation({
+  summary: '내가 만든 음식 목록 조회',
+})
+@ApiOkResponse({
+  description:
+    '내가 만든 음식 목록 조회 성공',
+})
+@ApiUnauthorizedResponse({
+  description: '로그인이 필요함',
+})
+@UseGuards(JwtAuthGuard)
+@Get('me/foods')
+async getMyFoods(
+  @Req()
+  req: {
+    user: AuthenticatedUser;
+  },
+
+  @Query(
+    'page',
+    new DefaultValuePipe(1),
+    ParseIntPipe,
+  )
+  page: number,
+
+  @Query(
+    'limit',
+    new DefaultValuePipe(20),
+    ParseIntPipe,
+  )
+  limit: number,
+) {
+  return this.usersService.getMyFoods(
+    req.user.userId,
+    page,
+    limit,
+  );
+}
 
   // 내 정보 수정
   @ApiOperation({
