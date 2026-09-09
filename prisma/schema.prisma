@@ -285,6 +285,7 @@ model Place {
   externalContents    PlaceExternalContent[]
   issueReports        PlaceIssueReport[]
   analyticsEvents     AnalyticsEvent[]
+  favorites           PlaceFavorite[]
 
   @@index([districtRegionId, categoryId])
   @@index([name])
@@ -435,6 +436,7 @@ model User {
   submittedIssueReports       PlaceIssueReport[]         @relation("IssueReporter")
   resolvedIssueReports        PlaceIssueReport[]         @relation("IssueResolver")
   analyticsEvents             AnalyticsEvent[]
+  favorites                   PlaceFavorite[]
 
   @@map("users")
 }
@@ -450,6 +452,20 @@ model UserSocialAccount {
 
   @@unique([userId, platform, socialUserId])
   @@map("user_social_accounts")
+}
+
+model PlaceFavorite {
+  userId    BigInt   @map("user_id")
+  placeId   BigInt   @map("place_id")
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  user  User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  place Place @relation(fields: [placeId], references: [id], onDelete: Cascade)
+
+  @@id([userId, placeId])
+  @@index([userId, createdAt])
+  @@index([placeId])
+  @@map("place_favorites")
 }
 
 model PlaceImage {
