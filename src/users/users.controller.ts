@@ -89,6 +89,39 @@ export class UsersController {
     };
   }
 
+  // 메인 페이지 통계 조회
+  @ApiOperation({
+    summary: '메인 화면 통계 조회',
+  })
+  @ApiBearerAuth()
+  @ApiOkResponse({
+    description: '메인 화면 통계 조회 성공',
+  })
+  @ApiUnauthorizedResponse({
+    description: 'JWT가 없거나 유효하지 않음',
+  })
+  @UseGuards(JwtAuthGuard)
+  @Get('me/dashboard')
+  async getDashboard(
+    @Req()
+    req: Request & {
+      user: AuthenticatedUser;
+    },
+  ) {
+    const dashboard =
+      await this.usersService.getDashboard(
+        req.user.userId,
+      );
+
+    if (!dashboard) {
+      throw new NotFoundException(
+        '사용자를 찾을 수 없습니다.',
+      );
+    }
+
+    return dashboard;
+  }
+
   // 내 정보 수정
   @ApiOperation({
     summary: '내 정보 수정',

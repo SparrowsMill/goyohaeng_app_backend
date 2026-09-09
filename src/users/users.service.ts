@@ -25,6 +25,19 @@ export interface User {
   deletedAt: Date | null;
 }
 
+export interface DashboardResponse {
+  monthlyVisitCount: number;
+  ingredientCount: number;
+  verifiedVisitCount: number;
+  madeFoodCount: number;
+
+  topRegions: {
+    regionId: number;
+    regionName: string;
+    visitCount: number;
+  }[];
+}
+
 interface CreateUserData {
   username: string;
   passwordHash: string;
@@ -104,21 +117,29 @@ export class UsersService {
       await this.prisma.user.create({
         data: {
           username: data.username,
+
           passwordHash:
             data.passwordHash,
 
-          realName: data.realName,
-          email: data.email,
-          phone: data.phone,
+          realName:
+            data.realName,
+
+          email:
+            data.email,
+
+          phone:
+            data.phone,
 
           birthDate:
             this.stringToDate(
               data.birthDate,
             ),
 
-          gender: data.gender,
+          gender:
+            data.gender,
 
-          status: 'ACTIVE',
+          status:
+            'ACTIVE',
         },
       });
 
@@ -145,7 +166,8 @@ export class UsersService {
         data: {
           ...(data.realName !==
             undefined && {
-            realName: data.realName,
+            realName:
+              data.realName,
           }),
 
           ...(data.birthDate !==
@@ -158,7 +180,8 @@ export class UsersService {
 
           ...(data.gender !==
             undefined && {
-            gender: data.gender,
+            gender:
+              data.gender,
           }),
 
           ...(data
@@ -185,11 +208,243 @@ export class UsersService {
                 .recordNotificationEnabled,
           }),
 
-          updatedAt: new Date(),
+          updatedAt:
+            new Date(),
         },
       });
 
     return this.toUser(user);
+  }
+
+  /*
+   * 메인 페이지 통계 조회
+   */
+  async getDashboard(
+    userId: number,
+  ): Promise<
+    DashboardResponse | undefined
+  > {
+    /*
+     * 현재 ACTIVE 사용자인지 확인
+     */
+    const user =
+      await this.prisma.user.findFirst({
+        where: {
+          id: BigInt(userId),
+          status: 'ACTIVE',
+        },
+
+        select: {
+          id: true,
+        },
+      });
+
+    if (!user) {
+      return undefined;
+    }
+
+    /*
+     * 한국 시간 기준
+     * 이번 달 시작 ~ 다음 달 시작
+     */
+    const {
+      monthStart,
+      nextMonthStart,
+    } =
+      this.getCurrentMonthRangeInSeoul();
+
+    /*
+     * 서로 독립적인 통계이므로
+     * 동시에 DB 조회
+     */
+    const [
+      monthlyVisitCount,
+      ingredientAggregate,
+      verifiedVisitCount,
+      madeFoodCount,
+      verifiedVisits,
+    ] = await Promise.all([
+      /*
+       * 이번 달 방문 횟수
+       *
+       * VERIFIED 된 시점이
+       * 이번 달에 포함되는 인증 개수
+       */
+      this.prisma.visitVerification.count({
+        where: {
+          userId:
+            BigInt(userId),
+
+          status:
+            'VERIFIED',
+
+          verifiedAt: {
+            gte:
+              monthStart,
+
+            lt:
+              nextMonthStart,
+          },
+        },
+      }),
+
+      /*
+       * 현재 보유한 재료 총 수량
+       *
+       * 예:
+       * 쌀 2개 + 대파 1개
+       * → ingredientCount = 3
+       */
+      this.prisma.userIngredient.aggregate({
+        where: {
+          userId:
+            BigInt(userId),
+        },
+
+        _sum: {
+          quantity: true,
+        },
+      }),
+
+      /*
+       * 지금까지 인증 완료한
+       * 전체 방문 횟수
+       */
+      this.prisma.visitVerification.count({
+        where: {
+          userId:
+            BigInt(userId),
+
+          status:
+            'VERIFIED',
+        },
+      }),
+
+      /*
+       * 사용자가 만든 음식 수
+       */
+      this.prisma.userFood.count({
+        where: {
+          userId:
+            BigInt(userId),
+        },
+      }),
+
+      /*
+       * 방문 횟수 TOP3 지역 계산용
+       *
+       * VERIFIED 방문의 장소와
+       * 장소가 속한 districtRegion 조회
+       */
+      this.prisma.visitVerification.findMany({
+        where: {
+          userId:
+            BigInt(userId),
+
+          status:
+            'VERIFIED',
+        },
+
+        select: {
+          place: {
+            select: {
+              districtRegion: {
+                select: {
+                  id: true,
+                  name: true,
+                },
+              },
+            },
+          },
+        },
+      }),
+    ]);
+
+    /*
+     * 지역별 방문 횟수 집계
+     */
+    const regionVisitMap =
+      new Map<
+        string,
+        {
+          regionId: number;
+          regionName: string;
+          visitCount: number;
+        }
+      >();
+
+    for (
+      const visit of verifiedVisits
+    ) {
+      const region =
+        visit.place
+          .districtRegion;
+
+      /*
+       * districtRegion이 없는 장소는
+       * TOP3 계산에서 제외
+       */
+      if (!region) {
+        continue;
+      }
+
+      const key =
+        region.id.toString();
+
+      const existing =
+        regionVisitMap.get(
+          key,
+        );
+
+      if (existing) {
+        existing.visitCount += 1;
+      } else {
+        regionVisitMap.set(
+          key,
+          {
+            regionId:
+              Number(
+                region.id,
+              ),
+
+            regionName:
+              region.name,
+
+            visitCount: 1,
+          },
+        );
+      }
+    }
+
+    /*
+     * 방문 횟수가 많은 순으로 정렬 후
+     * 상위 3개만 반환
+     */
+    const topRegions =
+      Array.from(
+        regionVisitMap.values(),
+      )
+        .sort(
+          (a, b) =>
+            b.visitCount -
+            a.visitCount,
+        )
+        .slice(0, 3);
+
+    return {
+      monthlyVisitCount,
+
+      ingredientCount:
+        ingredientAggregate
+          ._sum
+          .quantity ?? 0,
+
+      verifiedVisitCount,
+
+      madeFoodCount,
+
+      topRegions,
+    };
   }
 
   async changePassword(
@@ -230,7 +485,9 @@ export class UsersService {
       data: {
         passwordHash:
           newPasswordHash,
-        updatedAt: new Date(),
+
+        updatedAt:
+          new Date(),
       },
     });
 
@@ -253,13 +510,106 @@ export class UsersService {
       },
 
       data: {
-        status: 'DELETED',
-        deletedAt: new Date(),
-        updatedAt: new Date(),
+        status:
+          'DELETED',
+
+        deletedAt:
+          new Date(),
+
+        updatedAt:
+          new Date(),
       },
     });
 
     return true;
+  }
+
+  /*
+   * 한국 시간 기준
+   * 현재 달의 시작/다음 달 시작을
+   * UTC Date로 변환한다.
+   *
+   * DB verifiedAt이 timestamptz이므로
+   * 이 값을 기준으로 조회한다.
+   */
+  private getCurrentMonthRangeInSeoul(): {
+    monthStart: Date;
+    nextMonthStart: Date;
+  } {
+    const now =
+      new Date();
+
+    const parts =
+      new Intl.DateTimeFormat(
+        'en-US',
+        {
+          timeZone:
+            'Asia/Seoul',
+
+          year:
+            'numeric',
+
+          month:
+            'numeric',
+        },
+      ).formatToParts(
+        now,
+      );
+
+    const year =
+      Number(
+        parts.find(
+          (part) =>
+            part.type ===
+            'year',
+        )?.value,
+      );
+
+    const month =
+      Number(
+        parts.find(
+          (part) =>
+            part.type ===
+            'month',
+        )?.value,
+      );
+
+    /*
+     * 예:
+     * 한국시간 2026-09-01 00:00
+     * = UTC 2026-08-31 15:00
+     */
+    const monthStart =
+      new Date(
+        Date.UTC(
+          year,
+          month - 1,
+          1,
+          -9,
+          0,
+          0,
+        ),
+      );
+
+    /*
+     * 다음 달 1일 00:00 KST
+     */
+    const nextMonthStart =
+      new Date(
+        Date.UTC(
+          year,
+          month,
+          1,
+          -9,
+          0,
+          0,
+        ),
+      );
+
+    return {
+      monthStart,
+      nextMonthStart,
+    };
   }
 
   private stringToDate(
@@ -300,22 +650,31 @@ export class UsersService {
     deletedAt: Date | null;
   }): User {
     return {
-      id: Number(user.id),
+      id:
+        Number(user.id),
 
-      username: user.username,
+      username:
+        user.username,
+
       passwordHash:
         user.passwordHash,
 
-      realName: user.realName,
-      email: user.email,
-      phone: user.phone,
+      realName:
+        user.realName,
+
+      email:
+        user.email,
+
+      phone:
+        user.phone,
 
       birthDate:
         this.dateToString(
           user.birthDate,
         ),
 
-      gender: user.gender,
+      gender:
+        user.gender,
 
       promotionNotificationEnabled:
         user
@@ -329,8 +688,11 @@ export class UsersService {
         user
           .recordNotificationEnabled,
 
-      status: user.status,
-      deletedAt: user.deletedAt,
+      status:
+        user.status,
+
+      deletedAt:
+        user.deletedAt,
     };
   }
 }
