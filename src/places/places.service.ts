@@ -1,5 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
+import { PrismaService } from '../prisma/prisma.service';
+
 export type PlaceStatus =
   | 'ACTIVE'
   | 'INACTIVE'
@@ -28,7 +30,7 @@ export interface Place {
 
   ownerIntro: string | null;
 
-  status: PlaceStatus;
+  status: string;
 }
 
 interface PlaceImage {
@@ -36,7 +38,7 @@ interface PlaceImage {
   placeId: number;
   originalUrl: string;
   thumbnailUrl: string | null;
-  displayOrder: number;
+  displayOrder: number | null;
 }
 
 interface PlaceOperatingHour {
@@ -56,290 +58,880 @@ interface PlaceBenefit {
 
 interface VerificationSetting {
   enabled: boolean;
-  controlMode: 'AUTO' | 'MANUAL';
-  hoursMode: 'SAME_AS_OPERATING' | 'CUSTOM';
+  controlMode: string;
+  hoursMode: string;
   codeValidMinutes: number;
+}
+
+interface AvailableIngredient {
+  id: number;
+  name: string;
+  imageUrl: string | null;
+  rarity: string | null;
+  quantity: number;
+  rewardRule: string;
 }
 
 export interface PlaceDetail extends Place {
   images: PlaceImage[];
+
   operatingHours: PlaceOperatingHour[];
+
+  isOpenNow: boolean;
+
   benefits: PlaceBenefit[];
+
+  availableIngredients: AvailableIngredient[];
+
   verification: VerificationSetting | null;
+}
+
+export interface PaginatedPlacesResponse {
+  items: Place[];
+  page: number;
+  limit: number;
+  total: number;
+  totalPages: number;
 }
 
 @Injectable()
 export class PlacesService {
-  private readonly places: Place[] = [
-    {
-      id: 1,
-      name: '담양 죽녹원',
-      categoryId: 3,
+  constructor(
+    private readonly prisma: PrismaService,
+  ) {}
 
-      districtRegionId: 2,
-      adminDongRegionId: null,
-      legalDongRegionId: null,
+  async findAll(
+  regionId?: number,
+  categoryId?: number,
+  page = 1,
+  limit = 20,
+): Promise<PaginatedPlacesResponse> {
+  const where = {
+    status: 'ACTIVE',
 
-      roadAddress: '전라남도 담양군 담양읍 죽녹원로 119',
-      lotAddress: null,
-      postalCode: null,
+    ...(regionId !== undefined && {
+      districtRegionId: BigInt(regionId),
+    }),
 
-      latitude: 35.3251,
-      longitude: 126.9883,
-
-      phone: '061-380-2680',
-      homepage: null,
-
-      ownerIntro: '대나무 숲길을 걸으며 쉬어갈 수 있는 공간입니다.',
-
-      status: 'ACTIVE',
-    },
-    {
-      id: 2,
-      name: '메타세쿼이아길',
-      categoryId: 3,
-
-      districtRegionId: 2,
-      adminDongRegionId: null,
-      legalDongRegionId: null,
-
-      roadAddress: '전라남도 담양군 담양읍 메타세쿼이아로',
-      lotAddress: null,
-      postalCode: null,
-
-      latitude: 35.3218,
-      longitude: 126.9836,
-
-      phone: null,
-      homepage: null,
-      ownerIntro: null,
-
-      status: 'ACTIVE',
-    },
-    {
-      id: 3,
-      name: '담양 테스트 카페',
-      categoryId: 2,
-
-      districtRegionId: 2,
-      adminDongRegionId: null,
-      legalDongRegionId: null,
-
-      roadAddress: null,
-      lotAddress: null,
-      postalCode: null,
-
-      latitude: 35.32,
-      longitude: 126.99,
-
-      phone: null,
-      homepage: null,
-      ownerIntro: null,
-
-      status: 'ACTIVE',
-    },
-    {
-      id: 4,
-      name: '순천만 국가정원',
-      categoryId: 3,
-
-      districtRegionId: 3,
-      adminDongRegionId: null,
-      legalDongRegionId: null,
-
-      roadAddress: null,
-      lotAddress: null,
-      postalCode: null,
-
-      latitude: 34.9285,
-      longitude: 127.4872,
-
-      phone: null,
-      homepage: null,
-      ownerIntro: null,
-
-      status: 'ACTIVE',
-    },
-    {
-      id: 5,
-      name: '순천 테스트 식당',
-      categoryId: 1,
-
-      districtRegionId: 3,
-      adminDongRegionId: null,
-      legalDongRegionId: null,
-
-      roadAddress: null,
-      lotAddress: null,
-      postalCode: null,
-
-      latitude: 34.95,
-      longitude: 127.48,
-
-      phone: null,
-      homepage: null,
-      ownerIntro: null,
-
-      status: 'ACTIVE',
-    },
-  ];
-
-  private readonly placeImages: PlaceImage[] = [
-    {
-      id: 1,
-      placeId: 1,
-      originalUrl: 'https://example.com/juknokwon-1.jpg',
-      thumbnailUrl: 'https://example.com/juknokwon-1-thumb.jpg',
-      displayOrder: 1,
-    },
-    {
-      id: 2,
-      placeId: 1,
-      originalUrl: 'https://example.com/juknokwon-2.jpg',
-      thumbnailUrl: null,
-      displayOrder: 2,
-    },
-  ];
-
-  private readonly operatingHours: Record<
-    number,
-    PlaceOperatingHour[]
-  > = {
-    1: [
-      {
-        dayOfWeek: 1,
-        isClosed: false,
-        openTime: '09:00',
-        closeTime: '18:00',
-        breakStartTime: null,
-        breakEndTime: null,
-      },
-      {
-        dayOfWeek: 2,
-        isClosed: false,
-        openTime: '09:00',
-        closeTime: '18:00',
-        breakStartTime: null,
-        breakEndTime: null,
-      },
-      {
-        dayOfWeek: 3,
-        isClosed: false,
-        openTime: '09:00',
-        closeTime: '18:00',
-        breakStartTime: null,
-        breakEndTime: null,
-      },
-      {
-        dayOfWeek: 4,
-        isClosed: false,
-        openTime: '09:00',
-        closeTime: '18:00',
-        breakStartTime: null,
-        breakEndTime: null,
-      },
-      {
-        dayOfWeek: 5,
-        isClosed: false,
-        openTime: '09:00',
-        closeTime: '18:00',
-        breakStartTime: null,
-        breakEndTime: null,
-      },
-      {
-        dayOfWeek: 6,
-        isClosed: false,
-        openTime: '09:00',
-        closeTime: '19:00',
-        breakStartTime: null,
-        breakEndTime: null,
-      },
-      {
-        dayOfWeek: 7,
-        isClosed: false,
-        openTime: '09:00',
-        closeTime: '19:00',
-        breakStartTime: null,
-        breakEndTime: null,
-      },
-    ],
+    ...(categoryId !== undefined && {
+      categoryId: BigInt(categoryId),
+    }),
   };
 
-  private readonly benefits: Record<number, PlaceBenefit[]> = {
-    1: [
-      {
-        id: 1,
-        title: '방문 인증 혜택',
-        description: '방문 인증 시 지역 재료를 획득할 수 있습니다.',
+  const skip = (page - 1) * limit;
+
+  const [places, total] = await Promise.all([
+    this.prisma.place.findMany({
+      where,
+
+      orderBy: {
+        id: 'asc',
       },
-    ],
+
+      skip,
+      take: limit,
+    }),
+
+    this.prisma.place.count({
+      where,
+    }),
+  ]);
+
+  const items: Place[] = places.map((place) => ({
+    id: Number(place.id),
+
+    name: place.name,
+
+    categoryId:
+      place.categoryId === null
+        ? null
+        : Number(place.categoryId),
+
+    districtRegionId:
+      place.districtRegionId === null
+        ? null
+        : Number(place.districtRegionId),
+
+    adminDongRegionId:
+      place.adminDongRegionId === null
+        ? null
+        : Number(place.adminDongRegionId),
+
+    legalDongRegionId:
+      place.legalDongRegionId === null
+        ? null
+        : Number(place.legalDongRegionId),
+
+    roadAddress: place.roadAddress,
+    lotAddress: place.lotAddress,
+    postalCode: place.postalCode,
+
+    latitude:
+      place.latitude === null
+        ? null
+        : Number(place.latitude),
+
+    longitude:
+      place.longitude === null
+        ? null
+        : Number(place.longitude),
+
+    phone: place.phone,
+    homepage: place.homepage,
+
+    ownerIntro: place.ownerIntro,
+
+    status: place.status,
+  }));
+
+  return {
+    items,
+    page,
+    limit,
+    total,
+    totalPages: Math.ceil(total / limit),
   };
+}
 
-  private readonly verificationSettings: Record<
-    number,
-    VerificationSetting
-  > = {
-    1: {
-      enabled: true,
-      controlMode: 'AUTO',
-      hoursMode: 'SAME_AS_OPERATING',
-      codeValidMinutes: 30,
-    },
-  };
+  async findById(
+    id: number,
+  ): Promise<PlaceDetail | undefined> {
+    const place = await this.prisma.place.findFirst({
+      where: {
+        id: BigInt(id),
+        status: 'ACTIVE',
+      },
 
-  findAll(
-    regionId?: number,
-    categoryId?: number,
-  ): Place[] {
-    return this.places.filter((place) => {
-      if (place.status !== 'ACTIVE') {
-        return false;
-      }
+      include: {
+        images: {
+          where: {
+            isActive: true,
+          },
+          orderBy: {
+            displayOrder: 'asc',
+          },
+        },
 
-      if (
-        regionId !== undefined &&
-        place.districtRegionId !== regionId
-      ) {
-        return false;
-      }
+        operatingHours: {
+          orderBy: {
+            dayOfWeek: 'asc',
+          },
+        },
 
-      if (
-        categoryId !== undefined &&
-        place.categoryId !== categoryId
-      ) {
-        return false;
-      }
+        specialHours: true,
 
-      return true;
+        benefits: {
+          where: {
+            isActive: true,
+          },
+        },
+
+        verificationSetting: true,
+
+        ingredientRewards: {
+          where: {
+            isActive: true,
+          },
+          include: {
+            ingredient: true,
+          },
+        },
+      },
     });
-  }
-
-  findById(id: number): PlaceDetail | undefined {
-    const place = this.places.find(
-      (place) =>
-        place.id === id &&
-        place.status === 'ACTIVE',
-    );
 
     if (!place) {
       return undefined;
     }
 
+    const operatingHours: PlaceOperatingHour[] =
+      place.operatingHours.map((hours) => ({
+        dayOfWeek: hours.dayOfWeek,
+        isClosed: hours.isClosed,
+
+        openTime: this.formatTime(
+          hours.openTime,
+        ),
+
+        closeTime: this.formatTime(
+          hours.closeTime,
+        ),
+
+        breakStartTime: this.formatTime(
+          hours.breakStartTime,
+        ),
+
+        breakEndTime: this.formatTime(
+          hours.breakEndTime,
+        ),
+      }));
+
+    const isOpenNow = this.calculateIsOpenNow(
+      place.operatingHours,
+      place.specialHours,
+    );
+
     return {
-      ...place,
+      id: Number(place.id),
 
-      images: this.placeImages
-        .filter((image) => image.placeId === id)
-        .sort((a, b) => a.displayOrder - b.displayOrder),
+      name: place.name,
 
-      operatingHours:
-        this.operatingHours[id] ?? [],
+      categoryId:
+        place.categoryId === null
+          ? null
+          : Number(place.categoryId),
 
-      benefits:
-        this.benefits[id] ?? [],
+      districtRegionId:
+        place.districtRegionId === null
+          ? null
+          : Number(place.districtRegionId),
+
+      adminDongRegionId:
+        place.adminDongRegionId === null
+          ? null
+          : Number(place.adminDongRegionId),
+
+      legalDongRegionId:
+        place.legalDongRegionId === null
+          ? null
+          : Number(place.legalDongRegionId),
+
+      roadAddress: place.roadAddress,
+      lotAddress: place.lotAddress,
+      postalCode: place.postalCode,
+
+      latitude:
+        place.latitude === null
+          ? null
+          : Number(place.latitude),
+
+      longitude:
+        place.longitude === null
+          ? null
+          : Number(place.longitude),
+
+      phone: place.phone,
+      homepage: place.homepage,
+
+      ownerIntro: place.ownerIntro,
+
+      status: place.status,
+
+      images: place.images.map((image) => ({
+        id: Number(image.id),
+        placeId: Number(image.placeId),
+
+        originalUrl: image.originalUrl,
+        thumbnailUrl: image.thumbnailUrl,
+
+        displayOrder: image.displayOrder,
+      })),
+
+      operatingHours,
+
+      isOpenNow,
+
+      benefits: place.benefits.map(
+        (benefit) => ({
+          id: Number(benefit.id),
+          title: benefit.title,
+          description: benefit.description,
+        }),
+      ),
+
+      availableIngredients:
+        place.ingredientRewards.map(
+          (reward) => ({
+            id: Number(reward.ingredient.id),
+
+            name: reward.ingredient.name,
+
+            imageUrl:
+              reward.ingredient.imageUrl,
+
+            rarity:
+              reward.ingredient.rarity,
+
+            quantity: reward.quantity,
+
+            rewardRule:
+              reward.rewardRule,
+          }),
+        ),
 
       verification:
-        this.verificationSettings[id] ?? null,
+        place.verificationSetting === null
+          ? null
+          : {
+              enabled:
+                place.verificationSetting.enabled,
+
+              controlMode:
+                place.verificationSetting
+                  .controlMode,
+
+              hoursMode:
+                place.verificationSetting.hoursMode,
+
+              codeValidMinutes:
+                place.verificationSetting
+                  .codeValidMinutes,
+            },
     };
   }
+
+  private calculateIsOpenNow(
+    operatingHours: Array<{
+      dayOfWeek: number;
+      isClosed: boolean;
+      openTime: Date | null;
+      closeTime: Date | null;
+      breakStartTime: Date | null;
+      breakEndTime: Date | null;
+    }>,
+    specialHours: Array<{
+      targetDate: Date;
+      scheduleType: string;
+      openTime: Date | null;
+      closeTime: Date | null;
+      breakStartTime: Date | null;
+      breakEndTime: Date | null;
+    }>,
+  ): boolean {
+    const now = new Date();
+
+    const parts =
+      new Intl.DateTimeFormat(
+        'en-US',
+        {
+          timeZone: 'Asia/Seoul',
+          year: 'numeric',
+          month: '2-digit',
+          day: '2-digit',
+          weekday: 'short',
+          hour: '2-digit',
+          minute: '2-digit',
+          hour12: false,
+        },
+      ).formatToParts(now);
+
+    const getPart = (type: string) =>
+      parts.find(
+        (part) => part.type === type,
+      )?.value;
+
+    const year = getPart('year');
+    const month = getPart('month');
+    const day = getPart('day');
+
+    const weekday = getPart('weekday');
+
+    const hour = Number(
+      getPart('hour'),
+    );
+
+    const minute = Number(
+      getPart('minute'),
+    );
+
+    if (
+      !year ||
+      !month ||
+      !day ||
+      !weekday
+    ) {
+      return false;
+    }
+
+    const today =
+      `${year}-${month}-${day}`;
+
+    const currentMinutes =
+      hour * 60 + minute;
+
+    /*
+     * 특정 날짜 영업정보가 있으면
+     * 일반 주간 영업시간보다 우선한다.
+     */
+    const special =
+      specialHours.find(
+        (specialHour) =>
+          specialHour.targetDate
+            .toISOString()
+            .slice(0, 10) === today,
+      );
+
+    if (special) {
+      if (
+        special.scheduleType ===
+        'CLOSED'
+      ) {
+        return false;
+      }
+
+      if (
+        special.scheduleType ===
+        'SPECIAL_OPEN'
+      ) {
+        return this.isWithinOpeningHours(
+          currentMinutes,
+          special.openTime,
+          special.closeTime,
+          special.breakStartTime,
+          special.breakEndTime,
+        );
+      }
+    }
+
+    const dayMap: Record<
+      string,
+      number
+    > = {
+      Mon: 1,
+      Tue: 2,
+      Wed: 3,
+      Thu: 4,
+      Fri: 5,
+      Sat: 6,
+      Sun: 7,
+    };
+
+    const dayOfWeek =
+      dayMap[weekday];
+
+    const todayHours =
+      operatingHours.find(
+        (hours) =>
+          hours.dayOfWeek === dayOfWeek,
+      );
+
+    if (
+      !todayHours ||
+      todayHours.isClosed
+    ) {
+      return false;
+    }
+
+    return this.isWithinOpeningHours(
+      currentMinutes,
+      todayHours.openTime,
+      todayHours.closeTime,
+      todayHours.breakStartTime,
+      todayHours.breakEndTime,
+    );
+  }
+
+  private isWithinOpeningHours(
+    currentMinutes: number,
+    openTime: Date | null,
+    closeTime: Date | null,
+    breakStartTime: Date | null,
+    breakEndTime: Date | null,
+  ): boolean {
+    if (
+      !openTime ||
+      !closeTime
+    ) {
+      return false;
+    }
+
+    const openMinutes =
+      this.dateTimeToMinutes(
+        openTime,
+      );
+
+    const closeMinutes =
+      this.dateTimeToMinutes(
+        closeTime,
+      );
+
+    if (
+      currentMinutes < openMinutes ||
+      currentMinutes >= closeMinutes
+    ) {
+      return false;
+    }
+
+    if (
+      breakStartTime &&
+      breakEndTime
+    ) {
+      const breakStart =
+        this.dateTimeToMinutes(
+          breakStartTime,
+        );
+
+      const breakEnd =
+        this.dateTimeToMinutes(
+          breakEndTime,
+        );
+
+      if (
+        currentMinutes >= breakStart &&
+        currentMinutes < breakEnd
+      ) {
+        return false;
+      }
+    }
+
+    return true;
+  }
+
+  private dateTimeToMinutes(
+    time: Date,
+  ): number {
+    return (
+      time.getUTCHours() * 60 +
+      time.getUTCMinutes()
+    );
+  }
+
+  private formatTime(
+    time: Date | null,
+  ): string | null {
+    if (!time) {
+      return null;
+    }
+
+    const hour = time
+      .getUTCHours()
+      .toString()
+      .padStart(2, '0');
+
+    const minute = time
+      .getUTCMinutes()
+      .toString()
+      .padStart(2, '0');
+
+    return `${hour}:${minute}`;
+  }
+
+  async getTrendSummary(
+  placeId: number,
+) {
+  const place =
+    await this.prisma.place.findFirst({
+      where: {
+        id: BigInt(placeId),
+        status: 'ACTIVE',
+      },
+
+      select: {
+        id: true,
+        name: true,
+
+        trendSnapshots: {
+          orderBy: {
+            generatedAt: 'desc',
+          },
+          take: 1,
+
+          select: {
+            summaryText: true,
+            keywords: true,
+            periodStart: true,
+            periodEnd: true,
+            generatedAt: true,
+          },
+        },
+
+        externalContents: {
+          orderBy: {
+            publishedAt: 'desc',
+          },
+          take: 10,
+
+          select: {
+            id: true,
+            contentType: true,
+            title: true,
+            url: true,
+            author: true,
+            publishedAt: true,
+          },
+        },
+
+        naverSearchTerms: {
+          where: {
+            isActive: true,
+          },
+
+          orderBy: {
+            version: 'desc',
+          },
+
+          take: 1,
+
+          select: {
+            searchTerm: true,
+
+            interest: {
+              orderBy: {
+                periodStart: 'desc',
+              },
+
+              take: 30,
+
+              select: {
+                periodStart: true,
+                ratio: true,
+              },
+            },
+          },
+        },
+      },
+    });
+
+  if (!place) {
+    return undefined;
+  }
+
+  const trend =
+    place.trendSnapshots[0] ?? null;
+
+  const searchTerm =
+    place.naverSearchTerms[0] ?? null;
+
+  return {
+    placeId: Number(place.id),
+    placeName: place.name,
+
+    summaryText:
+      trend?.summaryText ?? null,
+
+    keywords:
+      trend?.keywords ?? [],
+
+    periodStart:
+      trend?.periodStart ?? null,
+
+    periodEnd:
+      trend?.periodEnd ?? null,
+
+    generatedAt:
+      trend?.generatedAt ?? null,
+
+    contents:
+      place.externalContents.map(
+        (content) => ({
+          id: Number(content.id),
+
+          contentType:
+            content.contentType,
+
+          title:
+            content.title,
+
+          url:
+            content.url,
+
+          author:
+            content.author,
+
+          publishedAt:
+            content.publishedAt,
+        }),
+      ),
+
+    searchTerm:
+      searchTerm?.searchTerm ?? null,
+
+    searchInterest:
+      searchTerm?.interest.map(
+        (item) => ({
+          periodStart:
+            item.periodStart,
+
+          ratio:
+            Number(item.ratio),
+        }),
+      ) ?? [],
+
+  
+  };
+}
+
+async rewardTrendFirstView(
+  userId: number,
+  placeId: number,
+): Promise<
+  | {
+      firstView: boolean;
+      rewarded: boolean;
+      ingredient: {
+        id: number;
+        name: string;
+        quantity: number;
+      } | null;
+    }
+  | undefined
+> {
+  // 1. 존재하는 활성 장소인지 확인
+  const place =
+    await this.prisma.place.findFirst({
+      where: {
+        id: BigInt(placeId),
+        status: 'ACTIVE',
+      },
+      select: {
+        id: true,
+      },
+    });
+
+  if (!place) {
+    return undefined;
+  }
+
+  return this.prisma.$transaction(
+    async (tx) => {
+      // 2. 이 사용자가 이 장소의 트렌드 보상을
+      // 이미 받은 적이 있는지 확인
+      const existingReward =
+        await tx.ingredientTransaction.findFirst({
+          where: {
+            userId: BigInt(userId),
+            placeId: BigInt(placeId),
+            transactionType:
+              'TREND_FIRST_VIEW',
+          },
+          select: {
+            id: true,
+          },
+        });
+
+      if (existingReward) {
+        return {
+          firstView: false,
+          rewarded: false,
+          ingredient: null,
+        };
+      }
+
+      // 3. 활성화된 BASIC 재료 조회
+      const basicIngredients =
+        await tx.ingredient.findMany({
+          where: {
+            ingredientType: 'BASIC',
+            isActive: true,
+          },
+          select: {
+            id: true,
+            name: true,
+          },
+        });
+
+      if (basicIngredients.length === 0) {
+        throw new Error(
+          '지급 가능한 BASIC 재료가 없습니다.',
+        );
+      }
+
+      // 4. BASIC 재료 중 랜덤 1개 선택
+      const randomIngredient =
+        basicIngredients[
+          Math.floor(
+            Math.random() *
+              basicIngredients.length,
+          )
+        ];
+
+      const now = new Date();
+
+      // 5. 사용자 재료 수량 +1
+      await tx.userIngredient.upsert({
+        where: {
+          userId_ingredientId: {
+            userId: BigInt(userId),
+            ingredientId:
+              randomIngredient.id,
+          },
+        },
+
+        update: {
+          quantity: {
+            increment: 1,
+          },
+          updatedAt: now,
+        },
+
+        create: {
+          userId: BigInt(userId),
+          ingredientId:
+            randomIngredient.id,
+          quantity: 1,
+          firstAcquiredAt: now,
+          updatedAt: now,
+        },
+      });
+
+      // 6. 지급 이력 기록
+      await tx.ingredientTransaction.create({
+        data: {
+          userId: BigInt(userId),
+          ingredientId:
+            randomIngredient.id,
+          quantityChange: 1,
+          transactionType:
+            'TREND_FIRST_VIEW',
+          placeId: BigInt(placeId),
+        },
+      });
+
+      return {
+        firstView: true,
+        rewarded: true,
+        ingredient: {
+          id: Number(
+            randomIngredient.id,
+          ),
+          name:
+            randomIngredient.name,
+          quantity: 1,
+        },
+      };
+    },
+  );
+}
+
+  async getVisitStatus(
+  userId: number,
+  placeId: number,
+): Promise<{
+  placeId: number;
+  visited: boolean;
+}> {
+  const place =
+    await this.prisma.place.findFirst({
+      where: {
+        id: BigInt(placeId),
+        status: 'ACTIVE',
+      },
+      select: {
+        id: true,
+      },
+    });
+
+  if (!place) {
+    throw new Error(
+      'PLACE_NOT_FOUND',
+    );
+  }
+
+  const verification =
+    await this.prisma.visitVerification.findFirst({
+      where: {
+        userId: BigInt(userId),
+        placeId: BigInt(placeId),
+        status: 'VERIFIED',
+      },
+      select: {
+        id: true,
+      },
+    });
+
+  return {
+    placeId,
+    visited:
+      verification !== null,
+  };
+}
 }
