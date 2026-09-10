@@ -173,18 +173,34 @@ model Region {
   parent   Region?  @relation("RegionHierarchy", fields: [parentId], references: [id])
   children Region[] @relation("RegionHierarchy")
 
-  externalCodes     RegionExternalCode[]
-  districtPlaces    Place[]              @relation("PlaceDistrictRegion")
-  adminDongPlaces   Place[]              @relation("PlaceAdminDongRegion")
-  legalDongPlaces   Place[]              @relation("PlaceLegalDongRegion")
-  metrics           RegionMetric[]
-  comparedGapScores GapScoreHistory[]    @relation("GapComparisonRegion")
-  ingredients       Ingredient[]
-  foods             Food[]
+  externalCodes             RegionExternalCode[]
+  districtPlaces            Place[]                   @relation("PlaceDistrictRegion")
+  adminDongPlaces           Place[]                   @relation("PlaceAdminDongRegion")
+  legalDongPlaces           Place[]                   @relation("PlaceLegalDongRegion")
+  metrics                   RegionMetric[]
+  comparedGapScores         GapScoreHistory[]         @relation("GapComparisonRegion")
+  ingredients               Ingredient[]
+  foods                     Food[]
+  foodRegionMappings        RegionFoodRegionMapping[] @relation("SourceRegionFoodMapping")
+  mappedAdministrativeAreas RegionFoodRegionMapping[] @relation("FoodRegionMapping")
 
   @@index([parentId])
   @@index([name, regionType])
   @@map("regions")
+}
+
+model RegionFoodRegionMapping {
+  sourceRegionId BigInt   @map("source_region_id")
+  foodRegionId   BigInt   @map("food_region_id")
+  createdAt      DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  sourceRegion Region @relation("SourceRegionFoodMapping", fields: [sourceRegionId], references: [id], onDelete: Cascade)
+  foodRegion   Region @relation("FoodRegionMapping", fields: [foodRegionId], references: [id], onDelete: Cascade)
+
+  @@id([sourceRegionId, foodRegionId])
+  @@unique([sourceRegionId])
+  @@index([foodRegionId])
+  @@map("region_food_region_mappings")
 }
 
 model RegionExternalCode {
@@ -467,9 +483,10 @@ model GapScoreHistory {
   expenditurePercentile     Decimal? @map("expenditure_percentile") @db.Decimal(8, 6)
   nonlocalVisitorPercentile Decimal? @map("nonlocal_visitor_percentile") @db.Decimal(8, 6)
 
-  onlineScore  Decimal? @map("online_score") @db.Decimal(8, 6)
-  offlineScore Decimal? @map("offline_score") @db.Decimal(8, 6)
-  gapScore     Decimal  @map("gap_score") @db.Decimal(8, 4)
+  onlineScore   Decimal? @map("online_score") @db.Decimal(8, 6)
+  offlineScore  Decimal? @map("offline_score") @db.Decimal(8, 6)
+  gapScore      Decimal  @map("gap_score") @db.Decimal(8, 4)
+  gapPercentile Decimal? @map("gap_percentile") @db.Decimal(8, 6)
 
   explanationText String? @map("explanation_text")
 
@@ -726,6 +743,22 @@ model VisitVerification {
 // ============================================================
 // 7. INGREDIENT / FOOD
 // ============================================================
+
+model IngredientDropPolicy {
+  id                   BigInt    @id @default(autoincrement())
+  code                 String    @unique @db.VarChar(30)
+  minGapPercentile     Decimal?  @map("min_gap_percentile") @db.Decimal(8, 6)
+  maxGapPercentile     Decimal?  @map("max_gap_percentile") @db.Decimal(8, 6)
+  commonProbability    Decimal   @map("common_probability") @db.Decimal(6, 5)
+  uncommonProbability  Decimal   @map("uncommon_probability") @db.Decimal(6, 5)
+  rareProbability      Decimal   @map("rare_probability") @db.Decimal(6, 5)
+  legendaryProbability Decimal   @map("legendary_probability") @db.Decimal(6, 5)
+  isActive             Boolean   @default(true) @map("is_active")
+  createdAt            DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt            DateTime? @map("updated_at") @db.Timestamptz(6)
+
+  @@map("ingredient_drop_policies")
+}
 
 model Ingredient {
   id              BigInt   @id @default(autoincrement())

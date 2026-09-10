@@ -720,11 +720,17 @@ async getMyFoods(
           food: true,
 
           specialIngredients: {
-  include: {
-    ingredient: true,
-    sourcePlace: true,
-  },
-},
+            include: {
+              ingredient: true,
+
+              sourcePlace: {
+                select: {
+                  id: true,
+                  name: true,
+                },
+              },
+            },
+          },
         },
       }),
 
@@ -746,6 +752,16 @@ async getMyFoods(
 
         description:
           userFood.food.description,
+
+        rarity:
+          userFood.food.rarity,
+
+        regionId:
+          userFood.food.regionId === null
+            ? null
+            : Number(
+                userFood.food.regionId,
+              ),
 
         imageUrl:
           userFood.food.imageUrl,
