@@ -1,0 +1,516 @@
+import { Injectable } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
+
+import { PrismaService } from '../../prisma/prisma.service';
+
+type NaverTrendPoint = {
+  period: string;
+  ratio: number;
+};
+
+type NaverTrendResult = {
+  title: string;
+  keywords: string[];
+  data: NaverTrendPoint[];
+};
+
+type NaverTrendResponse = {
+  startDate: string;
+  endDate: string;
+  timeUnit: string;
+  results: NaverTrendResult[];
+};
+
+@Injectable()
+export class NaverService {
+  private readonly baseUrl =
+    'https://naverapihub.apigw.ntruss.com/search-trend/v1/search';
+
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly configService: ConfigService,
+  ) {}
+
+  private getCredentials() {
+    const clientId =
+      this.configService.get<string>('NAVER_API_CLIENT_ID');
+
+    const clientSecret =
+      this.configService.get<string>('NAVER_API_CLIENT_SECRET');
+
+    if (!clientId || !clientSecret) {
+      throw new Error(
+        'NAVER_API_CLIENT_ID or NAVER_API_CLIENT_SECRET is not defined',
+      );
+    }
+
+    return {
+      clientId,
+      clientSecret,
+    };
+  }
+
+  private getReferenceTerm(): string {
+    const referenceTerm =
+      this.configService
+        .get<string>('NAVER_REFERENCE_TERM')
+        ?.trim();
+
+    if (!referenceTerm) {
+      throw new Error(
+        'NAVER_REFERENCE_TERM is not defined.',
+      );
+    }
+
+    return referenceTerm;
+  }
+
+  private getLookbackMonths(): number {
+    const raw =
+      this.configService.get<string>('NAVER_LOOKBACK_MONTHS');
+
+    const months = Number(raw ?? 6);
+
+    if (
+      !Number.isInteger(months) ||
+      months < 1 ||
+      months > 60
+    ) {
+      throw new Error(
+        'NAVER_LOOKBACK_MONTHS must be an integer between 1 and 60',
+      );
+    }
+
+    return months;
+  }
+
+  private formatDateUtc(date: Date): string {
+    const year = date.getUTCFullYear();
+
+    const month =
+      String(date.getUTCMonth() + 1).padStart(2, '0');
+
+    const day =
+      String(date.getUTCDate()).padStart(2, '0');
+
+    return `${year}-${month}-${day}`;
+  }
+
+  private getDateRange() {
+    const months =
+      this.getLookbackMonths();
+
+    const kstNow =
+      new Date(
+        Date.now() +
+          9 * 60 * 60 * 1000,
+      );
+
+    const currentYear =
+      kstNow.getUTCFullYear();
+
+    const currentMonth =
+      kstNow.getUTCMonth();
+
+    const end =
+      new Date(
+        Date.UTC(
+          currentYear,
+          currentMonth,
+          0,
+        ),
+      );
+
+    const start =
+      new Date(
+        Date.UTC(
+          end.getUTCFullYear(),
+          end.getUTCMonth() -
+            (months - 1),
+          1,
+        ),
+      );
+
+    return {
+      startDate:
+        this.formatDateUtc(start),
+
+      endDate:
+        this.formatDateUtc(end),
+
+      timeUnit:
+        'month' as const,
+    };
+  }
+
+  private async sleep(ms: number) {
+    await new Promise<void>(
+      (resolve) =>
+        setTimeout(resolve, ms),
+    );
+  }
+
+  private chunk<T>(
+    values: T[],
+    size: number,
+  ): T[][] {
+    const result: T[][] = [];
+
+    for (
+      let i = 0;
+      i < values.length;
+      i += size
+    ) {
+      result.push(
+        values.slice(i, i + size),
+      );
+    }
+
+    return result;
+  }
+
+  private async request(
+    body: Record<string, unknown>,
+  ): Promise<NaverTrendResponse> {
+    const {
+      clientId,
+      clientSecret,
+    } = this.getCredentials();
+
+    const maxAttempts = 3;
+
+    for (
+      let attempt = 1;
+      attempt <= maxAttempts;
+      attempt++
+    ) {
+      const response =
+        await fetch(
+          this.baseUrl,
+          {
+            method: 'POST',
+
+            headers: {
+              'X-NCP-APIGW-API-KEY-ID':
+                clientId,
+
+              'X-NCP-APIGW-API-KEY':
+                clientSecret,
+
+              'Content-Type':
+                'application/json',
+            },
+
+            body:
+              JSON.stringify(body),
+          },
+        );
+
+      const text =
+        await response.text();
+
+      if (
+        response.status === 429 &&
+        attempt < maxAttempts
+      ) {
+        console.warn(
+          `[Naver DataLab] 429 received. Retry ${attempt}/${maxAttempts}`,
+        );
+
+        await this.sleep(1500);
+
+        continue;
+      }
+
+      if (!response.ok) {
+        throw new Error(
+          `Naver DataLab request failed: ${response.status} ${response.statusText}\n${text}`,
+        );
+      }
+
+      return JSON.parse(
+        text,
+      ) as NaverTrendResponse;
+    }
+
+    throw new Error(
+      'Naver DataLab request failed after retries',
+    );
+  }
+
+  private async getNaverSource() {
+    const source =
+      await this.prisma.externalSource.findUnique({
+        where: {
+          code: 'NAVER_DATALAB',
+        },
+      });
+
+    if (!source) {
+      throw new Error(
+        'NAVER_DATALAB does not exist in external_sources',
+      );
+    }
+
+    return source;
+  }
+
+  async syncTourPlaceSearchTrends(
+    limit?: number,
+    onlySearchTermIds?: bigint[],
+  ) {
+    const referenceTerm =
+      this.getReferenceTerm();
+
+    const source =
+      await this.getNaverSource();
+
+    const {
+      startDate,
+      endDate,
+      timeUnit,
+    } = this.getDateRange();
+
+    const allTerms =
+      await this.prisma.naverSearchTerm.findMany({
+        where: {
+          isActive: true,
+
+          place: {
+            externalIds: {
+              some: {
+                idType:
+                  'CONTENT_ID',
+
+                source: {
+                  code:
+                    'TOUR_API',
+                },
+              },
+            },
+          },
+        },
+
+        select: {
+          id: true,
+          placeId: true,
+          searchTerm: true,
+        },
+
+        orderBy: {
+          id: 'asc',
+        },
+      });
+
+      let targets = allTerms;
+
+      if (
+        onlySearchTermIds &&
+        onlySearchTermIds.length > 0
+      ) {
+        const allowedIds =
+          new Set(
+            onlySearchTermIds.map(
+              (id) => id.toString(),
+            ),
+          );
+
+        targets =
+          allTerms.filter(
+            (term) =>
+              allowedIds.has(
+                term.id.toString(),
+              ),
+          );
+      } else if (
+        limit &&
+        limit > 0
+      ) {
+        targets =
+          allTerms.slice(
+            0,
+            limit,
+          );
+      }
+
+    const batches =
+      this.chunk(targets, 4);
+
+    let apiCallCount = 0;
+    let rawInsertedCount = 0;
+    let interestInsertedCount = 0;
+    let failedBatchCount = 0;
+
+    const failures: Array<{
+      batch: number;
+      error: string;
+    }> = [];
+
+    for (
+      let batchIndex = 0;
+      batchIndex < batches.length;
+      batchIndex++
+    ) {
+      const batch =
+        batches[batchIndex];
+
+      const keywordGroups = [
+        {
+          groupName:
+            'REFERENCE',
+
+          keywords: [
+            referenceTerm,
+          ],
+        },
+
+        ...batch.map(
+          (term) => ({
+            groupName:
+              `PLACE_${term.id.toString()}`,
+
+            keywords: [
+              term.searchTerm,
+            ],
+          }),
+        ),
+      ];
+
+      const requestPayload = {
+        startDate,
+        endDate,
+        timeUnit,
+        keywordGroups,
+      };
+
+      try {
+        const response =
+          await this.request(
+            requestPayload,
+          );
+
+        apiCallCount++;
+
+        const raw =
+          await this.prisma.rawNaverDatalabApi.create({
+            data: {
+              sourceId:
+                source.id,
+
+              startDate:
+                new Date(
+                  `${startDate}T00:00:00.000Z`,
+                ),
+
+              endDate:
+                new Date(
+                  `${endDate}T00:00:00.000Z`,
+                ),
+
+              timeUnit,
+
+              requestPayload,
+
+              responsePayload:
+                response,
+            },
+          });
+
+        rawInsertedCount++;
+
+        for (
+          const result
+          of response.results ?? []
+        ) {
+          if (
+            result.title ===
+            'REFERENCE'
+          ) {
+            continue;
+          }
+
+          const match =
+            /^PLACE_(\d+)$/.exec(
+              result.title,
+            );
+
+          if (!match) {
+            console.warn(
+              `[Naver DataLab] Unknown group title: ${result.title}`,
+            );
+
+            continue;
+          }
+
+          const searchTermId =
+            BigInt(match[1]);
+
+          for (
+            const point
+            of result.data ?? []
+          ) {
+            await this.prisma.naverSearchInterest.create({
+              data: {
+                rawNaverDatalabId:
+                  raw.id,
+
+                naverSearchTermId:
+                  searchTermId,
+
+                periodStart:
+                  new Date(
+                    `${point.period}T00:00:00.000Z`,
+                  ),
+
+                ratio:
+                  point.ratio,
+              },
+            });
+
+            interestInsertedCount++;
+          }
+        }
+      } catch (error) {
+        failedBatchCount++;
+
+        const message =
+          error instanceof Error
+            ? error.message
+            : String(error);
+
+        failures.push({
+          batch:
+            batchIndex + 1,
+          error:
+            message,
+        });
+
+        console.error(
+          `[Naver DataLab] batch ${batchIndex + 1}/${batches.length} failed`,
+          error,
+        );
+      }
+
+      await this.sleep(100);
+    }
+
+    return {
+      referenceTerm,
+      startDate,
+      endDate,
+      timeUnit,
+
+      targetCount:
+        targets.length,
+
+      batchCount:
+        batches.length,
+
+      apiCallCount,
+      rawInsertedCount,
+      interestInsertedCount,
+      failedBatchCount,
+      failures,
+    };
+  }
+}

@@ -433,6 +433,187 @@ export class TourService {
 
     return null;
   }
+  private async syncTourLclsMappingsFromRaw(): Promise<{
+    mappedPlaces: number;
+    mappingRows: number;
+  }> {
+    const source = await this.getTourApiSource();
+
+    const categories =
+      await this.prisma.externalCategory.findMany({
+        where: {
+          sourceId: source.id,
+          scheme: 'TOUR_LCLS',
+        },
+        select: {
+          id: true,
+          level: true,
+          externalCode: true,
+        },
+      });
+
+    const categoryMap = new Map<string, bigint>();
+
+    for (const category of categories) {
+      categoryMap.set(
+        `${category.level}:${category.externalCode}`,
+        category.id,
+      );
+    }
+
+    const raws =
+      await this.prisma.rawTourApi.findMany({
+        where: {
+          sourceId: source.id,
+          endpoint: 'areaBasedList2',
+          contentId: {
+            not: null,
+          },
+        },
+        orderBy: [
+          {
+            contentId: 'asc',
+          },
+          {
+            fetchedAt: 'desc',
+          },
+          {
+            id: 'desc',
+          },
+        ],
+        select: {
+          contentId: true,
+          responsePayload: true,
+        },
+      });
+
+    const latestByContentId =
+      new Map<string, Record<string, any>>();
+
+    for (const raw of raws) {
+      if (!raw.contentId) {
+        continue;
+      }
+
+      if (latestByContentId.has(raw.contentId)) {
+        continue;
+      }
+
+      latestByContentId.set(
+        raw.contentId,
+        raw.responsePayload as Record<string, any>,
+      );
+    }
+
+    const externalIds =
+      await this.prisma.placeExternalId.findMany({
+        where: {
+          sourceId: source.id,
+          idType: 'CONTENT_ID',
+        },
+        select: {
+          placeId: true,
+          externalId: true,
+        },
+      });
+
+    const placeByContentId =
+      new Map<string, bigint>();
+
+    for (const row of externalIds) {
+      placeByContentId.set(
+        row.externalId,
+        row.placeId,
+      );
+    }
+
+    const mappings: {
+      placeId: bigint;
+      externalCategoryId: bigint;
+    }[] = [];
+
+    const mappedPlaceIds =
+      new Set<string>();
+
+    for (const [contentId, payload] of latestByContentId) {
+      const placeId =
+        placeByContentId.get(contentId);
+
+      if (!placeId) {
+        continue;
+      }
+
+      const codes = [
+        {
+          level: 1,
+          code: payload.lclsSystm1,
+        },
+        {
+          level: 2,
+          code: payload.lclsSystm2,
+        },
+        {
+          level: 3,
+          code: payload.lclsSystm3,
+        },
+      ];
+
+      for (const item of codes) {
+        const code =
+          item.code == null
+            ? ''
+            : String(item.code).trim();
+
+        if (!code) {
+          continue;
+        }
+
+        const externalCategoryId =
+          categoryMap.get(
+            `${item.level}:${code}`,
+          );
+
+        if (!externalCategoryId) {
+          throw new Error(
+            `Unknown TOUR_LCLS code: ` +
+            `level=${item.level}, ` +
+            `code=${code}, ` +
+            `contentId=${contentId}`,
+          );
+        }
+
+        mappings.push({
+          placeId,
+          externalCategoryId,
+        });
+
+        mappedPlaceIds.add(
+          placeId.toString(),
+        );
+      }
+    }
+
+    await this.prisma.placeExternalCategory.deleteMany({
+      where: {
+        externalCategory: {
+          sourceId: source.id,
+          scheme: 'TOUR_LCLS',
+        },
+      },
+    });
+
+    if (mappings.length > 0) {
+      await this.prisma.placeExternalCategory.createMany({
+        data: mappings,
+        skipDuplicates: true,
+      });
+    }
+
+    return {
+      mappedPlaces: mappedPlaceIds.size,
+      mappingRows: mappings.length,
+    };
+  }
   async syncAllSeoulPlaces() {
     const source = await this.getTourApiSource();
 
@@ -533,7 +714,8 @@ export class TourService {
 
       pageNo++;
     } while (pageNo <= totalPages);
-
+    const lclsMapping =
+      await this.syncTourLclsMappingsFromRaw();
     return {
       areaCode: '1',
       totalCount,
@@ -541,6 +723,7 @@ export class TourService {
       fetchedCount,
       insertedCount,
       skippedCount,
+      lclsMapping,
     };
   }
 

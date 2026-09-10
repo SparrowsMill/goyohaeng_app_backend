@@ -306,6 +306,143 @@ export class TourismResourceDemandService {
     };
   }
 
+  private async normalizeRegionMetrics(
+    sourceId: bigint,
+    baseYm: string,
+  ): Promise<number> {
+    const raws =
+      await this.prisma.rawTourismResourceDemandApi.findMany({
+        where: {
+          sourceId,
+          baseMonth: baseYm,
+        },
+        orderBy: {
+          id: 'asc',
+        },
+      });
+
+    const regionCodes =
+      await this.prisma.regionExternalCode.findMany({
+        where: {
+          sourceId,
+          codeType: 'SIGUNGU_CODE',
+        },
+        select: {
+          regionId: true,
+          externalCode: true,
+        },
+      });
+
+    const regionByCode =
+      new Map<string, bigint>();
+
+    for (const row of regionCodes) {
+      regionByCode.set(
+        row.externalCode,
+        row.regionId,
+      );
+    }
+
+    const metricRows = [];
+
+    for (const raw of raws) {
+      if (!raw.signguCode) {
+        continue;
+      }
+
+      const regionId =
+        regionByCode.get(raw.signguCode);
+
+      if (!regionId) {
+        throw new Error(
+          `Region mapping not found: ${raw.signguCode}`,
+        );
+      }
+
+      const payload =
+        raw.responsePayload as Record<string, any>;
+
+      if (
+        raw.endpoint === 'areaTarSvcDemList'
+      ) {
+        if (
+          payload.tarSvcDemIxCd == null ||
+          payload.tarSvcDemIxVal == null
+        ) {
+          continue;
+        }
+
+        metricRows.push({
+          regionId,
+          sourceId,
+          metricFamily: 'SERVICE_DEMAND',
+          metricCode:
+            String(payload.tarSvcDemIxCd),
+          metricName:
+            payload.tarSvcDemIxNm == null
+              ? null
+              : String(payload.tarSvcDemIxNm),
+          dayOfWeekCode: null,
+          dayOfWeekName: null,
+          visitorTypeCode: null,
+          visitorTypeName: null,
+          periodDate: null,
+          periodMonth: baseYm,
+          metricValue:
+            String(payload.tarSvcDemIxVal),
+          fetchedAt: raw.fetchedAt,
+        });
+      }
+
+      if (
+        raw.endpoint === 'areaCulResDemList'
+      ) {
+        if (
+          payload.culResDemIxCd == null ||
+          payload.culResDemIxVal == null
+        ) {
+          continue;
+        }
+
+        metricRows.push({
+          regionId,
+          sourceId,
+          metricFamily: 'CULTURAL_DEMAND',
+          metricCode:
+            String(payload.culResDemIxCd),
+          metricName:
+            payload.culResDemIxNm == null
+              ? null
+              : String(payload.culResDemIxNm),
+          dayOfWeekCode: null,
+          dayOfWeekName: null,
+          visitorTypeCode: null,
+          visitorTypeName: null,
+          periodDate: null,
+          periodMonth: baseYm,
+          metricValue:
+            String(payload.culResDemIxVal),
+          fetchedAt: raw.fetchedAt,
+        });
+      }
+    }
+
+    await this.prisma.regionMetric.deleteMany({
+      where: {
+        sourceId,
+        periodMonth: baseYm,
+      },
+    });
+
+    if (metricRows.length > 0) {
+      await this.prisma.regionMetric.createMany({
+        data: metricRows,
+      });
+    }
+
+    return metricRows.length;
+  }
+
   /**
    * 최신 제공월을 자동으로 찾은 뒤
    * 서울 25개 구 × 모든 지표 RAW 저장.
@@ -452,6 +589,11 @@ export class TourismResourceDemandService {
           `${district.name}`,
       );
     }
+    const normalizedCount =
+      await this.normalizeRegionMetrics(
+        source.id,
+        baseYm,
+      );
 
     return {
       baseYm,
@@ -480,6 +622,7 @@ export class TourismResourceDemandService {
       totalSaved:
         serviceSaved +
         culturalSaved,
+      normalizedCount,
     };
   }
 }

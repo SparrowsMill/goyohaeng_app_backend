@@ -255,6 +255,143 @@ export class TourismDemandStrengthService {
     };
   }
 
+  private async normalizeRegionMetrics(
+    sourceId: bigint,
+    baseYm: string,
+  ): Promise<number> {
+    const raws =
+      await this.prisma.rawTourismDemandStrengthApi.findMany({
+        where: {
+          sourceId,
+          baseMonth: baseYm,
+        },
+        orderBy: {
+          id: 'asc',
+        },
+      });
+
+    const regionCodes =
+      await this.prisma.regionExternalCode.findMany({
+        where: {
+          sourceId,
+          codeType: 'SIGUNGU_CODE',
+        },
+        select: {
+          regionId: true,
+          externalCode: true,
+        },
+      });
+
+    const regionByCode =
+      new Map<string, bigint>();
+
+    for (const row of regionCodes) {
+      regionByCode.set(
+        row.externalCode,
+        row.regionId,
+      );
+    }
+
+    const metricRows = [];
+
+    for (const raw of raws) {
+      if (!raw.signguCode) {
+        continue;
+      }
+
+      const regionId =
+        regionByCode.get(raw.signguCode);
+
+      if (!regionId) {
+        throw new Error(
+          `Region mapping not found: ${raw.signguCode}`,
+        );
+      }
+
+      const payload =
+        raw.responsePayload as Record<string, any>;
+
+      if (
+        raw.endpoint === 'areaTarSjrnDsList'
+      ) {
+        if (
+          payload.tarSjrnDsIxCd == null ||
+          payload.tarSjrnDsIxVal == null
+        ) {
+          continue;
+        }
+
+        metricRows.push({
+          regionId,
+          sourceId,
+          metricFamily: 'STAY_STRENGTH',
+          metricCode:
+            String(payload.tarSjrnDsIxCd),
+          metricName:
+            payload.tarSjrnDsIxNm == null
+              ? null
+              : String(payload.tarSjrnDsIxNm),
+          dayOfWeekCode: null,
+          dayOfWeekName: null,
+          visitorTypeCode: null,
+          visitorTypeName: null,
+          periodDate: null,
+          periodMonth: baseYm,
+          metricValue:
+            String(payload.tarSjrnDsIxVal),
+          fetchedAt: raw.fetchedAt,
+        });
+      }
+
+      if (
+        raw.endpoint === 'areaTarExpDsList'
+      ) {
+        if (
+          payload.tarExpDsIxCd == null ||
+          payload.tarExpDsIxVal == null
+        ) {
+          continue;
+        }
+
+        metricRows.push({
+          regionId,
+          sourceId,
+          metricFamily: 'EXPENDITURE_STRENGTH',
+          metricCode:
+            String(payload.tarExpDsIxCd),
+          metricName:
+            payload.tarExpDsIxNm == null
+              ? null
+              : String(payload.tarExpDsIxNm),
+          dayOfWeekCode: null,
+          dayOfWeekName: null,
+          visitorTypeCode: null,
+          visitorTypeName: null,
+          periodDate: null,
+          periodMonth: baseYm,
+          metricValue:
+            String(payload.tarExpDsIxVal),
+          fetchedAt: raw.fetchedAt,
+        });
+      }
+    }
+
+    await this.prisma.regionMetric.deleteMany({
+      where: {
+        sourceId,
+        periodMonth: baseYm,
+      },
+    });
+
+    if (metricRows.length > 0) {
+      await this.prisma.regionMetric.createMany({
+        data: metricRows,
+      });
+    }
+
+    return metricRows.length;
+  }
+
   async syncLatestSeoulStrength() {
     const source = await this.getSource();
 
@@ -336,6 +473,12 @@ export class TourismDemandStrengthService {
       }
     }
 
+    const normalizedCount =
+      await this.normalizeRegionMetrics(
+        source.id,
+        baseYm,
+      );
+
     return {
       baseYm,
       districtCount: 25,
@@ -347,6 +490,7 @@ export class TourismDemandStrengthService {
       expenditureSaved,
       totalSaved:
         staySaved + expenditureSaved,
+      normalizedCount,
     };
   }
 }
