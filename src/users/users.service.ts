@@ -684,12 +684,16 @@ async getMyFoods(
         include: {
           food: true,
 
-          specialIngredient: true,
+          specialIngredients: {
+            include: {
+              ingredient: true,
 
-          specialSourcePlace: {
-            select: {
-              id: true,
-              name: true,
+              sourcePlace: {
+                select: {
+                  id: true,
+                  name: true,
+                },
+              },
             },
           },
         },
@@ -714,6 +718,16 @@ async getMyFoods(
         description:
           userFood.food.description,
 
+        rarity:
+          userFood.food.rarity,
+
+        regionId:
+          userFood.food.regionId === null
+            ? null
+            : Number(
+                userFood.food.regionId,
+              ),
+
         imageUrl:
           userFood.food.imageUrl,
 
@@ -724,37 +738,35 @@ async getMyFoods(
         madeAt:
           userFood.madeAt,
 
-        specialIngredient:
-          userFood.specialIngredient
-            ? {
-                id: Number(
-                  userFood
-                    .specialIngredient.id,
-                ),
+        specialIngredients:
+          userFood.specialIngredients.map(
+            (special) => ({
+              id: Number(
+                special.ingredient.id,
+              ),
 
-                name:
-                  userFood
-                    .specialIngredient.name,
+              name:
+                special.ingredient.name,
 
-                rarity:
-                  userFood
-                    .specialIngredient.rarity,
-              }
-            : null,
+              rarity:
+                special.ingredient.rarity,
 
-        specialSourcePlace:
-          userFood.specialSourcePlace
-            ? {
-                id: Number(
-                  userFood
-                    .specialSourcePlace.id,
-                ),
+              quantity:
+                special.quantity,
 
-                name:
-                  userFood
-                    .specialSourcePlace.name,
-              }
-            : null,
+              sourcePlace:
+                special.sourcePlace
+                  ? {
+                      id: Number(
+                        special.sourcePlace.id,
+                      ),
+
+                      name:
+                        special.sourcePlace.name,
+                    }
+                  : null,
+            }),
+          ),
       }),
     ),
 
