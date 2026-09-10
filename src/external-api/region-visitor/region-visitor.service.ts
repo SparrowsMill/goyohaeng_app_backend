@@ -293,6 +293,140 @@ export class RegionVisitorService {
     };
   }
 
+  private async normalizeVisitorMetrics(
+    sourceId: bigint,
+    startDate: Date,
+    endDate: Date,
+  ): Promise<number> {
+    const raws =
+      await this.prisma.rawRegionVisitorApi.findMany({
+        where: {
+          sourceId,
+          baseDate: {
+            gte: startDate,
+            lte: endDate,
+          },
+        },
+        orderBy: {
+          id: 'asc',
+        },
+      });
+
+    const regionCodes =
+      await this.prisma.regionExternalCode.findMany({
+        where: {
+          sourceId,
+        },
+        select: {
+          regionId: true,
+          codeType: true,
+          externalCode: true,
+        },
+      });
+
+    const regionByCode =
+      new Map<string, bigint>();
+
+    for (const row of regionCodes) {
+      regionByCode.set(
+        `${row.codeType}:${row.externalCode}`,
+        row.regionId,
+      );
+    }
+
+    const metricRows = [];
+
+    for (const raw of raws) {
+      const payload =
+        raw.responsePayload as Record<string, any>;
+
+      let regionId: bigint | undefined;
+
+      if (raw.signguCode) {
+        regionId =
+          regionByCode.get(
+            `SIGUNGU_CODE:${raw.signguCode}`,
+          );
+      } else if (raw.areaCode) {
+        regionId =
+          regionByCode.get(
+            `AREA_CODE:${raw.areaCode}`,
+          );
+      }
+
+      if (!regionId) {
+        throw new Error(
+          `Region mapping not found: ` +
+          `areaCode=${raw.areaCode}, ` +
+          `signguCode=${raw.signguCode}`,
+        );
+      }
+
+      if (
+        payload.touNum == null ||
+        raw.baseDate == null
+      ) {
+        continue;
+      }
+
+      metricRows.push({
+        regionId,
+        sourceId,
+
+        metricFamily: 'VISITOR',
+        metricCode: 'TOU_NUM',
+        metricName: '방문자수',
+
+        dayOfWeekCode:
+          payload.daywkDivCd == null
+            ? null
+            : String(payload.daywkDivCd),
+
+        dayOfWeekName:
+          payload.daywkDivNm == null
+            ? null
+            : String(payload.daywkDivNm),
+
+        visitorTypeCode:
+          payload.touDivCd == null
+            ? null
+            : String(payload.touDivCd),
+
+        visitorTypeName:
+          payload.touDivNm == null
+            ? null
+            : String(payload.touDivNm),
+
+        periodDate: raw.baseDate,
+        periodMonth: null,
+
+        metricValue:
+          String(payload.touNum),
+
+        fetchedAt:
+          raw.fetchedAt,
+      });
+    }
+
+    await this.prisma.regionMetric.deleteMany({
+      where: {
+        sourceId,
+        periodDate: {
+          gte: startDate,
+          lte: endDate,
+        },
+      },
+    });
+
+    if (metricRows.length > 0) {
+      await this.prisma.regionMetric.createMany({
+        data: metricRows,
+      });
+    }
+
+    return metricRows.length;
+  }
+
   /**
    * 서울 광역 + 자치구 방문자 데이터를
    * 지정 기간만큼 RAW 저장
@@ -445,10 +579,17 @@ export class RegionVisitorService {
         })),
       });
     }
+    const normalizedCount =
+      await this.normalizeVisitorMetrics(
+        source.id,
+        startDate,
+        endDate,
+      );
 
     return {
       startYmd,
       endYmd,
+      normalizedCount,
 
       metro: {
         endpoint:
