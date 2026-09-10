@@ -31,6 +31,35 @@ export class FoodsService {
         },
       });
 
+      // 사용자가 한 번이라도 만들어본 음식 조회
+const completedFoods =
+  foods.length === 0
+    ? []
+    : await this.prisma.userFood.findMany({
+        where: {
+          userId: BigInt(userId),
+
+          foodId: {
+            in: foods.map(
+              (food) => food.id,
+            ),
+          },
+        },
+
+        select: {
+          foodId: true,
+        },
+
+        distinct: ['foodId'],
+      });
+
+const completedFoodIdSet =
+  new Set(
+    completedFoods.map((item) =>
+      item.foodId.toString(),
+    ),
+  );
+
     // 음식 목록에 필요한 모든 재료 ID
     const ingredientIds = [
       ...new Set(
@@ -128,6 +157,11 @@ export class FoodsService {
 
           canMake,
 
+          isCompleted:
+          completedFoodIdSet.has(
+            food.id.toString(),
+          ),
+
           ingredients,
         };
       }),
@@ -160,6 +194,21 @@ export class FoodsService {
     if (!food) {
       return undefined;
     }
+
+    const completedFood =
+  await this.prisma.userFood.findFirst({
+    where: {
+      userId: BigInt(userId),
+      foodId: food.id,
+    },
+
+    select: {
+      id: true,
+    },
+  });
+
+  const isCompleted =
+  completedFood !== null;
 
     const ingredientIds =
       food.recipeItems.map(
@@ -258,6 +307,8 @@ export class FoodsService {
         food.illustrationUrl,
 
       canMake,
+
+      isCompleted,
 
       ingredients,
     };
@@ -508,4 +559,224 @@ export class FoodsService {
     throw error;
   }
 }
+
+async findHistoryById(
+  historyId: number,
+  userId: number,
+) {
+  const userFood =
+    await this.prisma.userFood.findFirst({
+      where: {
+        id: BigInt(historyId),
+        userId: BigInt(userId),
+      },
+
+      include: {
+        food: true,
+
+        specialIngredients: {
+          include: {
+            ingredient: true,
+            sourcePlace: true,
+          },
+        },
+      },
+    });
+
+  if (!userFood) {
+    return undefined;
+  }
+
+  const transactions =
+    await this.prisma.ingredientTransaction.findMany({
+      where: {
+        userId: BigInt(userId),
+        userFoodId: userFood.id,
+        transactionType: 'FOOD_USE',
+      },
+
+      orderBy: {
+        id: 'asc',
+      },
+
+      select: {
+        ingredientId: true,
+        quantityChange: true,
+      },
+    });
+
+  const ingredientIds = [
+    ...new Set(
+      transactions.map(
+        (transaction) =>
+          transaction.ingredientId.toString(),
+      ),
+    ),
+  ].map((id) => BigInt(id));
+
+  const ingredients =
+    ingredientIds.length === 0
+      ? []
+      : await this.prisma.ingredient.findMany({
+          where: {
+            id: {
+              in: ingredientIds,
+            },
+          },
+
+          select: {
+            id: true,
+            name: true,
+            description: true,
+            ingredientType: true,
+            imageUrl: true,
+            illustrationUrl: true,
+            rarity: true,
+          },
+        });
+
+  const ingredientMap =
+    new Map(
+      ingredients.map(
+        (ingredient) => [
+          ingredient.id.toString(),
+          ingredient,
+        ],
+      ),
+    );
+
+  /*
+   * 특별 재료 ID들
+   */
+  const specialIngredientIdSet =
+    new Set(
+      userFood.specialIngredients.map(
+        (item) =>
+          item.ingredientId.toString(),
+      ),
+    );
+
+  /*
+   * 일반 재료
+   */
+  const normalIngredients =
+    transactions
+      .filter(
+        (transaction) =>
+          !specialIngredientIdSet.has(
+            transaction.ingredientId.toString(),
+          ),
+      )
+      .map((transaction) => {
+        const ingredient =
+          ingredientMap.get(
+            transaction.ingredientId.toString(),
+          );
+
+        if (!ingredient) {
+          return null;
+        }
+
+        return {
+          ingredientId:
+            Number(ingredient.id),
+
+          name:
+            ingredient.name,
+
+          quantity:
+            Math.abs(
+              transaction.quantityChange,
+            ),
+
+          ingredientType:
+            ingredient.ingredientType,
+
+          imageUrl:
+            ingredient.imageUrl,
+
+          illustrationUrl:
+            ingredient.illustrationUrl,
+
+          rarity:
+            ingredient.rarity,
+        };
+      })
+      .filter(
+        (ingredient) =>
+          ingredient !== null,
+      );
+
+  /*
+   * 특별 재료
+   *
+   * 새 DB에서는 여러 개 가능
+   */
+  const specialIngredients =
+    userFood.specialIngredients.map(
+      (item) => ({
+        ingredientId:
+          Number(item.ingredient.id),
+
+        name:
+          item.ingredient.name,
+
+        quantity:
+          item.quantity,
+
+        imageUrl:
+          item.ingredient.imageUrl,
+
+        illustrationUrl:
+          item.ingredient.illustrationUrl,
+
+        rarity:
+          item.ingredient.rarity,
+
+        obtainedPlace:
+          item.sourcePlace
+            ? {
+                id:
+                  Number(
+                    item.sourcePlace.id,
+                  ),
+
+                name:
+                  item.sourcePlace.name,
+              }
+            : null,
+      }),
+    );
+
+  return {
+    id:
+      Number(userFood.id),
+
+    food: {
+      id:
+        Number(userFood.food.id),
+
+      name:
+        userFood.food.name,
+
+      description:
+        userFood.food.description,
+
+      imageUrl:
+        userFood.food.imageUrl,
+
+      illustrationUrl:
+        userFood.illustrationUrl ??
+        userFood.food.illustrationUrl,
+    },
+
+    madeAt:
+      userFood.madeAt,
+
+    specialIngredients,
+
+    normalIngredients,
+  };
+}
+
 }

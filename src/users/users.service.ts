@@ -583,65 +583,100 @@ export class UsersService {
 }
 
 async getIngredients(userId: number) {
+  // 앱에 표시할 전체 활성 재료 조회
+  const ingredients =
+    await this.prisma.ingredient.findMany({
+      where: {
+        isActive: true,
+      },
+
+      orderBy: [
+        {
+          ingredientType: 'asc',
+        },
+        {
+          id: 'asc',
+        },
+      ],
+    });
+
+  // 사용자가 실제로 보유한 재료 조회
   const userIngredients =
     await this.prisma.userIngredient.findMany({
       where: {
         userId: BigInt(userId),
-        quantity: {
-          gt: 0,
-        },
-      },
-
-      include: {
-        ingredient: true,
-      },
-
-      orderBy: {
-        updatedAt: 'desc',
       },
     });
 
-  const items = userIngredients.map(
-    (item) => ({
-      id: Number(item.ingredient.id),
+  // ingredientId -> 사용자 보유 정보
+  const balanceMap = new Map(
+    userIngredients.map((item) => [
+      item.ingredientId.toString(),
+      item,
+    ]),
+  );
 
-      name: item.ingredient.name,
+  const items = ingredients.map(
+    (ingredient) => {
+      const userIngredient =
+        balanceMap.get(
+          ingredient.id.toString(),
+        );
 
-      description:
-        item.ingredient.description,
+      const quantity =
+        userIngredient?.quantity ?? 0;
 
-      ingredientType:
-        item.ingredient.ingredientType,
+      return {
+        id: Number(ingredient.id),
 
-      quantity: item.quantity,
+        name: ingredient.name,
 
-      imageUrl:
-        item.ingredient.imageUrl,
+        description:
+          ingredient.description,
 
-      illustrationUrl:
-        item.ingredient.illustrationUrl,
+        ingredientType:
+          ingredient.ingredientType,
 
-      rarity:
-        item.ingredient.rarity,
+        quantity,
 
-      regionId:
-        item.ingredient.regionId === null
-          ? null
-          : Number(
-              item.ingredient.regionId,
-            ),
+        owned: quantity > 0,
 
-      firstAcquiredAt:
-        item.firstAcquiredAt,
+        imageUrl:
+          ingredient.imageUrl,
 
-      updatedAt:
-        item.updatedAt,
-    }),
+        illustrationUrl:
+          ingredient.illustrationUrl,
+
+        rarity:
+          ingredient.rarity,
+
+        regionId:
+          ingredient.regionId === null
+            ? null
+            : Number(
+                ingredient.regionId,
+              ),
+
+        firstAcquiredAt:
+          userIngredient
+            ?.firstAcquiredAt ?? null,
+
+        updatedAt:
+          userIngredient
+            ?.updatedAt ?? null,
+      };
+    },
   );
 
   return {
     items,
-    totalTypes: items.length,
+
+    // 실제 한 개 이상 가진 재료 종류 수
+    totalTypes: items.filter(
+      (item) => item.quantity > 0,
+    ).length,
+
+    // 현재 가진 재료 총 수량
     totalQuantity: items.reduce(
       (sum, item) =>
         sum + item.quantity,
@@ -684,14 +719,12 @@ async getMyFoods(
         include: {
           food: true,
 
-          specialIngredient: true,
-
-          specialSourcePlace: {
-            select: {
-              id: true,
-              name: true,
-            },
-          },
+          specialIngredients: {
+  include: {
+    ingredient: true,
+    sourcePlace: true,
+  },
+},
         },
       }),
 
@@ -724,37 +757,44 @@ async getMyFoods(
         madeAt:
           userFood.madeAt,
 
-        specialIngredient:
-          userFood.specialIngredient
-            ? {
-                id: Number(
-                  userFood
-                    .specialIngredient.id,
+        specialIngredients:
+  userFood.specialIngredients.map(
+    (item) => ({
+      ingredientId:
+        Number(
+          item.ingredient.id,
+        ),
+
+      name:
+        item.ingredient.name,
+
+      quantity:
+        item.quantity,
+
+      rarity:
+        item.ingredient.rarity,
+
+      imageUrl:
+        item.ingredient.imageUrl,
+
+      illustrationUrl:
+        item.ingredient
+          .illustrationUrl,
+
+      sourcePlace:
+        item.sourcePlace
+          ? {
+              id:
+                Number(
+                  item.sourcePlace.id,
                 ),
 
-                name:
-                  userFood
-                    .specialIngredient.name,
-
-                rarity:
-                  userFood
-                    .specialIngredient.rarity,
-              }
-            : null,
-
-        specialSourcePlace:
-          userFood.specialSourcePlace
-            ? {
-                id: Number(
-                  userFood
-                    .specialSourcePlace.id,
-                ),
-
-                name:
-                  userFood
-                    .specialSourcePlace.name,
-              }
-            : null,
+              name:
+                item.sourcePlace.name,
+            }
+          : null,
+    }),
+  ),
       }),
     ),
 
