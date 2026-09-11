@@ -963,15 +963,21 @@ model PlaceExternalContent {
   id          BigInt    @id @default(autoincrement())
   placeId     BigInt    @map("place_id")
   contentType String    @map("content_type") @db.VarChar(30)
+
   title       String?   @db.VarChar(500)
+  description String?
+
   url         String
   author      String?   @db.VarChar(300)
+  authorUrl   String?   @map("author_url")
+
   publishedAt DateTime? @map("published_at") @db.Timestamptz(6)
-  collectedAt DateTime? @map("collected_at") @db.Timestamptz(6)
+  collectedAt DateTime  @default(now()) @map("collected_at") @db.Timestamptz(6)
 
   place        Place              @relation(fields: [placeId], references: [id], onDelete: Cascade)
   issueReports PlaceIssueReport[]
 
+  @@unique([placeId, url])
   @@index([placeId, collectedAt])
   @@map("place_external_contents")
 }
