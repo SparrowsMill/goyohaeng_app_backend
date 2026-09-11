@@ -349,7 +349,7 @@ model Place {
   longitude         Decimal?  @db.Decimal(10, 7)
   phone             String?   @db.VarChar(100)
   homepage          String?
-  ownerIntro        String?   @map("owner_intro")
+  overview String?
   status            String    @default("ACTIVE") @db.VarChar(20)
   createdAt         DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
   updatedAt         DateTime? @map("updated_at") @db.Timestamptz(6)
