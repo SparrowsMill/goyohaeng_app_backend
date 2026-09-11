@@ -28,7 +28,7 @@ export interface Place {
   phone: string | null;
   homepage: string | null;
 
-  ownerIntro: string | null;
+  overview: string | null;
 
   status: string;
 }
@@ -181,7 +181,7 @@ export class PlacesService {
     phone: place.phone,
     homepage: place.homepage,
 
-    ownerIntro: place.ownerIntro,
+    overview: place.overview,
 
     status: place.status,
   }));
@@ -329,7 +329,7 @@ const isFavorite = !!favorite;
       phone: place.phone,
       homepage: place.homepage,
 
-      ownerIntro: place.ownerIntro,
+      overview: place.overview,
 
       status: place.status,
 
