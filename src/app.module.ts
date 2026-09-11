@@ -22,6 +22,10 @@ import { NaverModule } from './external-api/naver/naver.module';
 
 import { FoodsModule } from './foods/foods.module';
 
+import { IngredientsModule } from './ingredients/ingredients.module';
+
+import { RecordsModule } from './records/records.module';
+
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -46,6 +50,10 @@ import { FoodsModule } from './foods/foods.module';
 
     FoodsModule,
     NaverModule,
+
+    IngredientsModule,
+
+    RecordsModule,
   ],
 
   controllers: [AppController],
