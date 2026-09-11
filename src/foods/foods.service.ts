@@ -318,7 +318,7 @@ const completedFoodIdSet =
   foodId: number,
   userId: number,
 ) {
-  // 먼저 음식과 레시피 확인
+  // 음식 및 레시피 조회
   const food =
     await this.prisma.food.findFirst({
       where: {
@@ -349,12 +349,13 @@ const completedFoodIdSet =
     };
   }
 
-  // 현재 사용자 재료 조회
+  // 필요한 재료 ID
   const ingredientIds =
     food.recipeItems.map(
       (item) => item.ingredientId,
     );
 
+  // 현재 사용자의 재료 보유량 조회
   const userIngredients =
     await this.prisma.userIngredient.findMany({
       where: {
@@ -433,8 +434,10 @@ const completedFoodIdSet =
             },
           });
 
-        // ingredientId 순으로 처리해서
-        // 동시 transaction 충돌 가능성을 줄임
+        /*
+         * 항상 같은 ingredientId 순서로 처리해서
+         * 동시 요청 시 충돌 가능성을 줄임
+         */
         const sortedRecipeItems = [
           ...food.recipeItems,
         ].sort((a, b) =>
@@ -447,11 +450,9 @@ const completedFoodIdSet =
         for (const recipeItem of
           sortedRecipeItems) {
           /*
-           * 필요한 수량 이상 가지고 있을 때만
-           * 실제 차감
-           *
-           * 동시에 요리 요청이 들어오더라도
-           * quantity가 음수가 되는 것을 방지한다.
+           * 필요한 수량 이상 보유한 경우에만 차감
+           * 동시 요청으로 수량이 부족해진 경우
+           * update count가 0이 됨
            */
           const updated =
             await tx.userIngredient.updateMany({
@@ -477,15 +478,13 @@ const completedFoodIdSet =
               },
             });
 
-          // 앞의 검사 이후 다른 요청이 먼저
-          // 재료를 소비한 경우
           if (updated.count !== 1) {
             throw new Error(
               'INSUFFICIENT_INGREDIENTS_CONCURRENT',
             );
           }
 
-          // 재료 사용 이력 기록
+          // 재료 소비 기록
           await tx.ingredientTransaction.create({
             data: {
               userId: BigInt(userId),
@@ -503,6 +502,33 @@ const completedFoodIdSet =
                 userFood.id,
             },
           });
+
+          /*
+           * RARE / LEGENDARY 재료는
+           * 만든 음식의 특별 재료로 별도 기록
+           */
+          if (
+            recipeItem.ingredient.rarity ===
+              'RARE' ||
+            recipeItem.ingredient.rarity ===
+              'LEGENDARY'
+          ) {
+            await tx.userFoodSpecialIngredient.create({
+              data: {
+                userFoodId:
+                  userFood.id,
+
+                ingredientId:
+                  recipeItem.ingredientId,
+
+                quantity:
+                  recipeItem.requiredQuantity,
+
+                sourcePlaceId:
+                  null,
+              },
+            });
+          }
         }
 
         return {
@@ -535,6 +561,9 @@ const completedFoodIdSet =
 
                 quantity:
                   item.requiredQuantity,
+
+                rarity:
+                  item.ingredient.rarity,
               }),
             ),
         };
@@ -575,11 +604,16 @@ async findHistoryById(
         food: true,
 
         specialIngredients: {
-          include: {
-            ingredient: true,
-            sourcePlace: true,
-          },
-        },
+  include: {
+    ingredient: true,
+    sourcePlace: {
+      select: {
+        id: true,
+        name: true,
+      },
+    },
+  },
+},
       },
     });
 
