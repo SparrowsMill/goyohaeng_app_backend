@@ -499,6 +499,7 @@ model GapScoreHistory {
   comparisonRegion   Region?   @relation("GapComparisonRegion", fields: [comparisonRegionId], references: [id])
   comparisonCategory Category? @relation("GapComparisonCategory", fields: [comparisonCategoryId], references: [id])
 
+  @@unique([placeId, runId])
   @@index([placeId, calculatedAt])
   @@index([runId])
   @@index([gapMetricMappingId])
@@ -768,7 +769,7 @@ model Ingredient {
   regionId        BigInt?  @map("region_id")
   imageUrl        String?  @map("image_url")
   illustrationUrl String?  @map("illustration_url")
-  rarity          String?  @db.VarChar(50)
+  rarity          String   @db.VarChar(50)
   isActive        Boolean  @default(true) @map("is_active")
   createdAt       DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
 
@@ -960,16 +961,16 @@ model PlaceTrendSnapshot {
 }
 
 model PlaceExternalContent {
-  id          BigInt    @id @default(autoincrement())
-  placeId     BigInt    @map("place_id")
-  contentType String    @map("content_type") @db.VarChar(30)
+  id          BigInt @id @default(autoincrement())
+  placeId     BigInt @map("place_id")
+  contentType String @map("content_type") @db.VarChar(30)
 
-  title       String?   @db.VarChar(500)
+  title       String? @db.VarChar(500)
   description String?
 
-  url         String
-  author      String?   @db.VarChar(300)
-  authorUrl   String?   @map("author_url")
+  url       String
+  author    String? @db.VarChar(300)
+  authorUrl String? @map("author_url")
 
   publishedAt DateTime? @map("published_at") @db.Timestamptz(6)
   collectedAt DateTime  @default(now()) @map("collected_at") @db.Timestamptz(6)
