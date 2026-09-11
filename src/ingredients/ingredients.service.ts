@@ -18,18 +18,25 @@ export class IngredientsService {
           id: BigInt(ingredientId),
           isActive: true,
         },
+
+        include: {
+          region: {
+            select: {
+              id: true,
+              name: true,
+            },
+          },
+        },
       });
 
     if (!ingredient) {
       return undefined;
     }
 
-    const now = new Date();
-
     const [
       userIngredient,
       recipes,
-      placeRewards,
+      dropPolicies,
     ] = await Promise.all([
       // 사용자의 현재 보유 수량
       this.prisma.userIngredient.findUnique({
@@ -62,59 +69,93 @@ export class IngredientsService {
         },
       }),
 
-      // 현재 이 재료를 획득할 수 있는 장소
-      this.prisma.placeIngredientReward.findMany({
+      // 현재 방문 보상에 사용되는 GAP 드랍 정책
+      this.prisma.ingredientDropPolicy.findMany({
         where: {
-          ingredientId:
-            BigInt(ingredientId),
-
           isActive: true,
-
-          place: {
-            status: 'ACTIVE',
-          },
-
-          AND: [
-            {
-              OR: [
-                {
-                  validFrom: null,
-                },
-                {
-                  validFrom: {
-                    lte: now,
-                  },
-                },
-              ],
-            },
-
-            {
-              OR: [
-                {
-                  validUntil: null,
-                },
-                {
-                  validUntil: {
-                    gte: now,
-                  },
-                },
-              ],
-            },
-          ],
-        },
-
-        include: {
-          place: true,
         },
 
         orderBy: {
-          placeId: 'asc',
+          id: 'asc',
         },
       }),
     ]);
 
     const quantity =
       userIngredient?.quantity ?? 0;
+
+    /*
+     * 이 재료의 희귀도에 해당하는 확률만 추출
+     *
+     * 실제 방문 보상은
+     * 장소의 GAP percentile
+     * → drop policy 선택
+     * → rarity 추첨
+     * → 해당 rarity 재료 중 랜덤 선택
+     * 순서로 동작한다.
+     */
+    const dropProbabilities =
+      dropPolicies.map((policy) => {
+        let probability = 0;
+
+        switch (ingredient.rarity) {
+          case 'COMMON':
+            probability =
+              Number(
+                policy.commonProbability,
+              );
+            break;
+
+          case 'UNCOMMON':
+            probability =
+              Number(
+                policy.uncommonProbability,
+              );
+            break;
+
+          case 'RARE':
+            probability =
+              Number(
+                policy.rareProbability,
+              );
+            break;
+
+          case 'LEGENDARY':
+            probability =
+              Number(
+                policy.legendaryProbability,
+              );
+            break;
+
+          default:
+            probability = 0;
+        }
+
+        return {
+          policyCode:
+            policy.code,
+
+          minGapPercentile:
+            policy.minGapPercentile === null
+              ? null
+              : Number(
+                  policy.minGapPercentile,
+                ),
+
+          maxGapPercentile:
+            policy.maxGapPercentile === null
+              ? null
+              : Number(
+                  policy.maxGapPercentile,
+                ),
+
+          probability,
+        };
+      });
+
+    const isLegendary =
+      ingredient.rarity ===
+      'LEGENDARY';
 
     return {
       id: Number(ingredient.id),
@@ -144,7 +185,9 @@ export class IngredientsService {
       regionId:
         ingredient.regionId === null
           ? null
-          : Number(ingredient.regionId),
+          : Number(
+              ingredient.regionId,
+            ),
 
       // 이 재료가 사용되는 음식
       usedFoods:
@@ -168,26 +211,41 @@ export class IngredientsService {
             recipe.requiredQuantity,
         })),
 
-      // 이 재료를 받을 수 있는 장소
-      acquisitionPlaces:
-        placeRewards.map(
-          (reward) => ({
-            placeId:
-              Number(reward.place.id),
+      /*
+       * 기존 place_ingredient_rewards 기반
+       * 고정 획득처는 더 이상 일반 방문 보상에서
+       * 사용하지 않는다.
+       *
+       * 프론트 호환성을 위해 빈 배열 유지.
+       */
+      acquisitionPlaces: [],
 
-            placeName:
-              reward.place.name,
+      // 현재 실제 방문 보상 방식
+      acquisition: {
+        type: 'VISIT_REWARD',
 
-            quantity:
-              reward.quantity,
+        method:
+          'GAP_BASED_RANDOM_DROP',
 
-            rewardRule:
-              reward.rewardRule,
+        description:
+          isLegendary
+            ? '방문 인증 보상에서 획득할 수 있으며, 해당 지역의 LEGENDARY 재료 후보 중에서 추첨됩니다.'
+            : '방문 인증 보상에서 획득할 수 있으며, 장소의 GAP 구간에 따라 해당 희귀도의 등장 확률이 달라집니다.',
 
-            roadAddress:
-              reward.place.roadAddress,
-          }),
-        ),
+        region:
+          isLegendary &&
+          ingredient.region
+            ? {
+                id: Number(
+                  ingredient.region.id,
+                ),
+                name:
+                  ingredient.region.name,
+              }
+            : null,
+
+        dropProbabilities,
+      },
     };
   }
 }
