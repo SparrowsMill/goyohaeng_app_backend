@@ -21,10 +21,10 @@ import { ConcentrationForecastModule } from './external-api/concentration-foreca
 import { NaverModule } from './external-api/naver/naver.module';
 
 import { FoodsModule } from './foods/foods.module';
-
 import { IngredientsModule } from './ingredients/ingredients.module';
-
 import { RecordsModule } from './records/records.module';
+
+import { BusinessModule } from './business/business.module';
 
 @Module({
   imports: [
@@ -47,13 +47,13 @@ import { RecordsModule } from './records/records.module';
     TourismResourceDemandModule,
     TourismDemandStrengthModule,
     ConcentrationForecastModule,
-
-    FoodsModule,
     NaverModule,
 
+    FoodsModule,
     IngredientsModule,
-
     RecordsModule,
+
+    BusinessModule,
   ],
 
   controllers: [AppController],

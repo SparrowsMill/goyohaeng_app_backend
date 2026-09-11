@@ -22,5 +22,9 @@ import { VisitVerificationsService } from './visit-verifications.service';
   providers: [
     VisitVerificationsService,
   ],
+
+  exports: [
+    VisitVerificationsService,
+  ],
 })
 export class VisitVerificationsModule {}
