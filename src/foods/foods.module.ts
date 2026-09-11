@@ -6,6 +6,8 @@ import { PrismaModule } from '../prisma/prisma.module';
 import { FoodsController } from './foods.controller';
 import { FoodsService } from './foods.service';
 
+import { FoodHistoriesController } from './food-histories.controller';
+
 @Module({
   imports: [
     PrismaModule,
@@ -13,7 +15,10 @@ import { FoodsService } from './foods.service';
       defaultStrategy: 'jwt',
     }),
   ],
-  controllers: [FoodsController],
+  controllers: [
+  FoodsController,
+  FoodHistoriesController,
+],
   providers: [FoodsService],
   exports: [FoodsService],
 })

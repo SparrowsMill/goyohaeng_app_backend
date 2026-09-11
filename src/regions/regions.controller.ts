@@ -33,6 +33,22 @@ export class RegionsController {
     return this.regionsService.findAll();
   }
 
+  // =========================================================
+// 지역별 GAP Score 조회
+// =========================================================
+
+@ApiOperation({
+  summary: '지역별 GAP Score 조회',
+})
+@ApiOkResponse({
+  description:
+    '지역 내 장소 GAP Score 평균 조회 성공',
+})
+@Get('gap-scores')
+async getGapScores() {
+  return this.regionsService.getGapScores();
+}
+
   @ApiOperation({
   summary: '지역별 스팟 수 조회',
 })
