@@ -33,6 +33,18 @@ export interface VisitVerification {
   createdAt: Date;
 }
 
+export interface VisitVerificationReward {
+  ingredientId: number;
+  name: string;
+  quantity: number;
+  rarity: string | null;
+}
+
+export interface VisitVerificationDetail
+  extends VisitVerification {
+  reward: VisitVerificationReward | null;
+}
+
 interface CreateVisitVerificationData {
   placeId: number;
   arrivalOptionMinutes: number;
@@ -227,55 +239,123 @@ export class VisitVerificationsService {
 }
 
   async findById(
-    userId: number,
-    id: number,
-  ): Promise<
-    VisitVerification | undefined
-  > {
-    let verification =
-      await this.prisma.visitVerification
-        .findFirst({
-          where: {
-            id: BigInt(id),
-            userId: BigInt(userId),
-          },
-        });
+  userId: number,
+  id: number,
+): Promise<
+  VisitVerificationDetail | undefined
+> {
+  let verification =
+    await this.prisma.visitVerification.findFirst({
+      where: {
+        id: BigInt(id),
+        userId: BigInt(userId),
+      },
+    });
 
-    if (!verification) {
-      return undefined;
-    }
+  if (!verification) {
+    return undefined;
+  }
 
-    /*
-     * 아직 ISSUED 상태인데
-     * 만료 시간이 지났으면 EXPIRED 처리
-     */
-    if (
-      verification.status ===
-        'ISSUED' &&
-      new Date() >
-        verification.expiresAt
-    ) {
-      verification =
-        await this.prisma
-          .visitVerification
-          .update({
-            where: {
-              id: verification.id,
-            },
+  /*
+   * 아직 ISSUED 상태인데
+   * 만료 시간이 지났다면 EXPIRED 처리
+   */
+  if (
+    verification.status === 'ISSUED' &&
+    new Date() > verification.expiresAt
+  ) {
+    verification =
+      await this.prisma.visitVerification.update({
+        where: {
+          id: verification.id,
+        },
 
-            data: {
-              status: 'EXPIRED',
+        data: {
+          status: 'EXPIRED',
+          failReason:
+            '인증 시간이 만료되었습니다.',
+        },
+      });
+  }
 
-              failReason:
-                '인증 시간이 만료되었습니다.',
-            },
-          });
-    }
-
-    return this.toVisitVerification(
+  const baseVerification =
+    this.toVisitVerification(
       verification,
     );
+
+  /*
+   * VERIFIED가 아니면
+   * 아직 지급된 방문 보상이 없다.
+   */
+  if (
+    verification.status !== 'VERIFIED'
+  ) {
+    return {
+      ...baseVerification,
+      reward: null,
+    };
   }
+
+  /*
+   * 관리자 승인 과정에서 생성된
+   * VISIT_REWARD 지급 이력 조회
+   */
+  const rewardTransaction =
+    await this.prisma
+      .ingredientTransaction
+      .findFirst({
+        where: {
+          visitVerificationId:
+            verification.id,
+
+          transactionType:
+            'VISIT_REWARD',
+        },
+
+        orderBy: {
+          id: 'desc',
+        },
+
+        select: {
+          ingredientId: true,
+          quantityChange: true,
+
+          ingredient: {
+            select: {
+              name: true,
+              rarity: true,
+            },
+          },
+        },
+      });
+
+  return {
+    ...baseVerification,
+
+    reward:
+      rewardTransaction === null
+        ? null
+        : {
+            ingredientId:
+              Number(
+                rewardTransaction
+                  .ingredientId,
+              ),
+
+            name:
+              rewardTransaction
+                .ingredient.name,
+
+            quantity:
+              rewardTransaction
+                .quantityChange,
+
+            rarity:
+              rewardTransaction
+                .ingredient.rarity,
+          },
+  };
+}
 
 
   async cancel(
