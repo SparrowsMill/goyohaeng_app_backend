@@ -1732,6 +1732,53 @@ async getGapMap(
     };
   }
 
+  /*
+   * 상위 카테고리를 선택한 경우
+   * 선택 카테고리 + 활성 직계 하위 카테고리까지 포함
+   *
+   * 예:
+   * FOOD(1)
+   * → FOOD + KOREAN / CHINESE / CAFE 등
+   *
+   * CAFE(15)
+   * → CAFE만
+   */
+  let categoryIds:
+    bigint[] | undefined;
+
+  if (categoryId !== undefined) {
+    const selectedCategoryId =
+      BigInt(categoryId);
+
+    const categories =
+      await this.prisma.category.findMany({
+        where: {
+          isActive: true,
+
+          OR: [
+            {
+              id:
+                selectedCategoryId,
+            },
+            {
+              parentId:
+                selectedCategoryId,
+            },
+          ],
+        },
+
+        select: {
+          id: true,
+        },
+      });
+
+    categoryIds =
+      categories.map(
+        (category) =>
+          category.id,
+      );
+  }
+
   const scores =
     await this.prisma.gapScoreHistory.findMany({
       where: {
@@ -1754,9 +1801,10 @@ async getGapMap(
               BigInt(regionId),
           }),
 
-          ...(categoryId !== undefined && {
-            categoryId:
-              BigInt(categoryId),
+          ...(categoryIds !== undefined && {
+            categoryId: {
+              in: categoryIds,
+            },
           }),
         },
       },

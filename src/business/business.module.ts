@@ -90,6 +90,14 @@ import {
   BusinessRevisitAnalyticsService,
 } from './business-revisit-analytics.service';
 
+import {
+  BusinessNaverAnalyticsController,
+} from './business-naver-analytics.controller';
+
+import {
+  BusinessNaverAnalyticsService,
+} from './business-naver-analytics.service';
+
 @Module({
   imports: [
     PrismaModule,
@@ -135,6 +143,7 @@ import {
     BusinessAccountSettingsController,
     BusinessDashboardController,
     BusinessRevisitAnalyticsController,
+    BusinessNaverAnalyticsController,
   ],
 
   providers: [
@@ -158,6 +167,8 @@ import {
     BusinessDashboardService,
 
     BusinessRevisitAnalyticsService,
+
+    BusinessNaverAnalyticsService,
   ],
 
   exports: [

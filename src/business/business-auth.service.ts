@@ -2,13 +2,14 @@ import {
   BadRequestException,
   ConflictException,
   Injectable,
-  NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
+
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 
 import { PrismaService } from '../prisma/prisma.service';
+
 import { BusinessSignupDto } from './dto/business-signup.dto';
 import { BusinessLoginDto } from './dto/business-login.dto';
 
@@ -20,7 +21,8 @@ export class BusinessAuthService {
   ) {}
 
   async checkUsername(username: string) {
-    const trimmedUsername = username.trim();
+    const trimmedUsername =
+      username.trim();
 
     if (!trimmedUsername) {
       throw new BadRequestException(
@@ -33,6 +35,7 @@ export class BusinessAuthService {
         where: {
           username: trimmedUsername,
         },
+
         select: {
           id: true,
         },
@@ -45,14 +48,18 @@ export class BusinessAuthService {
   }
 
   async signup(dto: BusinessSignupDto) {
-    const username = dto.username.trim();
-    const email = dto.email.trim();
+    const username =
+      dto.username.trim();
+
+    const email =
+      dto.email.trim();
 
     const existingUsername =
       await this.prisma.user.findUnique({
         where: {
           username,
         },
+
         select: {
           id: true,
         },
@@ -69,6 +76,7 @@ export class BusinessAuthService {
         where: {
           email,
         },
+
         select: {
           id: true,
         },
@@ -80,44 +88,11 @@ export class BusinessAuthService {
       );
     }
 
-    const place =
-      await this.prisma.place.findFirst({
-        where: {
-          id: BigInt(dto.placeId),
-          status: 'ACTIVE',
-        },
-        select: {
-          id: true,
-          name: true,
-          roadAddress: true,
-        },
-      });
-
-    if (!place) {
-      throw new NotFoundException(
-        '관리할 장소를 찾을 수 없습니다.',
-      );
-    }
-
-    const existingBusinessAccount =
-      await this.prisma.businessAccount.findUnique({
-        where: {
-          placeId: place.id,
-        },
-        select: {
-          id: true,
-          status: true,
-        },
-      });
-
-    if (existingBusinessAccount) {
-      throw new ConflictException(
-        '이미 관리자 신청이 존재하는 장소입니다.',
-      );
-    }
-
     const passwordHash =
-      await bcrypt.hash(dto.password, 10);
+      await bcrypt.hash(
+        dto.password,
+        10,
+      );
 
     const result =
       await this.prisma.$transaction(
@@ -126,13 +101,28 @@ export class BusinessAuthService {
             await tx.user.create({
               data: {
                 username,
-                passwordHash,
-                realName: dto.realName,
-                email,
-                phone: dto.phone ?? null,
 
-                // 사업자 여부는 BusinessAccount 존재 여부로 판단
+                passwordHash,
+
+                realName:
+                  dto.realName,
+
+                birthDate:
+                  new Date(
+                    `${dto.birthDate}T00:00:00.000Z`,
+                  ),
+
+                email,
+
+                phone:
+                  dto.phone ?? null,
+
+                /*
+                 * 사업자 여부는
+                 * BusinessAccount 존재 여부로 판단
+                 */
                 role: 'USER',
+
                 status: 'ACTIVE',
               },
             });
@@ -140,12 +130,24 @@ export class BusinessAuthService {
           const businessAccount =
             await tx.businessAccount.create({
               data: {
-                userId: user.id,
-                placeId: place.id,
+                userId:
+                  user.id,
+
+                /*
+                 * 가입 신청 단계에서는
+                 * 아직 실제 장소와 연결하지 않는다.
+                 *
+                 * 관리자 승인 과정에서
+                 * placeId를 연결한다.
+                 */
+                placeId: null,
+
                 businessName:
                   dto.businessName,
+
                 businessRegistrationNo:
                   dto.businessRegistrationNo,
+
                 submittedStoreAddress:
                   dto.submittedStoreAddress,
 
@@ -161,19 +163,23 @@ export class BusinessAuthService {
       );
 
     return {
-      userId: Number(result.user.id),
+      userId:
+        Number(
+          result.user.id,
+        ),
 
       businessAccountId:
-        Number(result.businessAccount.id),
+        Number(
+          result.businessAccount.id,
+        ),
 
       username:
         result.user.username,
 
-      place: {
-        id: Number(place.id),
-        name: place.name,
-        roadAddress: place.roadAddress,
-      },
+      /*
+       * 승인 전에는 장소가 없다.
+       */
+      place: null,
 
       approvalStatus:
         result.businessAccount.status,
@@ -187,7 +193,8 @@ export class BusinessAuthService {
     const user =
       await this.prisma.user.findUnique({
         where: {
-          username: dto.username,
+          username:
+            dto.username,
         },
 
         include: {
@@ -233,24 +240,35 @@ export class BusinessAuthService {
 
     const accessToken =
       await this.jwtService.signAsync({
-        sub: Number(user.id),
-        username: user.username,
-        accountType: 'BUSINESS',
+        sub:
+          Number(user.id),
+
+        username:
+          user.username,
+
+        accountType:
+          'BUSINESS',
       });
 
     return {
       accessToken,
 
       user: {
-        id: Number(user.id),
-        username: user.username,
-        realName: user.realName,
+        id:
+          Number(user.id),
+
+        username:
+          user.username,
+
+        realName:
+          user.realName,
       },
 
       businessAccount: {
-        id: Number(
-          user.businessAccount.id,
-        ),
+        id:
+          Number(
+            user.businessAccount.id,
+          ),
 
         status:
           user.businessAccount.status,
@@ -259,14 +277,24 @@ export class BusinessAuthService {
           user.businessAccount
             .rejectionReason,
 
-        place: {
-          id: Number(
-            user.businessAccount.place.id,
-          ),
+        /*
+         * PENDING / REJECTED 계정은
+         * 아직 placeId가 없을 수 있다.
+         */
+        place:
+          user.businessAccount.place
+            ? {
+                id:
+                  Number(
+                    user.businessAccount
+                      .place.id,
+                  ),
 
-          name:
-            user.businessAccount.place.name,
-        },
+                name:
+                  user.businessAccount
+                    .place.name,
+              }
+            : null,
       },
     };
   }
