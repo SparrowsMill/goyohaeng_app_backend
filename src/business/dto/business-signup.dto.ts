@@ -1,6 +1,6 @@
 import {
+  IsDateString,
   IsEmail,
-  IsInt,
   IsNotEmpty,
   IsOptional,
   IsString,
@@ -23,6 +23,9 @@ export class BusinessSignupDto {
   @MaxLength(100)
   realName: string;
 
+  @IsDateString()
+  birthDate: string;
+
   @IsEmail()
   @MaxLength(320)
   email: string;
@@ -31,9 +34,6 @@ export class BusinessSignupDto {
   @IsString()
   @MaxLength(50)
   phone?: string;
-
-  @IsInt()
-  placeId: number;
 
   @IsString()
   @IsNotEmpty()
