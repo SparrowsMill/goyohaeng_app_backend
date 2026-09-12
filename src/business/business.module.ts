@@ -26,6 +26,70 @@ import { BusinessVisitVerificationsController } from './business-visit-verificat
 
 import { BusinessVisitVerificationsService } from './business-visit-verifications.service';
 
+import {
+  BusinessPlaceController,
+} from './business-place.controller';
+
+import {
+  BusinessPlaceService,
+} from './business-place.service';
+
+import {
+  BusinessOperatingHoursController,
+} from './business-operating-hours.controller';
+
+import {
+  BusinessOperatingHoursService,
+} from './business-operating-hours.service';
+
+import {
+  BusinessSpecialHoursController,
+} from './business-special-hours.controller';
+
+import {
+  BusinessSpecialHoursService,
+} from './business-special-hours.service';
+
+import {
+  BusinessBenefitsController,
+} from './business-benefits.controller';
+
+import {
+  BusinessBenefitsService,
+} from './business-benefits.service';
+
+import {
+  BusinessPlaceImagesController,
+} from './business-place-images.controller';
+
+import {
+  BusinessPlaceImagesService,
+} from './business-place-images.service';
+
+import {
+  UsersModule,
+} from '../users/users.module';
+
+import {
+  BusinessAccountSettingsController,
+} from './business-account-settings.controller';
+
+import {
+  BusinessDashboardController,
+} from './business-dashboard.controller';
+
+import {
+  BusinessDashboardService,
+} from './business-dashboard.service';
+
+import {
+  BusinessRevisitAnalyticsController,
+} from './business-revisit-analytics.controller';
+
+import {
+  BusinessRevisitAnalyticsService,
+} from './business-revisit-analytics.service';
+
 @Module({
   imports: [
     PrismaModule,
@@ -56,12 +120,21 @@ import { BusinessVisitVerificationsService } from './business-visit-verification
         }),
     }),
     VisitVerificationsModule,
+    UsersModule,
   ],
 
   controllers: [
     BusinessAuthController,
     BusinessMeController,
     BusinessVisitVerificationsController,
+    BusinessPlaceController,
+    BusinessOperatingHoursController,
+    BusinessSpecialHoursController,
+    BusinessBenefitsController,
+    BusinessPlaceImagesController,
+    BusinessAccountSettingsController,
+    BusinessDashboardController,
+    BusinessRevisitAnalyticsController,
   ],
 
   providers: [
@@ -72,6 +145,19 @@ import { BusinessVisitVerificationsService } from './business-visit-verification
     BusinessApprovedGuard,
 
     BusinessVisitVerificationsService,
+
+    BusinessPlaceService,
+
+    BusinessOperatingHoursService,
+    BusinessSpecialHoursService,
+
+    BusinessBenefitsService,
+
+    BusinessPlaceImagesService,
+
+    BusinessDashboardService,
+
+    BusinessRevisitAnalyticsService,
   ],
 
   exports: [
