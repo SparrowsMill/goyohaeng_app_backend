@@ -1,0 +1,32 @@
+import {
+  IsBoolean,
+  IsDateString,
+  IsNotEmpty,
+  IsOptional,
+  IsString,
+  MaxLength,
+} from 'class-validator';
+
+export class UpdateBusinessBenefitDto {
+  @IsOptional()
+  @IsString()
+  @IsNotEmpty()
+  @MaxLength(300)
+  title?: string;
+
+  @IsOptional()
+  @IsString()
+  description?: string | null;
+
+  @IsOptional()
+  @IsDateString()
+  validFrom?: string | null;
+
+  @IsOptional()
+  @IsDateString()
+  validUntil?: string | null;
+
+  @IsOptional()
+  @IsBoolean()
+  isActive?: boolean;
+}

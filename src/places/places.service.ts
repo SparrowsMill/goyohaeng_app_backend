@@ -108,6 +108,43 @@ export class PlacesService {
   page = 1,
   limit = 20,
 ): Promise<PaginatedPlacesResponse> {
+
+    let categoryIds:
+    bigint[] | undefined;
+
+  if (categoryId !== undefined) {
+    const selectedCategoryId =
+      BigInt(categoryId);
+
+    const categories =
+      await this.prisma.category.findMany({
+        where: {
+          isActive: true,
+
+          OR: [
+            {
+              id:
+                selectedCategoryId,
+            },
+            {
+              parentId:
+                selectedCategoryId,
+            },
+          ],
+        },
+
+        select: {
+          id: true,
+        },
+      });
+
+    categoryIds =
+      categories.map(
+        (category) =>
+          category.id,
+      );
+  }
+
   const where = {
     status: 'ACTIVE',
 
@@ -115,9 +152,11 @@ export class PlacesService {
       districtRegionId: BigInt(regionId),
     }),
 
-    ...(categoryId !== undefined && {
-      categoryId: BigInt(categoryId),
-    }),
+    ...(categoryIds !== undefined && {
+  categoryId: {
+    in: categoryIds,
+  },
+}),
   };
 
   const skip = (page - 1) * limit;
@@ -199,6 +238,8 @@ export class PlacesService {
     id: number,
     userId: number,
   ): Promise<PlaceDetail | undefined> {
+
+    const now = new Date();
     const place = await this.prisma.place.findFirst({
       where: {
         id: BigInt(id),
@@ -224,10 +265,42 @@ export class PlacesService {
         specialHours: true,
 
         benefits: {
-          where: {
-            isActive: true,
+  where: {
+    isActive: true,
+
+    AND: [
+      {
+        OR: [
+          {
+            validFrom: null,
           },
-        },
+          {
+            validFrom: {
+              lte: now,
+            },
+          },
+        ],
+      },
+
+      {
+        OR: [
+          {
+            validUntil: null,
+          },
+          {
+            validUntil: {
+              gte: now,
+            },
+          },
+        ],
+      },
+    ],
+  },
+
+  orderBy: {
+    createdAt: 'desc',
+  },
+},
 
         verificationSetting: true,
 
@@ -1128,6 +1201,42 @@ async getGapRankings(
     };
   }
 
+  let categoryIds:
+  bigint[] | undefined;
+
+if (categoryId !== undefined) {
+  const selectedCategoryId =
+    BigInt(categoryId);
+
+  const categories =
+    await this.prisma.category.findMany({
+      where: {
+        isActive: true,
+
+        OR: [
+          {
+            id:
+              selectedCategoryId,
+          },
+          {
+            parentId:
+              selectedCategoryId,
+          },
+        ],
+      },
+
+      select: {
+        id: true,
+      },
+    });
+
+  categoryIds =
+    categories.map(
+      (category) =>
+        category.id,
+    );
+}
+
   const where = {
     runId: latestRun.id,
 
@@ -1139,10 +1248,11 @@ async getGapRankings(
           BigInt(regionId),
       }),
 
-      ...(categoryId !== undefined && {
-        categoryId:
-          BigInt(categoryId),
-      }),
+      ...(categoryIds !== undefined && {
+  categoryId: {
+    in: categoryIds,
+  },
+}),
     },
   };
 
