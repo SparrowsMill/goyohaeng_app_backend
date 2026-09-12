@@ -1,0 +1,379 @@
+﻿content_id,content_type_id,place_id,place_name,operating_raw,rest_raw,classification,reason
+1013079,38,4156,숭례문(남대문) 수입상가,06:30~18:30,매주 일요일,PARSE_SIMPLE_WEEKLY,single time range + supported rest rule
+1013559,38,4160,동대문종합시장 액세서리상가,09:30~19:00,매주 일요일,PARSE_SIMPLE_WEEKLY,single time range + supported rest rule
+1017547,12,4162,중명전,09:30~17:30 (입장 마감 17:00),매주 월요일,PARSE_SIMPLE_WEEKLY,single time range + supported rest rule
+1021125,39,4168,씨네 드 쉐프(CINE de CHEF),"- 11:30~21:00
+- 준비시간 16:00~17:30
+- 마지막 주문 20:00",연중무휴,PARSE_SIMPLE_WEEKLY,single time range + supported rest rule
+1052741,39,4176,가문,11:00~21:00,연중무휴,PARSE_SIMPLE_WEEKLY,single time range + supported rest rule
+1063403,39,4180,인사동찻집,10:00~21:00,연중무휴,PARSE_SIMPLE_WEEKLY,single time range + supported rest rule
+1063408,39,4181,옛찻집,11:00~21:00,연중무휴,PARSE_SIMPLE_WEEKLY,single time range + supported rest rule
+1106194,14,4184,상상톡톡 미술관,10:00~18:00 (입장 마감 17:00),매주 월요일,PARSE_SIMPLE_WEEKLY,single time range + supported rest rule
+1188653,14,4193,예림당아트홀,10:00~18:00,매주 월요일,PARSE_SIMPLE_WEEKLY,single time range + supported rest rule
+126490,12,4209,서울어린이대공원,[공원]- 05:00~22:00[동물원]- 10:00~17:00[놀이동산]- 평일 10:00~18:30- 주말 10:00~19:30,연중무휴,PARSE_WEEKDAY_WEEKEND,explicit weekday/weekend schedule + supported rest rule
+126502,12,4215,도선사(서울),09:00~18:00,연중무휴,PARSE_SIMPLE_WEEKLY,single time range + supported rest rule
+126503,12,4216,봉원사(서울),05:00~18:00,연중무휴,PARSE_SIMPLE_WEEKLY,single time range + supported rest rule
+126505,12,4217,승가사(서울),09:00~18:00,연중무휴,PARSE_SIMPLE_WEEKLY,single time range + supported rest rule
+126525,12,4225,서울 선릉과 정릉 [유네스코 세계유산],06:00~21:00,매주 월요일,PARSE_SIMPLE_WEEKLY,single time range + supported rest rule
+126528,12,4228,절두산 순교성지,09:30~17:00,매주 월요일,PARSE_SIMPLE_WEEKLY,single time range + supported rest rule
+126537,12,4230,북촌한옥마을,"10:00~17:00
+
+※ 방문 제한시간(특별관리지역(레드존) 방문 금지) : 17:00~익일 10:00",연중무휴,PARSE_SIMPLE_WEEKLY,single time range + supported rest rule
+126803,12,4233,당고개순교성지,성지개방시간 09:00~17:00,연중무휴,PARSE_SIMPLE_WEEKLY,single time range + supported rest rule
+128162,12,4256,숭례문,09:00~18:00 (입장 마감 17:50),매주 월요일,PARSE_SIMPLE_WEEKLY,single time range + supported rest rule
+128553,12,4257,쌈지길,10:30~20:30,연중무휴,PARSE_SIMPLE_WEEKLY,single time range + supported rest rule
+128866,12,4259,길상사(서울),09:00~18:00,연중무휴,PARSE_SIMPLE_WEEKLY,single time range + supported rest rule
+128961,12,4260,강변스파랜드,"- 주간 05:00~20:00
+
+- 야간 20:00~익일 05:00",연중무휴,PARSE_SIMPLE_WEEKLY,single time range + supported rest rule
+129907,14,4277,조형갤러리,10:30~18:30,연중무휴,PARSE_SIMPLE_WEEKLY,single time range + supported rest rule
+129912,14,4278,세종호텔 세종갤러리,11:00~20:00,연중무휴,PARSE_SIMPLE_WEEKLY,single time range + supported rest rule
+129927,14,4280,갤러리 서림,11:00~18:00,매주 일요일,PARSE_SIMPLE_WEEKLY,single time range + supported rest rule
+130155,14,4284,동덕아트갤러리,10:00~18:00,연중무휴,PARSE_SIMPLE_WEEKLY,single time range + supported rest rule
+130209,14,4289,서울 중구문화원,10:00~17:00,연중무휴,PARSE_SIMPLE_WEEKLY,single time range + supported rest rule
+130212,14,4290,관악문화원,09:00~17:00,연중무휴,PARSE_SIMPLE_WEEKLY,single time range + supported rest rule
+130227,14,4295,일민미술관,11:00~19:00,매주 월요일,PARSE_SIMPLE_WEEKLY,single time range + supported rest rule
+130263,14,4299,초전섬유·퀼트박물관,"10:00~17:00 (입장마감 16:30)
+
+※ 사전 예약 필수",매주 토요일~일요일,PARSE_SIMPLE_WEEKLY,single time range + supported rest rule
+130289,14,4303,LG아트센터 서울,10:00~23:00,매주 월요일,PARSE_SIMPLE_WEEKLY,single time range + supported rest rule
+130361,14,4310,서울역사박물관,09:00~18:00 (입장 마감 17:30),매주 월요일 / 1월 1일,PARSE_SIMPLE_WEEKLY,single time range + supported rest rule
+130374,14,4315,은평문화원,09:00~18:00 (휴게시간 12:00~13:00),매주 토요일~일요일,PARSE_SIMPLE_WEEKLY,single time range + supported rest rule
+130431,14,4323,전쟁기념관,09:30~18:00 (입장마감 17:00),매주 월요일,PARSE_SIMPLE_WEEKLY,single time range + supported rest rule
+1304864,38,4326,영풍문고 종각종로본점,10:00~22:00,연중무휴,PARSE_SIMPLE_WEEKLY,single time range + supported rest rule
+1304880,38,4327,승진완구,09:00~18:00,연중무휴,PARSE_SIMPLE_WEEKLY,single time range + supported rest rule
+130568,14,4330,갤러리 미즈,10:30~18:30,연중무휴,PARSE_SIMPLE_WEEKLY,single time range + supported rest rule
+130577,14,4332,갤러리 라메르,10:30~18:00,매주 화요일,PARSE_SIMPLE_WEEKLY,single time range + supported rest rule
+130587,14,4334,갤러리조선,10:30~18:30,매주 월요일,PARSE_SIMPLE_WEEKLY,single time range + supported rest rule
+130628,14,4338,박여숙화랑,10:00~18:00,매주 일요일,PARSE_SIMPLE_WEEKLY,single time range + supported rest rule
+130636,14,4340,아트파크,11:00~18:00,매주 월요일,PARSE_SIMPLE_WEEKLY,single time range + supported rest rule
+130637,14,4341,어반아트,11:00~18:00,매주 일요일 / 월요일,PARSE_SIMPLE_WEEKLY,single time range + supported rest rule
+130688,14,4342,세계장신구박물관,10:00~17:00,연중무휴,PARSE_SIMPLE_WEEKLY,single time range + supported rest rule
+130699,14,4343,나루아트센터,09:00~18:00 (준비 시간 12:00~13:00),매주 월요일,PARSE_SIMPLE_WEEKLY,single time range + supported rest rule
+1316965,39,4373,사찰음식 전문점 발우공양,11:30~21:00 (준비시간 15:00~18:00),매주 일요일,PARSE_SIMPLE_WEEKLY,single time range + supported rest rule
+132201,38,4384,강남고속터미널 혼수상가,09:30~19:00,"매주 일요일
+※ 자세한 사항은 홈페이지 참조",PARSE_SIMPLE_WEEKLY,single time range + supported rest rule
+132218,38,4392,세브도르,"- 평일 09:00~24:00 
+- 주말 12:00~22:00",연중무휴,PARSE_SIMPLE_WEEKLY,single time range + supported rest rule
+132248,38,4403,롯데월드 쇼핑몰,10:30~20:00,연중무휴,PARSE_SIMPLE_WEEKLY,single time range + supported rest rule
+132522,38,4408,우석공예사,10:00~17:00,매주 일요일,PARSE_SIMPLE_WEEKLY,single time range + supported rest rule
+1325623,39,4410,신승관,"- 11:00~23:00
+- 준비시간 15:00~16:30
+- 마지막 주문 21:00",매주 일요일,PARSE_SIMPLE_WEEKLY,single time range + supported rest rule
+132892,39,4417,삼원가든,"[평일]
+- 11:30~21:30
+- 준비 시간 14:30~17:30
+- 마지막 주문 20:45
+[주말]
+-11:00~21:00
+- 준비 시간 14:30~17:00
+- 마지막 주문 20:00",연중무휴,PARSE_WEEKDAY_WEEKEND,explicit weekday/weekend schedule + supported rest rule
+132901,39,4418,신촌형제갈비,11:00~22:00,연중무휴,PARSE_SIMPLE_WEEKLY,single time range + supported rest rule
+132903,39,4419,청송본관함흥냉면,10:30~20:20 (마지막 주문 20:00),매주 일요일,PARSE_SIMPLE_WEEKLY,single time range + supported rest rule
+133339,39,4420,우래옥,11:30~21:00 (마지막 주문 20:20),매주 월요일 / 1월 1일,PARSE_SIMPLE_WEEKLY,single time range + supported rest rule
+133785,39,4423,서석대,11:30~22:00 (평일 준비시간 15:00~17:00),연중무휴,PARSE_SIMPLE_WEEKLY,single time range + supported rest rule
+133836,39,4424,송원,11:00~21:30,연중무휴,PARSE_SIMPLE_WEEKLY,single time range + supported rest rule
+133858,39,4426,백제삼계탕,09:00~22:00 (마지막 주문 21:00),연중무휴,PARSE_SIMPLE_WEEKLY,single time range + supported rest rule
+133868,39,4427,곰바위,11:00~22:00 (마지막 주문 21:30),연중무휴,PARSE_SIMPLE_WEEKLY,single time range + supported rest rule
+133984,39,4428,희래등,11:30~21:00,연중무휴,PARSE_SIMPLE_WEEKLY,single time range + supported rest rule
+134268,39,4431,명동부대찌개 명동황기족발,10:00~22:00 (마지막 주문 21:30),연중무휴,PARSE_SIMPLE_WEEKLY,single time range + supported rest rule
+134691,39,4432,스시겐,11:30~22:00 (준비시간 15:00~17:00),매주 일요일,PARSE_SIMPLE_WEEKLY,single time range + supported rest rule
+134702,39,4433,비하인드(B-hind),13:00~22:00,연중무휴,PARSE_SIMPLE_WEEKLY,single time range + supported rest rule
+134708,39,4434,완차이,"- 11:00~21:00
+- 준비시간 15:00~16:30
+- 마지막 주문 20:30",매주 월요일,PARSE_SIMPLE_WEEKLY,single time range + supported rest rule
+134733,39,4435,카나디안 랍스터,12:00~21:00 (준비 시간 15:00~17:00 / 마지막 주문 20:00),"매주 월요일
+※ 12월은 월요일도 영업",PARSE_SIMPLE_WEEKLY,single time range + supported rest rule
+134746,39,4436,개화,11:30~22:30 (마지막 주문 20:50),매주 토요일,PARSE_SIMPLE_WEEKLY,single time range + supported rest rule
+134752,39,4437,미진,10:30~21:00 (마지막 주문 20:30),연중무휴,PARSE_SIMPLE_WEEKLY,single time range + supported rest rule
+134796,39,4439,벽제갈비 방이점,"- 11:30~22:00
+- 마지막 주문 21:00",연중무휴,PARSE_SIMPLE_WEEKLY,single time range + supported rest rule
+134807,39,4440,영광밥상,"- 10:50~22:00
+- 준비시간 15:30~17:00
+- 마지막 주문 20:50",매주 일요일,PARSE_SIMPLE_WEEKLY,single time range + supported rest rule
+134810,39,4441,황도바지락칼국수,10:00~21:30,연중무휴,PARSE_SIMPLE_WEEKLY,single time range + supported rest rule
+135114,39,4442,대문점,10:30~22:00,매주 일요일,PARSE_SIMPLE_WEEKLY,single time range + supported rest rule
+135136,39,4443,강강술래 신림동,11:00~22:00 (마지막 주문 21:00),연중무휴,PARSE_SIMPLE_WEEKLY,single time range + supported rest rule
+135385,39,4444,한강파라다이스,11:30~22:00,연중무휴,PARSE_SIMPLE_WEEKLY,single time range + supported rest rule
+135683,39,4445,더플레이스다이닝,"- 11:00~22:00
+- 마지막 주문 21:00",연중무휴,PARSE_SIMPLE_WEEKLY,single time range + supported rest rule
+1413224,14,4453,양화진홀 전시관,10:00~15:30,매주 일요일,PARSE_SIMPLE_WEEKLY,single time range + supported rest rule
+1511411,39,4465,왕비집,11:30~22:00 (21:20 라스트오더),연중무휴,PARSE_SIMPLE_WEEKLY,single time range + supported rest rule
+1515607,39,4466,그란구스또,"[평일]
+- 11:30~22:00
+- 준비시간 14:30~17:30
+- 마지막 주문 20:30
+[주말]
+- 12:00~21:30
+- 준비시간 15:00~17:30
+- 마지막 주문 20:00",연중무휴,PARSE_WEEKDAY_WEEKEND,explicit weekday/weekend schedule + supported rest rule
+1604784,12,4481,경희궁 흥화문,09:00~18:00 (입장마감 17:30),매주 월요일 / 1월 1일,PARSE_SIMPLE_WEEKLY,single time range + supported rest rule
+1604824,12,4482,경희궁공원,09:00~18:00 (입장 마감 17:30),매주 월요일 / 1월 1일,PARSE_SIMPLE_WEEKLY,single time range + supported rest rule
+1605948,12,4487,대원군별장(석파정),10:00~18:00 (입장마감 17:00),매주 월요일~화요일,PARSE_SIMPLE_WEEKLY,single time range + supported rest rule
+1756249,39,4500,강남목장,11:30~22:00,매주 일요일,PARSE_SIMPLE_WEEKLY,single time range + supported rest rule
+1836254,12,4511,존비코올터장군상,05:00~22:00,연중무휴,PARSE_SIMPLE_WEEKLY,single time range + supported rest rule
+1874704,39,4520,하모,"- 11:30~22:00
+- 준비시간 15:00~17:30
+- 마지막 주문 20:30",연중무휴,PARSE_SIMPLE_WEEKLY,single time range + supported rest rule
+1887499,39,4523,셀프하우스,10:00~21:00,매주 일요일,PARSE_SIMPLE_WEEKLY,single time range + supported rest rule
+1887505,39,4524,일방통행 국물즉석떡볶이&화덕피자,10:30~22:00,연중무휴,PARSE_SIMPLE_WEEKLY,single time range + supported rest rule
+1947036,39,4531,스미스가 좋아하는 한옥,11:30~21:00 (준비시간 15:00~17:00),연중무휴,PARSE_SIMPLE_WEEKLY,single time range + supported rest rule
+1964978,39,4533,은호식당,"- 평일 06:05~21:00 (마지막 주문 20:40)
+- 주말 06:05~16:00 (마지막 주문 15:40)",연중무휴,PARSE_WEEKDAY_WEEKEND,explicit weekday/weekend schedule + supported rest rule
+1985338,39,4535,영일분식,10:00~20:00 (마지막 주문 19:20),매주 월요일,PARSE_SIMPLE_WEEKLY,single time range + supported rest rule
+1985351,39,4536,문배동 육칼,09:00~19:30 (마지막 주문 19:00),연중무휴,PARSE_SIMPLE_WEEKLY,single time range + supported rest rule
+1998192,39,4537,순희네빈대떡,11:00~21:00 (마지막 주문 20:30),매주 화요일,PARSE_SIMPLE_WEEKLY,single time range + supported rest rule
+2024964,39,4546,플랜트,"- 11:00~22:00
+- 준비시간 15:00~17:00
+- 마지막 주문 21:00",매주 월요일,PARSE_SIMPLE_WEEKLY,single time range + supported rest rule
+2029564,12,4549,오미요리연구소,"10:00~13:00
+
+※ 예약 필수",연중무휴,PARSE_SIMPLE_WEEKLY,single time range + supported rest rule
+2029960,39,4550,기와,"- 11:30~21:30
+- 준비시간 15:00~17:00
+- 마지막 주문 20:30",연중무휴,PARSE_SIMPLE_WEEKLY,single time range + supported rest rule
+2039626,39,4552,평래옥,"- 11:00~22:00
+- 준비시간 15:30~17:00
+- 마지막 주문 21:00",연중무휴,PARSE_SIMPLE_WEEKLY,single time range + supported rest rule
+231962,14,4557,이스탄불문화원,10:00~17:00 (휴게시간 12:00~13:00),연중무휴,PARSE_SIMPLE_WEEKLY,single time range + supported rest rule
+232206,39,4559,에베레스트 레스토랑 동대문본점,11:00~22:00,연중무휴,PARSE_SIMPLE_WEEKLY,single time range + supported rest rule
+232225,39,4561,양반댁,11:30~21:00 (주중 브레이크타임 15:00~17:00 / 라스트오더 20:00),연중무휴,PARSE_SIMPLE_WEEKLY,single time range + supported rest rule
+232231,39,4562,남문토방,10:00~22:00,연중무휴,PARSE_SIMPLE_WEEKLY,single time range + supported rest rule
+232241,39,4563,대문한정식,"- 11:30~21:00
+- 준비시간 15:00~17:00
+- 마지막 주문 20:00",연중무휴,PARSE_SIMPLE_WEEKLY,single time range + supported rest rule
+232242,39,4564,태림산채정식,11:00~21:00 (준비 시간 15:00~17:00 / 마지막 주문 20:00),매주 일요일,PARSE_SIMPLE_WEEKLY,single time range + supported rest rule
+232261,39,4565,버드나무집 본점,11:00~21:30,연중무휴,PARSE_SIMPLE_WEEKLY,single time range + supported rest rule
+232271,39,4566,광양불고기본가,"- 11:30~22:00
+- 준비시간 15:00~17:00
+- 마지막 주문 21:00",연중무휴,PARSE_SIMPLE_WEEKLY,single time range + supported rest rule
+2367770,39,4569,계림식당,"- 11:30~21:45
+- 준비시간 15:30~16:30
+- 마지막 주문 20:30",매주 일요일,PARSE_SIMPLE_WEEKLY,single time range + supported rest rule
+2373384,39,4580,송림식당,"- 평일 10:00~22:00 (마지막 주문 21:20)
+- 주말 09:00~22:00 (마지막 주문 21:20)",연중무휴,PARSE_WEEKDAY_WEEKEND,explicit weekday/weekend schedule + supported rest rule
+2373394,39,4581,성수족발,"- 12:00~22:00
+- 준비시간 15:00~17:00
+- 마지막 주문 21:00",연중무휴,PARSE_SIMPLE_WEEKLY,single time range + supported rest rule
+2373420,12,4582,아띠인력거,10:00~18:00,연중무휴,PARSE_SIMPLE_WEEKLY,single time range + supported rest rule
+2384192,39,4584,용궁횟집,10:00~22:00,연중무휴,PARSE_SIMPLE_WEEKLY,single time range + supported rest rule
+2390314,12,4586,한복남 경복궁점,09:00~19:00 (입장 마감 18:30),연중무휴,PARSE_SIMPLE_WEEKLY,single time range + supported rest rule
+2438633,39,4593,역전회관,11:00~22:00 (준비시간 15:00~17:00),연중무휴,PARSE_SIMPLE_WEEKLY,single time range + supported rest rule
+2451912,12,4594,크라운해태 키즈뮤지엄,10:00~17:00,매주 월요일~화요일,PARSE_SIMPLE_WEEKLY,single time range + supported rest rule
+2469474,39,4602,하단,"- 12:00~20:00
+- 준비시간 14:00~17:00
+- 마지막 주문 19:00",매주 화요일,PARSE_SIMPLE_WEEKLY,single time range + supported rest rule
+2495404,39,4609,텅앤그루브조인트,"- 11:30~22:50
+- 마지막 주문 21:30",연중무휴,PARSE_SIMPLE_WEEKLY,single time range + supported rest rule
+2495458,39,4610,명문막국수,"- 11:10~20:00
+- 준비시간 14:30~17:00
+- 점심 마지막 주문 14:00 / 저녁 마지막 주문 19:30",연중무휴,PARSE_SIMPLE_WEEKLY,single time range + supported rest rule
+2495465,39,4611,봉파레트,"- 11:30~22:00
+- 준비시간 15:30~17:30
+- 마지막 주문 20:30",매주 월요일,PARSE_SIMPLE_WEEKLY,single time range + supported rest rule
+2495915,39,4613,성북동누룽지백숙,"- 11:30~21:00
+- 마지막 주문 20:00
+※ 매년 초·중·말복은 11:00 영업 시작",매주 월요일,PARSE_SIMPLE_WEEKLY,single time range + supported rest rule
+2496274,39,4614,손국수,"- 11:40~20:00
+- 준비시간 15:00~17:30
+- 마지막 주문 19:00",매주 일요일,PARSE_SIMPLE_WEEKLY,single time range + supported rest rule
+2496493,39,4615,옛날중국집,"- 11:00~21:00
+- 준비시간 15:00~16:00
+- 마지막 주문 20:00",매주 월요일,PARSE_SIMPLE_WEEKLY,single time range + supported rest rule
+2500218,12,4619,광흥당,09:00~18:00,매주 토요일~일요일,PARSE_SIMPLE_WEEKLY,single time range + supported rest rule
+2500229,12,4620,경의선책거리,11:00~20:00,매주 월요일,PARSE_SIMPLE_WEEKLY,single time range + supported rest rule
+250364,12,4626,문화역 서울 284,11:00~19:00 (입장 마감 : 관람 종료 1시간 전),"매주 월요일
+※전시 기간 확인 후 방문 요망(전시 준비 기간 미운영)",PARSE_SIMPLE_WEEKLY,single time range + supported rest rule
+250564,39,4633,산띠,11:30~22:00,연중무휴,PARSE_SIMPLE_WEEKLY,single time range + supported rest rule
+2507433,12,4635,삼해소주,"10:00~17:00
+
+※ 방문 전 연락 필수",매주 화요일 / 수요일,PARSE_SIMPLE_WEEKLY,single time range + supported rest rule
+2507822,14,4636,별마당도서관,10:30~22:00,연중무휴,PARSE_SIMPLE_WEEKLY,single time range + supported rest rule
+2535439,39,4644,우성식당,09:00~22:30,연중무휴,PARSE_SIMPLE_WEEKLY,single time range + supported rest rule
+2535455,39,4645,아르모니움,"- 11:30~22:00
+- 준비시간 15:00~17:30
+- 마지막 주문 21:00",연중무휴,PARSE_SIMPLE_WEEKLY,single time range + supported rest rule
+2544497,39,4650,스시 카이신(鮨海信),18:00~22:00,연중무휴,PARSE_SIMPLE_WEEKLY,single time range + supported rest rule
+2544579,39,4651,금용문,11:30~22:00 (준비시간 15:00~17:00),연중무휴,PARSE_SIMPLE_WEEKLY,single time range + supported rest rule
+2544584,39,4652,일품당프리미엄,"- 11:30~22:00
+- 준비시간 15:00~17:00
+- 마지막 주문 21:00",연중무휴,PARSE_SIMPLE_WEEKLY,single time range + supported rest rule
+2563182,39,4667,[백년가게] 선천집,11:00~21:00,매주 일요일,PARSE_SIMPLE_WEEKLY,single time range + supported rest rule
+2563211,39,4668,[백년가게] 삼거리 먼지막 순대국,08:00~19:30,매주 화요일,PARSE_SIMPLE_WEEKLY,single time range + supported rest rule
+2581396,14,4692,신촌문화발전소,10:00~21:00,매주 일요일 / 월요일,PARSE_SIMPLE_WEEKLY,single time range + supported rest rule
+2591878,14,4715,갤러리 구루지,10:00~18:00,연중무휴,PARSE_SIMPLE_WEEKLY,single time range + supported rest rule
+2602869,39,4729,루위,11:30~22:00 (준비시간 15:00~17:00),연중무휴,PARSE_SIMPLE_WEEKLY,single time range + supported rest rule
+2603070,39,4730,설마중,"- 평일 11:30~22:00 (준비시간 15:00~17:15)
+- 주말 11:00~22:00",연중무휴,PARSE_WEEKDAY_WEEKEND,explicit weekday/weekend schedule + supported rest rule
+2606224,14,4738,공평도시유적전시관,09:00~18:00 (입장 마감 17:30),매주 월요일 / 1월 1일,PARSE_SIMPLE_WEEKLY,single time range + supported rest rule
+2608651,39,4749,[백년가게] 청해진,"- 11:00~22:00
+- 준비 시간 15:00~17:00
+- 마지막 주문 21:30",연중무휴,PARSE_SIMPLE_WEEKLY,single time range + supported rest rule
+2608909,39,4750,[백년가게]창성옥,06:00~23:00,연중무휴,PARSE_SIMPLE_WEEKLY,single time range + supported rest rule
+2608924,39,4751,[백년가게]새만포면옥,"- 11:00~21:00
+- 준비시간 16:00~17:00
+- 마지막 주문 20:30
+※ 주말은 준비시간 없이 영업함",연중무휴,PARSE_SIMPLE_WEEKLY,single time range + supported rest rule
+2622715,39,4784,감꽃당,10:30~22:00,연중무휴,PARSE_SIMPLE_WEEKLY,single time range + supported rest rule
+2623187,39,4786,썬더버드 청담점,11:00~21:00 (마지막 주문 20:30),연중무휴,PARSE_SIMPLE_WEEKLY,single time range + supported rest rule
+2629577,39,4790,장수촌 풍천장어,10:00~22:00,연중무휴,PARSE_SIMPLE_WEEKLY,single time range + supported rest rule
+2630324,39,4791,[백년가게]대호정,10:00~22:00,연중무휴,PARSE_SIMPLE_WEEKLY,single time range + supported rest rule
+2642151,14,4794,갤러리JJ,11:00~19:00,"매주 일요일, 월요일",PARSE_SIMPLE_WEEKLY,single time range + supported rest rule
+2661492,12,4812,북정마을,"09:00~18:00
+
+※ 주민배려 정숙관광 필요",연중무휴,PARSE_SIMPLE_WEEKLY,single time range + supported rest rule
+2663444,39,4815,거창 왕돈까스,11:00~19:30 (준비시간 14:00~17:00),매주 토요일~일요일,PARSE_SIMPLE_WEEKLY,single time range + supported rest rule
+2663450,39,4816,고려정,10:00~22:00 (마지막 주문 21:30),매주 토요일~일요일,PARSE_SIMPLE_WEEKLY,single time range + supported rest rule
+2663476,39,4818,성하,11:30~21:30,매주 토요일~일요일,PARSE_SIMPLE_WEEKLY,single time range + supported rest rule
+2663518,39,4819,쌍대포 맷돌순두부,09:00~22:00,매주 토요일~일요일,PARSE_SIMPLE_WEEKLY,single time range + supported rest rule
+2663525,39,4820,여의도 양꼬치,17:00~23:00,매주 토요일~일요일,PARSE_SIMPLE_WEEKLY,single time range + supported rest rule
+2663533,39,4821,진가,"- 11:00~23:00
+- 준비시간 14:00~16:30
+- 마지막 주문 22:00",매주 토요일~일요일,PARSE_SIMPLE_WEEKLY,single time range + supported rest rule
+2665070,39,4823,보보식당,"- 11:30~22:00
+- 준비시간 15:00~17:30
+- 마지막 주문 21:00",연중무휴,PARSE_SIMPLE_WEEKLY,single time range + supported rest rule
+2666751,12,4826,안녕인사동,10:00~22:00,연중무휴,PARSE_SIMPLE_WEEKLY,single time range + supported rest rule
+2667567,39,4827,청하,11:30~22:00 (브레이크타임 15:00~17:00 / 라스트오더 21:00),매주 일요일,PARSE_SIMPLE_WEEKLY,single time range + supported rest rule
+2675098,12,4834,푸른수목원,05:00~22:00,연중무휴,PARSE_SIMPLE_WEEKLY,single time range + supported rest rule
+2679810,39,4837,만다린,11:00~21:00,연중무휴,PARSE_SIMPLE_WEEKLY,single time range + supported rest rule
+2685594,39,4838,삼청각,12:00~21:00,연중무휴,PARSE_SIMPLE_WEEKLY,single time range + supported rest rule
+2714028,14,4866,쾨닉 서울,11:00~18:00,매주 일요일 / 월요일,PARSE_SIMPLE_WEEKLY,single time range + supported rest rule
+2717322,39,4868,꾸에바마테라,12:00~20:00 (마지막 주문 19:30),연중무휴,PARSE_SIMPLE_WEEKLY,single time range + supported rest rule
+2717547,39,4869,내자상회,10:00~22:00,연중무휴,PARSE_SIMPLE_WEEKLY,single time range + supported rest rule
+2719780,39,4871,하니칼국수,"- 10:30~22:00
+- 준비시간 14:30~17:00
+- 마지막 주문 21:00
+※ 주말에는 준비시간 없이 영업함",연중무휴,PARSE_SIMPLE_WEEKLY,single time range + supported rest rule
+2733860,39,4882,봉우리 역삼본점,11:30~21:20 (준비시간 15:00~17:30),연중무휴,PARSE_SIMPLE_WEEKLY,single time range + supported rest rule
+2733862,39,4884,빌즈 강남,10:30~22:00 (라스트오더 21:00),연중무휴,PARSE_SIMPLE_WEEKLY,single time range + supported rest rule
+2733970,12,4890,대치유수지체육공원,07:00~21:00,연중무휴,PARSE_SIMPLE_WEEKLY,single time range + supported rest rule
+2738571,14,4899,서울공예박물관,10:00~18:00,매주 월요일 / 1월1일,PARSE_SIMPLE_WEEKLY,single time range + supported rest rule
+2739443,14,4900,PKM갤러리,10:00~18:00 (입장 마감 17:30),매주 월요일,PARSE_SIMPLE_WEEKLY,single time range + supported rest rule
+2739448,14,4901,공근혜갤러리,10:30~17:30,매주 일요일~월요일,PARSE_SIMPLE_WEEKLY,single time range + supported rest rule
+2739479,14,4906,한국미술관,10:00~18:00,연중무휴,PARSE_SIMPLE_WEEKLY,single time range + supported rest rule
+2739480,39,4907,원조남산왕돈까스,10:00~22:00,매주 화요일,PARSE_SIMPLE_WEEKLY,single time range + supported rest rule
+2741583,39,4911,정담은보쌈,11:00~21:30,연중무휴,PARSE_SIMPLE_WEEKLY,single time range + supported rest rule
+2743740,12,4921,육영재단 어린이회관,09:00~18:00,"매주 토요일, 일요일",PARSE_SIMPLE_WEEKLY,single time range + supported rest rule
+2745526,39,4927,우참판,"평일 11:30~22:00 (브레이크타임 14:30~17:00)
+21:00 라스트오더
+주말 11:30~21:30 (15:00~17:00 브레이크타임)
+20:30 라스트오더",연중무휴,PARSE_WEEKDAY_WEEKEND,explicit weekday/weekend schedule + supported rest rule
+2745569,39,4928,서래본갈비,11:30~22:00,연중무휴,PARSE_SIMPLE_WEEKLY,single time range + supported rest rule
+2745572,39,4929,서관면옥,"11:00~21:00 (브레이크타임 15:00~17:00)
+20:30 라스트오더",연중무휴,PARSE_SIMPLE_WEEKLY,single time range + supported rest rule
+2745580,39,4930,배나무골오리집 양재본점,11:30~21:30 (브레이크타임 15:00~17:00),매주 일요일,PARSE_SIMPLE_WEEKLY,single time range + supported rest rule
+2745582,39,4931,진미식당,"12:00 ~ 20:00
+브레이크타임 15:30 ~ 17:00",매주 일요일,PARSE_SIMPLE_WEEKLY,single time range + supported rest rule
+2745725,14,4935,서울시립 난지미술창작스튜디오,10:00~18:00 (입장마감 17:30),매주 월요일 / 1월 1일,PARSE_SIMPLE_WEEKLY,single time range + supported rest rule
+2751294,12,4937,법안정사,08:30~17:00,연중무휴,PARSE_SIMPLE_WEEKLY,single time range + supported rest rule
+2751881,39,4948,윤화돈까스,"[평일]
+- 11:00~21:00
+- 준비시간 15:00~17:00
+- 마지막 주문 20:55
+[주말]
+- 11:00~21:00
+- 마지막 주문 20:55",연중무휴,PARSE_WEEKDAY_WEEKEND,explicit weekday/weekend schedule + supported rest rule
+2752177,39,4952,단미그린비,"[평일]
+- 11:30~21:00
+- 준비시간 15:00~17:30
+- 마지막 주문 20:00
+[주말]
+- 11:30~21:30
+- 준비시간 15:00~17:30
+- 마지막 주문 20:30",매주 월요일,PARSE_WEEKDAY_WEEKEND,explicit weekday/weekend schedule + supported rest rule
+2752385,39,4954,백마김씨네 도곡본점,11:30~21:50,연중무휴,PARSE_SIMPLE_WEEKLY,single time range + supported rest rule
+2752546,39,4957,돝고기506,"- 11:30~22:00
+- 준비시간 15:00~17:00
+- 마지막 주문 21:20",연중무휴,PARSE_SIMPLE_WEEKLY,single time range + supported rest rule
+2753157,39,4963,으뜸횟집,11:30~23:00,매주 일요일,PARSE_SIMPLE_WEEKLY,single time range + supported rest rule
+2755513,39,4968,다래함박스텍,10:00~21:00 (준비 시간 15:00~16:00),매주 월요일,PARSE_SIMPLE_WEEKLY,single time range + supported rest rule
+2756589,12,4973,우리유황온천,05:30~21:00,연중무휴,PARSE_SIMPLE_WEEKLY,single time range + supported rest rule
+2757830,39,4982,오선채,"- 11:30~21:00
+- 준비시간 15:00~17:00
+- 마지막 주문 20:00",연중무휴,PARSE_SIMPLE_WEEKLY,single time range + supported rest rule
+2758116,39,4984,메종 한남,"- 11:30~22:00
+- 준비시간 15:00~17:30
+- 마지막 주문 20:00",매주 월요일,PARSE_SIMPLE_WEEKLY,single time range + supported rest rule
+2758128,39,4986,쭈꾸미킹2.0 상봉점,11:00~22:00 (마지막 주문 20:30),연중무휴,PARSE_SIMPLE_WEEKLY,single time range + supported rest rule
+2758137,39,4988,툇마루밥상,"- 11:30~21:30
+- 준비시간 15:00~17:00
+- 마지막 주문 20:30",연중무휴,PARSE_SIMPLE_WEEKLY,single time range + supported rest rule
+2758163,39,4992,청와옥 본점,"- 08:00~22:00
+- 마지막 주문 21:00",연중무휴,PARSE_SIMPLE_WEEKLY,single time range + supported rest rule
+2758166,39,4993,오향가가락본점,"- 11:30~22:00
+- 준비시간 14:30~17:00",매주 일요일,PARSE_SIMPLE_WEEKLY,single time range + supported rest rule
+2761653,39,5018,잠두봉더나인,12:00~21:30,연중무휴,PARSE_SIMPLE_WEEKLY,single time range + supported rest rule
+2761661,12,5019,구강사,09:00~18:00,연중무휴,PARSE_SIMPLE_WEEKLY,single time range + supported rest rule
+2762868,38,5024,동화상가,09:00~19:00,매주 일요일,PARSE_SIMPLE_WEEKLY,single time range + supported rest rule
+2763515,39,5027,와이키키마켓,"- 11:30~23:00
+- 마지막 주문 22:00",연중무휴,PARSE_SIMPLE_WEEKLY,single time range + supported rest rule
+2763818,12,5031,헬로애니멀,10:30~19:00 (입장 마감 18:00),연중무휴,PARSE_SIMPLE_WEEKLY,single time range + supported rest rule
+2764171,39,5034,등나무집,11:00~22:00,연중무휴,PARSE_SIMPLE_WEEKLY,single time range + supported rest rule
+2773265,14,5045,K현대미술관,10:00~19:00 (18시 입장 마감),연중무휴,PARSE_SIMPLE_WEEKLY,single time range + supported rest rule
+2774280,39,5057,봉피양 방이점,"- 11:30~22:00
+- 마지막 주문 21:00",연중무휴,PARSE_SIMPLE_WEEKLY,single time range + supported rest rule
+2778425,39,5069,군산오징어 본점,11:30~22:30,연중무휴,PARSE_SIMPLE_WEEKLY,single time range + supported rest rule
+2779128,39,5070,공기(Gongi),"- 12:00~21:30
+- 준비시간 15:00~17:30
+- 마지막 주문 20:30",연중무휴,PARSE_SIMPLE_WEEKLY,single time range + supported rest rule
+2782140,39,5078,진미평양냉면,"- 11:00~21:30
+- 마지막 주문 21:10",연중무휴,PARSE_SIMPLE_WEEKLY,single time range + supported rest rule
+2782825,39,5081,골목집,11:00~22:30,매주 월요일,PARSE_SIMPLE_WEEKLY,single time range + supported rest rule
+2782928,39,5083,소문난식당,11:00~16:00,매주 일요일,PARSE_SIMPLE_WEEKLY,single time range + supported rest rule
+2783104,39,5084,매일낙지,11:30~21:00 (준비시간 15:00~17:00),매주 일요일,PARSE_SIMPLE_WEEKLY,single time range + supported rest rule
+2783318,28,5085,와이키키레저,11:30~23:00,연중무휴,PARSE_SIMPLE_WEEKLY,single time range + supported rest rule
+2783334,39,5087,인왕산 더숲 초소책방,08:00~22:00 (라스트오더 21:30),연중무휴,PARSE_SIMPLE_WEEKLY,single time range + supported rest rule
+2783339,14,5088,별책부록,"- 평일 14:00~19:00
+
+- 주말 14:00~18:00",매주 월요일~ 화요일,PARSE_WEEKDAY_WEEKEND,explicit weekday/weekend schedule + supported rest rule
+2783356,39,5090,작은공간,"[평일]
+- 11:00~20:50 (마지막 주문 20:20)
+[주말]
+- 11:00~20:30 (라스트오더 20:00)",연중무휴,PARSE_WEEKDAY_WEEKEND,explicit weekday/weekend schedule + supported rest rule
+2783402,39,5092,하츠베이커리,11:30~20:30,연중 무휴,PARSE_SIMPLE_WEEKLY,single time range + supported rest rule
+2783578,39,5097,맛차차,11:00~19:00,"매주 월요일, 화요일",PARSE_SIMPLE_WEEKLY,single time range + supported rest rule
+2784016,39,5098,얼스어스,12:00~21:00,매주 화요일,PARSE_SIMPLE_WEEKLY,single time range + supported rest rule
+2784696,39,5102,동작구름카페,12:00~21:00,연중무휴,PARSE_SIMPLE_WEEKLY,single time range + supported rest rule
+2784912,38,5103,프레젠트모먼트,13:00~21:00,매주 월요일,PARSE_SIMPLE_WEEKLY,single time range + supported rest rule
+2785872,39,5105,호랑이,11:00~21:00 (라스트오더 20:30),"매주 일요일, 월요일",PARSE_SIMPLE_WEEKLY,single time range + supported rest rule
+2786045,39,5106,깔리,11:30 ~ 21:10 (브레이크타임 15:40 ~ 17:00),매주 월요일,PARSE_SIMPLE_WEEKLY,single time range + supported rest rule
+2787231,39,5110,명품기사식당뚝다리김치찌개,"- 평일 06:30~22:00
+- 주말 06:30~21:00",연중무휴,PARSE_WEEKDAY_WEEKEND,explicit weekday/weekend schedule + supported rest rule
+2788760,39,5111,낙동강,11:30~22:30,매주 일요일,PARSE_SIMPLE_WEEKLY,single time range + supported rest rule
+2788817,39,5112,창신동매운족발 본점,10:30~22:00,매주 월요일,PARSE_SIMPLE_WEEKLY,single time range + supported rest rule
+2788820,39,5113,동해도 광화문,"- 11:00~22:00
+- 준비시간 14:30~17:00",연중무휴,PARSE_SIMPLE_WEEKLY,single time range + supported rest rule
+2789169,39,5117,된장예술과술,11:00 ~ 22:00 (브레이크타임 15:00~16:30),"매주 토요일, 일요일",PARSE_SIMPLE_WEEKLY,single time range + supported rest rule
+2789182,39,5118,동경우동,"- 평일 07:00~22:00
+- 주말 10:00~22:00",연중무휴,PARSE_WEEKDAY_WEEKEND,explicit weekday/weekend schedule + supported rest rule
+2789212,39,5121,철계단집,"- 16:30~22:30
+- 마지막 주문 22:00",연중무휴,PARSE_SIMPLE_WEEKLY,single time range + supported rest rule
+2794740,39,5127,청량리함흥냉면,10:00~19:00,연중무휴,PARSE_SIMPLE_WEEKLY,single time range + supported rest rule
+2804500,39,5132,원형들,13:00~19:00,매주 월요일~수요일,PARSE_SIMPLE_WEEKLY,single time range + supported rest rule
+2807930,39,5134,와가리피순대,09:30~22:30,매주 일요일,PARSE_SIMPLE_WEEKLY,single time range + supported rest rule
+2808041,39,5135,후암편백,"- 11:30~23:30
+- 준비시간 15:00~17:00",매주 토요일,PARSE_SIMPLE_WEEKLY,single time range + supported rest rule
+2809287,39,5136,메종브리크,"- 11:30~22:00
+- 준비시간 15:30~17:00
+- 마지막 주문 21:00",연중무휴,PARSE_SIMPLE_WEEKLY,single time range + supported rest rule
+2810010,39,5139,마얘(MAILLET),11:00~21:30,연중무휴,PARSE_SIMPLE_WEEKLY,single time range + supported rest rule
+2814649,39,5142,온정텐동,"- 11:00~23:00
+- 마지막 주문 21:30
+※ 재료 소진 시 조기 마감",연중무휴,PARSE_SIMPLE_WEEKLY,single time range + supported rest rule
+2814836,39,5143,다과상사,"- 평일 07:00~20:00
+- 주말 08:00~20:00",연중무휴,PARSE_WEEKDAY_WEEKEND,explicit weekday/weekend schedule + supported rest rule
+2815129,39,5144,뉴웨이브서울,"- 12:00~22:00
+- 준비 시간 15:00~16:30
+- 마지막 주문 14:30/21:00",매주 월요일,PARSE_SIMPLE_WEEKLY,single time range + supported rest rule
+2815401,39,5145,봄솔레씨네,"- 11:00~20:30
+- 준비시간 15:00~17:00
+- 마지막 주문 19:40","매주 일요일 (1~2월, 7~8월에는 토요일도 휴무)",PARSE_SIMPLE_WEEKLY,single time range + supported rest rule
+2819962,39,5149,인더베이글,08:00~21:00,매주 일요일,PARSE_SIMPLE_WEEKLY,single time range + supported rest rule
+2821755,39,5151,썸띵어바웃커피,11:00~22:30,연중무휴,PARSE_SIMPLE_WEEKLY,single time range + supported rest rule
+2823094,39,5152,청아라 생선구이,"- 11:00~21:00
+- 준비시간 15:00~17:00
+- 마지막 주문 20:20",매주 일요일,PARSE_SIMPLE_WEEKLY,single time range + supported rest rule
+2823949,39,5153,고두리 용산점,"- 11:30~22:30
+- 준비시간 15:00~17:00
+- 마지막 주문 21:30",연중무휴,PARSE_SIMPLE_WEEKLY,single time range + supported rest rule

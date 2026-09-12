@@ -1,0 +1,441 @@
+﻿content_type_id,classification,operating_pattern,rest_pattern,count
+12,SKIP_TIME_AMBIGUOUS,상시 개방,연중무휴,148
+32,RAW_ONLY_LODGING,입실시간: <TIME> 퇴실시간: <TIME>,<EMPTY>,121
+28,NO_DATA,<EMPTY>,<EMPTY>,41
+39,PARSE_SIMPLE_WEEKLY,<RANGE>,연중무휴,34
+38,SKIP_TIME_AMBIGUOUS,점포 별로 상이함,점포 별로 상이함,29
+38,SKIP_TIME_AMBIGUOUS,점포별 상이,점포별 상이,18
+39,PARSE_SIMPLE_WEEKLY,- <RANGE> - 준비시간 <RANGE> - 마지막 주문 <TIME>,연중무휴,16
+15,RAW_ONLY_EVENT,<RANGE>,<EMPTY>,15
+12,PARSE_SIMPLE_WEEKLY,<RANGE>,연중무휴,13
+14,PARSE_SIMPLE_WEEKLY,<RANGE>,연중무휴,10
+38,SKIP_TIME_AMBIGUOUS,매장 별로 상이함,매장 별로 상이함,9
+39,PARSE_SIMPLE_WEEKLY,<RANGE> (마지막 주문 <TIME>),연중무휴,9
+39,PARSE_SIMPLE_WEEKLY,<RANGE>,매주 일요일,9
+39,PARSE_SIMPLE_WEEKLY,- <RANGE> - 마지막 주문 <TIME>,연중무휴,8
+14,SKIP_TIME_AMBIGUOUS,공연 별로 상이함,공연 별로 상이함,7
+12,SKIP_TIME_AMBIGUOUS,점포별 상이,점포별 상이,6
+14,PARSE_SIMPLE_WEEKLY,<RANGE>,매주 월요일,5
+14,SKIP_REST_AMBIGUOUS,<RANGE>,매주 토요일~일요일 / 법정공휴일,5
+39,PARSE_SIMPLE_WEEKLY,- <RANGE> - 준비시간 <RANGE> - 마지막 주문 <TIME>,매주 일요일,5
+39,PARSE_SIMPLE_WEEKLY,- <RANGE> - 준비시간 <RANGE> - 마지막 주문 <TIME>,매주 월요일,5
+39,PARSE_SIMPLE_WEEKLY,<RANGE> (준비시간 <RANGE>),연중무휴,5
+38,SKIP_TIME_AMBIGUOUS,※ 점포별 상이함,※ 점포별 상이함,4
+38,PARSE_SIMPLE_WEEKLY,<RANGE>,매주 일요일,4
+14,SKIP_REST_AMBIGUOUS,<RANGE>,매주 일요일 / 법정공휴일,4
+39,SKIP_TIME_AMBIGUOUS,<TIME>~24:00,연중무휴,4
+12,SKIP_TIME_AMBIGUOUS,점포 별로 상이함,점포 별로 상이함,3
+12,PARSE_SIMPLE_WEEKLY,<RANGE>,매주 월요일,3
+14,PARSE_SIMPLE_WEEKLY,<RANGE>,매주 일요일,3
+38,PARSE_SIMPLE_WEEKLY,<RANGE>,연중무휴,3
+14,PARSE_SIMPLE_WEEKLY,<RANGE>,매주 일요일 / 월요일,3
+39,PARSE_SIMPLE_WEEKLY,<RANGE> (준비시간 <RANGE>),매주 일요일,3
+39,SKIP_TIME_AMBIGUOUS,<RANGE> (마지막 주문 <TIME>),연중무휴,3
+32,RAW_ONLY_LODGING,입실시간: <TIME> 퇴실시간: 익일 <TIME>,<EMPTY>,3
+12,NO_TIME_TEXT,<EMPTY>,<EMPTY>,3
+39,PARSE_SIMPLE_WEEKLY,<RANGE>,매주 화요일,3
+12,SKIP_REST_AMBIGUOUS,<RANGE>,<EMPTY>,3
+39,PARSE_SIMPLE_WEEKLY,<RANGE>,매주 토요일~일요일,3
+39,PARSE_WEEKDAY_WEEKEND,- 평일 <RANGE> - 주말 <RANGE>,연중무휴,3
+12,PARSE_SIMPLE_WEEKLY,<RANGE> (입장 마감 <TIME>),매주 월요일,2
+14,PARSE_SIMPLE_WEEKLY,<RANGE> (입장 마감 <TIME>),매주 월요일,2
+14,SKIP_TIME_AMBIGUOUS,공연 별로 상이함,연중무휴,2
+38,SKIP_TIME_AMBIGUOUS,<RANGE> ※ 점포별 상이,연중무휴 ※ 점포별 상이,2
+12,NO_TIME_TEXT,<EMPTY>,연중무휴,2
+12,SKIP_REST_AMBIGUOUS,<RANGE> (입장마감 <TIME>),"매주 월요일 ※ 단, 정기휴일이 공휴일 및 대체공휴일과 겹칠 경우에는 개방하며, 그 다음의 첫 번째 비공휴일이 정기휴일임",2
+12,SKIP_TIME_AMBIGUOUS,<TIME>~24:00,연중무휴,2
+14,SKIP_TIME_AMBIGUOUS,공연 및 전시 별로 상이함,공연 및 전시 별로 상이함,2
+14,SKIP_TIME_AMBIGUOUS,- 월요일~토요일 <RANGE> - 일요일 및 공휴일 <RANGE>,연중무휴,2
+14,PARSE_SIMPLE_WEEKLY,<RANGE> (입장 마감 <TIME>),매주 월요일 / 1월 1일,2
+14,SKIP_REST_AMBIGUOUS,<RANGE>,"매주 토요일, 일요일 / 법정공휴일",2
+14,SKIP_REST_AMBIGUOUS,<RANGE>,매주 일요일~월요일 / 법정공휴일,2
+38,SKIP_REST_AMBIGUOUS,<RANGE>,점포별 상이,2
+39,SKIP_TIME_AMBIGUOUS,[평일] - <RANGE> - 준비시간 <RANGE> - 마지막 주문 <TIME> [토요일] - <RANGE> - 마지막 주문 <TIME>,매주 일요일,2
+12,SKIP_TIME_AMBIGUOUS,- 하절기(4월~10월) <RANGE> - 동절기(11월~3월) <RANGE>,"매주 월요일 (단, 월요일이 공휴일인 경우 정상 운영)",2
+39,PARSE_WEEKDAY_WEEKEND,- 평일 <RANGE> (마지막 주문 <TIME>) - 주말 <RANGE> (마지막 주문 <TIME>),연중무휴,2
+39,SKIP_TIME_AMBIGUOUS,- 평일 <RANGE> - 토요일 <RANGE>,매주 일요일,2
+39,SKIP_REST_AMBIGUOUS,<RANGE>,설·추석 연휴,2
+12,PARSE_SIMPLE_WEEKLY,<RANGE> (입장 마감 <TIME>),연중무휴,2
+14,SKIP_REST_AMBIGUOUS,<RANGE>,<EMPTY>,2
+12,PARSE_SIMPLE_WEEKLY,<RANGE>,매주 월요일 / 설·추석 당일,2
+39,SKIP_REST_AMBIGUOUS,- <RANGE> - 마지막 주문 <TIME>,설·추석 연휴,2
+39,PARSE_SIMPLE_WEEKLY,<RANGE> (라스트오더 <TIME>),연중무휴,2
+38,SKIP_TIME_AMBIGUOUS,<RANGE> (점포별 상이),점포별 상이,2
+39,PARSE_SIMPLE_WEEKLY,<RANGE>,매주 월요일,2
+38,SKIP_TIME_AMBIGUOUS,[평일] - <RANGE> [토요일(자유 오픈)] - <RANGE> ※ 점포별 상이,매주 일요일 / 공휴일 ※ 점포별 상이,1
+38,SKIP_TIME_AMBIGUOUS,<RANGE> ※ 점포 별로 상이함,연중무휴 ※ 점포 별로 상이함,1
+38,SKIP_TIME_AMBIGUOUS,<RANGE> ※ 매장별 상이,매주 일요일 ※ 혼수용품 일요일 자율영업,1
+14,SKIP_TIME_AMBIGUOUS,"[인문사회자연과학실, 어문학·족보실] - 평일 <RANGE> - 주말 <RANGE> [어린이실, 청소년관, 다국어·연속간행물실, 디지털자료실, 서울교육박물관] - 평일 <RANGE> - 주말 <RANGE> [자율학습실, 노트북실] - 하절기 (3월~10월) <RANGE> - 동절기 (11월~2월) <RANGE>","매월 첫째, 셋째 수요일 / 일요일을 제외한 법정공휴일 (단, 공휴일과 일요일이 겹칠 경우 휴관) / 도서관 사정으로 임시로 정하는 휴일",1
+12,SKIP_TIME_AMBIGUOUS,"상시 개방 ※ 단, 매장 이용 시 매장 별로 상이할 수 있음","연중무휴 ※ 단, 매장 이용 시 매장 별로 상이할 수 있음",1
+14,SKIP_TIME_AMBIGUOUS,공연장 및 갤러리 운영 프로그램별 상이,관공서의 공휴일에 관한 규정 / 대관규정에 근거한 휴무일 운영,1
+12,SKIP_REST_AMBIGUOUS,<TIME> / <TIME> / <TIME>,매주 토요일~일요일 / 법정공휴일,1
+14,SKIP_TIME_AMBIGUOUS,- 평일 <RANGE> - 주말 및 공휴일 <RANGE>,연중무휴,1
+14,SKIP_REST_AMBIGUOUS,<RANGE> (입장 마감 <TIME>),"매주 일요일, 월요일 / 1월1일 / 개교기념일 / 설·추석 연휴 / 법정공휴일 / 근로자의 날",1
+38,SKIP_REST_AMBIGUOUS,[정상영업] - <RANGE> [연장영업] - <RANGE> [식당가 영업] - <RANGE> (마지막 주문 <TIME>) ※ 유동가능성 있으므로 홈페이지 참고,점포별 상이,1
+12,SKIP_TIME_AMBIGUOUS,<RANGE> ※ 시설 별로 상이함,<EMPTY>,1
+12,SKIP_TIME_AMBIGUOUS,상시개방,연중무휴,1
+12,PARSE_WEEKDAY_WEEKEND,[공원]- <RANGE>[동물원]- <RANGE>[놀이동산]- 평일 <RANGE>- 주말 <RANGE>,연중무휴,1
+12,SKIP_REST_AMBIGUOUS,<RANGE> (입장마감 <TIME>),"매주 월요일 / 1월 1일 (※ 단, 월요일이 공휴일인 경우 그 다음 첫 번째 평일 휴관)",1
+12,SKIP_TIME_AMBIGUOUS,[공원] 상시 개방 [사육신묘] - 하절기 <RANGE> - 동절기 <RANGE>,연중무휴,1
+12,SKIP_TIME_AMBIGUOUS,[출입문 개방시간] - 하절기(3월~10월) <RANGE> - 동절기(11월~2월) <RANGE> [기념관 / 봉안소] - 하절기(3월~10월) <RANGE> - 동절기(11월~2월) <RANGE>,"- 묘지 : 연중무휴 - 기념관 : 매주 월요일 ※ 단, 월요일이 휴일일 경우 익일 휴무",1
+12,SKIP_REST_AMBIGUOUS,- 2월~5월 <RANGE> (입장마감 <TIME>) - 6월~8월 <RANGE> (입장마감 <TIME>) - 9월~10월 <RANGE> (입장마감 <TIME>) - 11월~1월 <RANGE> (입장마감 <TIME>),"매주 월요일 ※ 단, 월요일이 공휴일인 경우 개방하며, 그 다음 첫 번째 평일에 휴관",1
+12,SKIP_REST_AMBIGUOUS,- 11월~1월 <RANGE> (입장 마감 <TIME>) - 2월~5월 / 9월~10월 <RANGE> (입장 마감 <TIME>) - 6월~8월 <RANGE> (입장 마감 <TIME>),"매주 월요일 (단, 월요일이 공휴일일 경우 다음날 휴무)",1
+12,SKIP_REST_AMBIGUOUS,[2월~5월] <RANGE> (입장마감 <TIME>) [6월~8월] <RANGE> (입장마감 <TIME>) [9월~10월] <RANGE> (입장마감 <TIME>) [11월~1월] <RANGE> (입장마감 <TIME>),"매주 월요일 ※ 단, 월요일이 공휴일인 경우 개방하며, 그 다음 첫 번째 평일에 휴관",1
+12,PARSE_SIMPLE_WEEKLY,<RANGE> ※ 방문 제한시간(특별관리지역(레드존) 방문 금지) : <TIME>~익일 <TIME>,연중무휴,1
+12,SKIP_TIME_AMBIGUOUS,- 월요일 <RANGE> - 화요일~금요일 <RANGE> - 주말 <RANGE>,연중무휴,1
+12,SKIP_TIME_AMBIGUOUS,- 하절기(04~10월) <RANGE> - 동절기(11~03월) <RANGE>,"매주 월요일(단, 월요일이 공휴일일 경우 익일 휴관)",1
+12,PARSE_SIMPLE_WEEKLY,성지개방시간 <RANGE>,연중무휴,1
+12,SKIP_REST_AMBIGUOUS,홈페이지 참조,홈페이지 참조,1
+12,PARSE_SIMPLE_WEEKLY,월요일~토요일 <RANGE>,매주 일요일,1
+12,SKIP_REST_AMBIGUOUS,<RANGE>,주말,1
+12,SKIP_REST_AMBIGUOUS,주말 <RANGE>,평일 (학생 안전강화로 인해 주말에만 개방),1
+12,SKIP_TIME_AMBIGUOUS,[하절기(4월~10월)] <RANGE> (입장 마감 <TIME>) [동절기(11월~3월)] <RANGE> (입장 마감 <TIME>) ※ 자세한 사항은 홈페이지 참조,"매주 월요일 (단, 월요일이 공휴일인 경우 정상 개장)",1
+12,SKIP_TIME_AMBIGUOUS,"[몽촌토성] - 도보, 자전거 <RANGE> - 차량 <RANGE> [몽촌역사관] - <RANGE>",연중무휴,1
+12,PARSE_SIMPLE_WEEKLY,- 주간 <RANGE> - 야간 <TIME>~익일 <TIME>,연중무휴,1
+39,SKIP_REST_AMBIGUOUS,- <RANGE> - 브레이크타임 <RANGE> - 마지막 주문 <TIME>,매주 월요일 (월요일이 공휴일인 경우 화요일 휴무),1
+12,SKIP_TIME_AMBIGUOUS,[3월~4월] <RANGE> (<TIME>까지 입산) [5월~8월] <RANGE> (<TIME>까지 입산) [9월~10월] <RANGE> (<TIME>까지 입산) [11월~2월] <RANGE> (<TIME>까지 입산),연중무휴,1
+14,PARSE_SIMPLE_WEEKLY,<RANGE>,매주 월요일 / 1월 1일 / 설날·추석,1
+14,SKIP_REST_AMBIGUOUS,화요일~금요일 <RANGE> (입장 마감 <TIME>),"매주 토요일, 일요일, 월요일 / 법정공휴일 / 근로자의 날(5월 1일)",1
+14,PARSE_SIMPLE_WEEKLY,<RANGE> (입장마감 <TIME>),매주 일요일~월요일 / 1월 1일 / 설·추석 연휴,1
+14,SKIP_REST_AMBIGUOUS,<RANGE> (입장마감 <TIME>),매주 토요일~일요일 / 법정공휴일 / 개교기념일(4월 28일),1
+14,SKIP_REST_AMBIGUOUS,화요일~토요일 <RANGE> (입장마감 <TIME>),매주 일요일~월요일 / 법정공휴일 / 박물관 규정에 정한 휴관일,1
+14,SKIP_REST_AMBIGUOUS,<RANGE> (입장 마감 <TIME>),매주 토요일~일요일 / 개교기념일(9월 25일) / 공부자탄강일(9월 28일) / 국정 공휴일,1
+14,SKIP_REST_AMBIGUOUS,<RANGE> (입장 마감 <TIME>),매주 일요일~월요일 /개교기념일(10월 15일) / 법정공휴일,1
+14,SKIP_REST_AMBIGUOUS,[월요일~금요일] - <RANGE> [토요일] - <RANGE> ※ 전시기간에는 토요일 16시까지 운영,매주 일요일 / 공휴일,1
+14,SKIP_TIME_AMBIGUOUS,- 평일 <RANGE> - 주말 <RANGE> ※ 자세한 사항은 전화문의 요망,매주 월요일,1
+14,SKIP_REST_AMBIGUOUS,<RANGE> (입장마감 <TIME>),"매주 월요일 (단, 월요일이 공휴일인 경우 정상 운영 후 익일 화요일 휴관) / 1월 1일",1
+14,SKIP_TIME_AMBIGUOUS,[외교사전시실 / 외교체험실 / 기획전시실] - 월요일~금요일 <RANGE> - 점심시간 <RANGE> - 오전 입장마감 <TIME> - 오후 입장마감 <TIME> ※ 외교사료관 입장 시 본인 확인을 위해 신분증 제시 필수(성인만 해당) ※ 부처일정 및 여건에 따라 변동될 수 있음 [외교문서열람실] 월요일~금요일 <RANGE> (점심시간 <RANGE>),[외교사전시실 / 외교체험실 / 기획전시실] 프로그램이 없는 토요일~일요일 / 법정공휴일 [외교문서열람실] 매주 토요일~일요일 / 법정공휴일,1
+14,SKIP_REST_AMBIGUOUS,- 월요일~토요일 <RANGE> - 일요일 <RANGE>,1월 1일 / 설·추석 연휴,1
+14,SKIP_REST_AMBIGUOUS,"[일반자료실, 디지털자료실, 장애인자료실] 평일 <RANGE>, 주말 <RANGE> [서울자료실, 세계자료실] 평일 <RANGE>, 주말 <RANGE>",[정기휴관일] 매주 월요일 [임시휴관일] 관공서의 휴관일(토․일요일이 법정공휴일과 겹칠 경우) 및 국가가 정한 임시휴일 -기타 관장이 필요하다고 인정한 날,1
+14,SKIP_TIME_AMBIGUOUS,- 평일 <RANGE> - 주말 <RANGE> ※ 변동 될 수 있으므로 전화문의 요망,설·추석 당일,1
+14,SKIP_REST_AMBIGUOUS,<RANGE>,매주 일요일 / 법정 공휴일,1
+14,SKIP_REST_AMBIGUOUS,- 월요일~금요일 <RANGE> - 토요일 <RANGE>,매주 일요일 / 법정공휴일,1
+14,SKIP_REST_AMBIGUOUS,- 월요일~금요일<RANGE> - 화요일 <RANGE> - 토요일~일요일<RANGE>,4월 1일 창립기념일,1
+14,PARSE_SIMPLE_WEEKLY,<RANGE> (입장마감 <TIME>) ※ 사전 예약 필수,매주 토요일~일요일,1
+14,SKIP_TIME_AMBIGUOUS,- 하절기 <RANGE> - 동절기 <RANGE>,매주 일요일,1
+12,SKIP_REST_AMBIGUOUS,<RANGE> (입장 마감 <TIME>),<EMPTY>,1
+14,SKIP_REST_AMBIGUOUS,<RANGE>,설·추석 당일,1
+14,SKIP_REST_AMBIGUOUS,화요일~토요일 <RANGE> (입장마감 <TIME>),매주 일요일~월요일 / 법정공휴일,1
+14,SKIP_REST_AMBIGUOUS,화요일~토요일 <RANGE>,매주 일요일~월요일 / 공휴일,1
+14,SKIP_TIME_AMBIGUOUS,※ 전시마다 상이하므로 전화문의 요망,※ 전시마다 상이하므로 전화문의 요망,1
+14,SKIP_TIME_AMBIGUOUS,"[인문사회과학실, 문학실·한국문학자료관] - 평일 <RANGE> - 주말 <RANGE> [자연과학실, 독서치료·어학실, 디지털라운지] - 평일 <RANGE> - 주말 <RANGE> [일반열람실] - 하절기(3월~10월) <RANGE> - 동절기(11월~2월) <RANGE>","매월 첫째, 셋째 월요일",1
+14,SKIP_TIME_AMBIGUOUS,[문헌정보실] - 평일 <RANGE> - 주말 <RANGE> [디지털·간행물실/어린이실] - 평일 <RANGE> - 주말 <RANGE> [자율학습실] - 하절기(3~10월) <RANGE> - 동절기(11월~2월) <RANGE>,"매월 둘째주, 넷째주 화요일 / 법정공휴일 (일요일을 제외한 관공서 공휴일) / 도서관 및 기타 사정으로 도서관장이 정한 날",1
+14,PARSE_SIMPLE_WEEKLY,월요일~토요일 <RANGE> (입장마감 <TIME>),매주 일요일 / 설·추석,1
+14,PARSE_SIMPLE_WEEKLY,<RANGE> (휴게시간 <RANGE>),매주 토요일~일요일,1
+14,SKIP_REST_AMBIGUOUS,평일 <RANGE> 토요일 <RANGE>,매주 일요일 / 법정공휴일 / 1월 1일 / 설·추석 연휴,1
+14,PARSE_SIMPLE_WEEKLY,월요일~금요일 <RANGE>,대관 없을 시 매주 토요일~일요일,1
+14,SKIP_REST_AMBIGUOUS,- 월요일 / 목요일~금요일 <RANGE> - 화요일~수요일 <RANGE> - 토요일 <RANGE>,매주 일요일 / 법정공휴일,1
+14,PARSE_SIMPLE_WEEKLY,<RANGE> (입장 마감 <TIME>),매주 월요일 / 1월 1일 / 설·추석 당일,1
+14,SKIP_REST_AMBIGUOUS,화요일~일요일 <RANGE> (매표 마감 <TIME>),"매주 월요일 / 1월 1일 / 설·추석 연휴 ※ 봄과 가을의 경우, 3월, 9월 첫째 주 화요일~일요일 정기 휴관",1
+14,PARSE_SIMPLE_WEEKLY,<RANGE> (입장마감 <TIME>),매주 월요일,1
+14,SKIP_TIME_AMBIGUOUS,[관람시간] - 3월~11월 <RANGE> - 12월~2월 <RANGE> ※ 관람 시 종료 40분 전까지 입장 [체험시간] - <RANGE> ※ 체험 시 종료 1시간 전까지 입장,매주 월요일,1
+14,SKIP_TIME_AMBIGUOUS,[3월~10월] <RANGE> (입장 마감 <TIME>) [11월~2월] <RANGE> (입장 마감 <TIME>),매주 월요일 / 1월 1일 / 설·추석,1
+14,SKIP_TIME_AMBIGUOUS,[정기전시] - 춘계전시 4월 말~5월 초 - 추계전시 9월 말~10월 초 [관람시간] - <RANGE> ※ 일정은 미술관 및 재단 사정에 의해 변동 가능하므로 홈페이지 참조 또는 전화 문의 요망 ※ 전시 관람은 사전 예약제로 운영,매주 월요일 / 전시 또는 프로그램 운영 기간이 아닌 경우,1
+14,PARSE_SIMPLE_WEEKLY,<RANGE>,"매주 일요일, 월요일 / 1월1일 / 설·추석",1
+14,PARSE_SIMPLE_WEEKLY,<RANGE>,매주 화요일,1
+14,SKIP_TIME_AMBIGUOUS,<RANGE> (점심시간 <RANGE>),연중무휴,1
+14,SKIP_REST_AMBIGUOUS,<RANGE> ※ 토요일 <RANGE> (특별전 기간에만 운영),매주 토요일~일요일 / 공휴일 ※ 기획전 및 특별전의 경우 토요일 개관,1
+14,SKIP_REST_AMBIGUOUS,<RANGE>,※ 전시 준비기간 휴무로 자세한 사항은 전화문의 요망,1
+14,PARSE_SIMPLE_WEEKLY,<RANGE> ※ 매주 목요일~다음주 수요일 (주일단위 전시),연중무휴,1
+14,PARSE_SIMPLE_WEEKLY,<RANGE> (준비 시간 <RANGE>),매주 월요일,1
+14,SKIP_TIME_AMBIGUOUS,"[문헌정보실] - 평일 <RANGE> - 주말 <RANGE> [디지털자료실, 어린이실] - 평일 <RANGE> - 주말 <RANGE> [자율학습실, 마음자리(간행물실)] - 하절기 (3월~10월) <RANGE> - 동절기 (11월~2월) <RANGE>","매달 둘째·넷째 월요일 / 일요일을 제외한 법정공휴일(단, 공휴일과 일요일이 겹칠 경우 휴관) / 임시휴관일",1
+14,SKIP_REST_AMBIGUOUS,[종합자료실] - 평일 <RANGE> - 주말 <RANGE> [디지털자료실＆간행물실＆어린이자료실] - 평일 <RANGE> - 주말 <RANGE> [일반열람실(3월~10월)] - 평일 <RANGE> - 주말 <RANGE> [일반열람실(11월~2월)] - 평일 <RANGE> - 주말 <RANGE>,"매월 첫째, 셋째 수요일 / 법정 공휴일(일요일과 겹칠 경우 휴관) / 임시휴관일",1
+14,SKIP_REST_AMBIGUOUS,- 평일 <RANGE> - 주말 <RANGE>,"매월 첫째주·셋째주 월요일 / 일요일을 제외한 법정공휴일 (단, 일요일과 법정공휴일이 겹칠 경우 휴관)",1
+14,SKIP_TIME_AMBIGUOUS,[문헌정보실] 평일 <RANGE> / 주말 <RANGE> [디지털 간행물실] 평일 <RANGE> / 주말 <RANGE> [어린이실] 평일 <RANGE> / 주말 <RANGE> [자율학습실] 하절기 <RANGE> / 동절기 <RANGE>,"[정기휴관일] 매월 둘째, 넷째 월요일 / 공휴일 (※ 단, 일요일은 개관하되, 일요일과 다른 공휴일이 겹치는 경우에는 휴관)",1
+14,SKIP_REST_AMBIGUOUS,[문헌정보실 및 연속간행물실] - 평일 <RANGE> - 주말 <RANGE> [디지털자료실] - 평일 <RANGE> - 주말 <RANGE> [어린이실] - 평일 <RANGE> - 주말 <RANGE> [필사공감] <RANGE> [일반열람실] <RANGE> (11월~2월 <RANGE>),매월 둘째·넷째 월요일 / 공휴일,1
+14,SKIP_TIME_AMBIGUOUS,"[종합자료1실] - 평일 <RANGE> - 주말 <RANGE> [종합자료2실, 어린이실] - 평일 <RANGE> - 주말 <RANGE> [자율학습1실, 자율학습2실] - 하절기(3월~10월) 평일 <RANGE> - 하절기(3월~10월) 주말 <RANGE> - 동절기(11월~2월) 평일 <RANGE> - 동절기(11월~2월) 주말 <RANGE>","매월 둘째, 넷째주 수요일 / 일요일을 제외한 법정공휴일(단, 공휴일과 일요일이 겹칠 경우 휴관) / 임시 휴관일",1
+12,SKIP_REST_AMBIGUOUS,- 화요일 / 목요일~금요일 <RANGE> - 수요일 <RANGE> - 토요일~일요일 <RANGE>,<EMPTY>,1
+14,SKIP_TIME_AMBIGUOUS,월요일~금요일 <RANGE> ※ 하계 및 동계방학 개관 시간 상이 (홈페이지 공지사항 참조),매주 토요일~일요일 / 법정공휴일 / 개교기념일(5월 18일),1
+14,SKIP_REST_AMBIGUOUS,월요일~금요일 <RANGE>,매주 토요일~일요일 / 법정공휴일,1
+12,SKIP_REST_AMBIGUOUS,<RANGE> ※ 인터넷 사전 예약 필수,<EMPTY>,1
+14,SKIP_REST_AMBIGUOUS,월요일~금요일 / 2·4주차 토요일 <RANGE>,"1, 2, 7, 8월 토요일 / 1·3·5주차 토요일(3월~6월 / 9월~12월) / 매주 일요일 / 공휴일",1
+14,SKIP_REST_AMBIGUOUS,화요일~토요일 <RANGE>,매주 일요일~월요일 / 법정공휴일,1
+14,SKIP_REST_AMBIGUOUS,<RANGE> (입장 마감 <TIME>),매주 일요일 / 법정공휴일,1
+12,SKIP_TIME_AMBIGUOUS,매장 별로 상이함,매장 별로 상이함,1
+28,SKIP_TIME_AMBIGUOUS,- 일요일~목요일 <RANGE> - 금요일~토요일 <RANGE> ※ 현장 운영 상황에 따라 이용시간이 조정될 수 있음,연중무휴,1
+28,SKIP_REST_AMBIGUOUS,"- 6월~8월 <RANGE> (이용 마감 <TIME>) - 점심시간 <RANGE> - 저녁시간 <RANGE> ※ 매시 15분간 휴식시간 ※ 휴식시간, 점심시간, 저녁시간 중에는 입수 불가 ※ 자세한 사항은 홈페이지 참조","개장 기간 중 연중무휴 ※ 단, 폭우로 인한 침수 위험 시 일시 중단",1
+28,SKIP_TIME_AMBIGUOUS,[수영장] - 평일 <RANGE> - 토요일 <RANGE> [헬스장] - 평일 <RANGE> - 토요일 <RANGE> [체육관] - 평일 <RANGE> [청다락(청소년쉼터)] - 평일 <RANGE> - 토요일 <RANGE>,매주 일요일,1
+28,SKIP_TIME_AMBIGUOUS,- 화요일~토요일 <RANGE> - 일요일 / 공휴일 <RANGE>,매주 월요일,1
+38,SKIP_TIME_AMBIGUOUS,<TIME>~익일 <TIME>,매주 토요일~일요일,1
+38,SKIP_TIME_AMBIGUOUS,<RANGE> ※ 매장 별로 상이할 수 있음,"매월 둘째, 넷째 주 수요일",1
+38,SKIP_TIME_AMBIGUOUS,- 원단 및 의류부자재 <RANGE> - 액세서리 부자재 <RANGE> - 혼수용품 및 홈인테리어 <RANGE>,"매주 일요일 (단, 혼수용품 및 홈인테리어 첫 번째, 세 번째, 다섯 번째 일요일 부분 영업) ※ 매달 두 번째, 네 번째 일요일 전체 휴장",1
+38,PARSE_SIMPLE_WEEKLY,<RANGE>,매주 일요일 ※ 자세한 사항은 홈페이지 참조,1
+38,SKIP_TIME_AMBIGUOUS,전화 문의,전화 문의,1
+38,SKIP_TIME_AMBIGUOUS,[경매] - 패류뷰류 <TIME>~ - 고급선어 <TIME>~ - 대중부류 <TIME>~ - 고급활어 <TIME>~ - 냉동부류 <TIME>~ [판매(도소매)] - 고급 <TIME>~24:00 - 대중 <RANGE> - 냉동 <RANGE> - 패류 <RANGE> - 건어 <RANGE> - 젓갈 <RANGE>,[경매] 매주 일요일 / 1월 1일 / 설·추석 연휴 [판매(도소매)] 연중무휴,1
+38,PARSE_SIMPLE_WEEKLY,- 평일 <TIME>~24:00 - 주말 <RANGE>,연중무휴,1
+38,SKIP_TIME_AMBIGUOUS,<RANGE> ※ 점포별 상이,매주 일요일 ※ 점포별 상이,1
+38,SKIP_TIME_AMBIGUOUS,- 생화 <TIME>~익일 <TIME> - 조화 24:00~익일 <TIME>,매주 일요일,1
+38,SKIP_TIME_AMBIGUOUS,"<RANGE> ※ 단, 매장 별로 상이할 수 있음","매주 일요일 / 법정공휴일 ※ 단, 매장 별로 상이할 수 있음",1
+38,SKIP_TIME_AMBIGUOUS,점포별 상이함,점포별 상이함,1
+38,SKIP_TIME_AMBIGUOUS,매장 별로 상이,연중무휴,1
+38,SKIP_REST_AMBIGUOUS,- 월요일~목요일 <RANGE> - 금요일~일요일 <RANGE>,설·추석 당일,1
+38,SKIP_REST_AMBIGUOUS,- 월요일~목요일 <RANGE> - 금요일~일요일 <RANGE>,<EMPTY>,1
+39,SKIP_REST_AMBIGUOUS,<RANGE>,"매월 두번 째, 네번 째, 다섯번 째 일요일",1
+39,SKIP_REST_AMBIGUOUS,- <RANGE> - 마지막 주문 <TIME>,설·추석 당일,1
+39,PARSE_WEEKDAY_WEEKEND,[평일] - <RANGE> - 준비 시간 <RANGE> - 마지막 주문 <TIME> [주말] -<RANGE> - 준비 시간 <RANGE> - 마지막 주문 <TIME>,연중무휴,1
+39,PARSE_SIMPLE_WEEKLY,<RANGE> (마지막 주문 <TIME>),매주 일요일,1
+39,PARSE_SIMPLE_WEEKLY,<RANGE> (마지막 주문 <TIME>),매주 월요일 / 1월 1일,1
+39,SKIP_TIME_AMBIGUOUS,<RANGE> (준비시간 <RANGE>) ※ 금요일~일요일·공휴일은 준비시간이 없으므로 자세한 사항은 전화문의,명절,1
+39,SKIP_TIME_AMBIGUOUS,- 점심 <RANGE> - 저녁 <RANGE> ※ 영업시간 변동 가능성 있으므로 방문 전 전화 문의 요망,매주 수요일 / 설·추석 연휴 ※ 전화 문의 요망,1
+39,PARSE_SIMPLE_WEEKLY,<RANGE> (평일 준비시간 <RANGE>),연중무휴,1
+39,SKIP_TIME_AMBIGUOUS,- 월요일~금요일 <RANGE> - 토요일~일요일 <RANGE>,연중무휴,1
+39,PARSE_SIMPLE_WEEKLY,[월요일~금요일] - <TIME>~24:00 - 마지막 주문 <TIME> [토요일] - <RANGE> - 마지막 주문 <TIME>,매주 일요일,1
+39,PARSE_SIMPLE_WEEKLY,<RANGE> (준비 시간 <RANGE> / 마지막 주문 <TIME>),매주 월요일 ※ 12월은 월요일도 영업,1
+39,PARSE_SIMPLE_WEEKLY,<RANGE> (마지막 주문 <TIME>),매주 토요일,1
+39,SKIP_REST_AMBIGUOUS,<RANGE>,"매월 둘째, 넷째 화요일",1
+12,SKIP_REST_AMBIGUOUS,화요일~토요일 <RANGE> ※ 4월 1일~11월 30일에만 개관,매주 일요일~월요일 / 설·추석 당일 / 동절기(12월~3월),1
+39,PARSE_SIMPLE_WEEKLY,<RANGE> (<TIME> 라스트오더),연중무휴,1
+39,PARSE_WEEKDAY_WEEKEND,[평일] - <RANGE> - 준비시간 <RANGE> - 마지막 주문 <TIME> [주말] - <RANGE> - 준비시간 <RANGE> - 마지막 주문 <TIME>,연중무휴,1
+38,PARSE_SIMPLE_WEEKLY,<RANGE>,[백화점] 1월 1일 / 설·추석 / 매월 월요일 중 하루 [쇼핑몰] 연중무휴 ※ 자세한 사항은 홈페이지 참조,1
+14,SKIP_TIME_AMBIGUOUS,- 평일 <RANGE> - 토요일 <RANGE>,매주 일요일,1
+12,PARSE_SIMPLE_WEEKLY,<RANGE>,매주 월요일 / 1월 1일 / 설·추석 당일,1
+12,SKIP_TIME_AMBIGUOUS,<RANGE> ※ 자세한 사항은 전화문의 요망,1월 1일 / 설·추석 연휴 ※ 자세한 사항은 전화문의 요망,1
+12,SKIP_REST_AMBIGUOUS,[1월~2월] <RANGE> (입장마감 <TIME>) [3월~5월] <RANGE> (입장마감 <TIME>) [6월~8월] <RANGE> (입장마감 <TIME>) [9월~10월] <RANGE> (입장마감 <TIME>) [11월~12월] <RANGE> (입장마감 <TIME>),"매주 화요일 ※ 단, 정기휴일이 공휴일 및 대체공휴일과 겹칠 경우에는 개방하며, 그 다음의 첫 번째 비공휴일이 정기휴일임",1
+12,PARSE_SIMPLE_WEEKLY,<RANGE> (입장마감 <TIME>),매주 월요일 / 1월 1일,1
+12,PARSE_SIMPLE_WEEKLY,<RANGE> (입장 마감 <TIME>),매주 월요일 / 1월 1일,1
+12,SKIP_REST_AMBIGUOUS,[2월~5월] <RANGE> (입장마감 <TIME>) [6월~8월] <RANGE> (입장마감 <TIME>) [9월~10월] <RANGE> (입장마감 <TIME>) [11월~1월] <RANGE> (입장마감 <TIME>),"매주 월요일 ※ 단, 정기휴일이 공휴일 및 대체공휴일과 겹칠 경우에는 개방하며, 그 다음의 첫 번째 비공휴일이 정기휴일임",1
+12,SKIP_REST_AMBIGUOUS,[2월~5월] <RANGE> (입장마감 <TIME>) [6월~8월] <RANGE> (입장마감 <TIME>) [9월~10월] <RANGE> (입장마감 <TIME>) [11월~1월] <RANGE> (입장마감 <TIME>),"매주 월요일 ※ 단, 정기휴일이 공휴일 및 대체공휴일과 겹칠 경우에는 개방하며, 그 다음의 첫 번째 비공휴일이 정기휴일",1
+12,SKIP_TIME_AMBIGUOUS,- 3월~10월 <RANGE> - 11월~2월 <RANGE>,연중무휴,1
+12,PARSE_SIMPLE_WEEKLY,<RANGE> (입장마감 <TIME>),매주 월요일~화요일,1
+12,SKIP_REST_AMBIGUOUS,[일반관람] <RANGE> (입장마감 <TIME>) [전시관] - 석조전 <RANGE> (마지막 해설 <TIME>) - 돈덕전 <RANGE> (입장마감 <TIME>) - 중명전 <RANGE>(입장마감 <TIME>),"매주 월요일 ※ 단, 정기휴일이 공휴일 및 대체공휴일과 겹칠 경우에는 개방하며, 그 다음의 첫 번째 비공휴일이 정기휴일임",1
+12,SKIP_TIME_AMBIGUOUS,- 하절기 <RANGE> - 동절기 <RANGE>,매주 월요일,1
+14,SKIP_REST_AMBIGUOUS,- 월요일~금요일 <RANGE> - 방학기간 <RANGE>,매주 토요일~일요일 / 법정공휴일,1
+39,SKIP_TIME_AMBIGUOUS,[수요일~금요일] <RANGE> (마지막 주문 <TIME>) [토요일] <RANGE> (마지막 주문 <TIME>) [일요일] <RANGE> (마지막 주문 <TIME>),매주 월요일~화요일,1
+14,PARSE_SIMPLE_WEEKLY,<RANGE>,매주 일요일~월요일 / 설·추석,1
+38,SKIP_TIME_AMBIGUOUS,- 시장 <RANGE> - 식당가 <RANGE>,매주 화요일,1
+14,PARSE_SIMPLE_WEEKLY,<RANGE> (입장 마감 <TIME>),1월 1일 / 설·추석 연휴 / 매주 월요일 / 기타 관장이 정하는 휴일,1
+12,SKIP_TIME_AMBIGUOUS,상시 개방 ※ 교내에 위치함으로 전화 문의 후 방문 바람,연중무휴,1
+12,SKIP_REST_AMBIGUOUS,<RANGE>,주말 / 공휴일,1
+14,PARSE_SIMPLE_WEEKLY,<RANGE> (입장 마감 <TIME>),매주 월요일 / 1월 1일 / 설·추석 연휴 / 12월 12일(개관기념일),1
+14,PARSE_SIMPLE_WEEKLY,<RANGE>,매주 월요일 / 설·추석,1
+14,SKIP_REST_AMBIGUOUS,- 월요일~화요일/목요일~금요일/일요일 <RANGE> (입장 마감 <TIME>)- 수요일/토요일 <RANGE> (입장 마감 <TIME>),1월 1일 / 설·추석 당일,1
+14,SKIP_TIME_AMBIGUOUS,[평일] <RANGE> (입장마감 <TIME>) [주말] - 하절기(3월~10월) <RANGE> (입장마감 <TIME>) - 동절기(11월~2월) <RANGE> (입장마감 <TIME>) [서울 문화의 밤] <RANGE> (입장마감 <TIME>),"매주 월요일 / 1월 1일 ※ 단, 월요일이 공휴일인 경우 정상 개관",1
+39,PARSE_SIMPLE_WEEKLY,<RANGE> (마지막 주문 <TIME>),매주 일요일 / 설·추석 연휴,1
+39,SKIP_TIME_AMBIGUOUS,전화 문의,연중무휴,1
+14,SKIP_TIME_AMBIGUOUS,[하절기(3월~10월)] - 평일 <RANGE> - 주말 <RANGE> - 금요일 <RANGE> [동절기(11월~2월)] - 평일 <RANGE> - 주말 <RANGE> - 금요일 <RANGE> ※ 자세한 사항은 홈페이지 참조,"매주 월요일 (단, 월요일이 공휴일인 경우 정상 운영) / 1월 1일 / 시장이 정하는 휴관일",1
+39,SKIP_TIME_AMBIGUOUS,※ 전화문의 요망,※ 전화문의 요망,1
+14,SKIP_REST_AMBIGUOUS,"<RANGE> 수,토 <RANGE> ※ 발권시간 : 관람종료 1시간 전까지 가능",1월1일 / 설날 / 추석,1
+39,SKIP_TIME_AMBIGUOUS,<RANGE>,연중무휴,1
+39,PARSE_SIMPLE_WEEKLY,<RANGE> (마지막 주문 <TIME>),매주 월요일,1
+39,PARSE_SIMPLE_WEEKLY,<RANGE> (마지막 주문 <TIME>),매주 화요일,1
+39,SKIP_TIME_AMBIGUOUS,<RANGE>,매주 일요일,1
+39,SKIP_REST_AMBIGUOUS,- <RANGE> - 마지막 주문 <TIME>,격주 일요일,1
+12,SKIP_TIME_AMBIGUOUS,매장 별로 상이함 ※ 홈페이지 참조,매장 별로 상이함 ※ 홈페이지 참조,1
+14,SKIP_REST_AMBIGUOUS,<RANGE>,매주 금요일 / 법정공휴일,1
+39,SKIP_TIME_AMBIGUOUS,[사찰음식점] <RANGE> ※ 예약제로 운영 [베이커리] <RANGE>,매주 일요일~월요일,1
+39,SKIP_TIME_AMBIGUOUS,[수요일~토요일] - <RANGE> - 준비시간 <RANGE> - 마지막 주문 <TIME> [일요일] - <RANGE> - 마지막 주문 <TIME>,"매주 월요일, 화요일",1
+12,PARSE_SIMPLE_WEEKLY,<RANGE> ※ 예약 필수,연중무휴,1
+15,NO_DATA,<EMPTY>,<EMPTY>,1
+14,SKIP_TIME_AMBIGUOUS,※ 시설 별로 상이하므로 홈페이지 참조,연중무휴,1
+14,SKIP_TIME_AMBIGUOUS,- 하절기(4월~10월) <RANGE> - 동절기(11월~3월) <RANGE>,매주 월요일,1
+14,PARSE_SIMPLE_WEEKLY,<RANGE> (휴게시간 <RANGE>),연중무휴,1
+14,SKIP_TIME_AMBIGUOUS,- 하절기 <RANGE> (입장마감 <TIME>) - 동절기 <RANGE> (입장마감 <TIME>),매주 월요일 / 설·추석 연휴,1
+39,PARSE_SIMPLE_WEEKLY,<RANGE> (주중 브레이크타임 <RANGE> / 라스트오더 <TIME>),연중무휴,1
+39,PARSE_SIMPLE_WEEKLY,<RANGE> (준비 시간 <RANGE> / 마지막 주문 <TIME>),매주 일요일,1
+39,SKIP_REST_AMBIGUOUS,<RANGE>,1월 1일 / 설·추석 연휴,1
+14,SKIP_TIME_AMBIGUOUS,[하절기(3월~11월)] - 평일 <RANGE> (입장 마감 <TIME>) - 주말 <RANGE> (입장 마감 <TIME>) [동절기(12월~2월)] - <RANGE> (입장 마감 <TIME>) ※ 박물관 사정에 따라 변동될 수 있으므로 홈페이지 참조,"매주 월요일 (단, 월요일이 공휴일인 경우 다음날 휴관) / 1월 1일",1
+12,SKIP_REST_AMBIGUOUS,상시 개방,매주 토요일~일요일 / 법정공휴일,1
+12,SKIP_TIME_AMBIGUOUS,상시 개방,매주 월요일,1
+39,SKIP_TIME_AMBIGUOUS,전화 문의,전화 문의,1
+12,SKIP_TIME_AMBIGUOUS,점포별 상이함,점포별 상이함,1
+28,NO_TIME_TEXT,<EMPTY>,<EMPTY>,1
+12,PARSE_SIMPLE_WEEKLY,<RANGE>,매주 월요일~화요일,1
+12,PARSE_SIMPLE_WEEKLY,<RANGE> ※ 회차 별로 운영 ※ 사전 예약제,매주 월요일 / 1월 1일 / 설·추석 연휴,1
+12,SKIP_REST_AMBIGUOUS,<TIME> / <TIME> ※ 사전 예약 필수,매주 토요일~일요일 / 법정공휴일,1
+12,SKIP_TIME_AMBIGUOUS,- 하절기(3~10월) <RANGE> - 동절기(11~2월) <RANGE>,국경일 / 공휴일,1
+39,SKIP_REST_AMBIGUOUS,<RANGE> (준비시간 <RANGE>),<EMPTY>,1
+39,PARSE_SIMPLE_WEEKLY,- <RANGE> - 준비시간 <RANGE> - 마지막 주문 <TIME>,매주 화요일,1
+12,SKIP_REST_AMBIGUOUS,<RANGE> ※ 프로그램에 따라 일부공간 탄력운영,1월 1일 / 설·추석 당일 ※ 시설 별로 상이하므로 자세한 사항은 홈페이지 참조,1
+12,SKIP_REST_AMBIGUOUS,<RANGE> (입장마감 <TIME>),<EMPTY>,1
+12,SKIP_REST_AMBIGUOUS,<RANGE> (입장마감 <TIME>),"매주 월요일 / 1월 1일 ※ 단, 월요일이 공휴일인 경우 개관",1
+14,PARSE_SIMPLE_WEEKLY,<RANGE>,매주 월요일~수요일 / 설·추석 당일,1
+39,PARSE_SIMPLE_WEEKLY,- <RANGE> - 준비시간 <RANGE> - 점심 마지막 주문 <TIME> / 저녁 마지막 주문 <TIME>,연중무휴,1
+39,PARSE_SIMPLE_WEEKLY,- <RANGE> - 마지막 주문 <TIME> ※ 매년 초·중·말복은 <TIME> 영업 시작,매주 월요일,1
+12,SKIP_TIME_AMBIGUOUS,※ 점포별 상이,※ 점포별 상이,1
+12,PARSE_SIMPLE_WEEKLY,<RANGE>,매주 토요일~일요일,1
+12,SKIP_TIME_AMBIGUOUS,※ 자세한 사항은 전화문의 요망,연중무휴,1
+12,PARSE_SIMPLE_WEEKLY,<RANGE> (입장 마감 : 관람 종료 1시간 전),매주 월요일 ※전시 기간 확인 후 방문 요망(전시 준비 기간 미운영),1
+14,SKIP_REST_AMBIGUOUS,홈페이지 참조,홈페이지 참조,1
+14,SKIP_TIME_AMBIGUOUS,<RANGE> ※ 전시마다 상이하므로 전화문의 요망,연중무휴,1
+12,SKIP_REST_AMBIGUOUS,<RANGE>,시설별 상이,1
+12,PARSE_SIMPLE_WEEKLY,<RANGE> ※ 방문 전 연락 필수,매주 화요일 / 수요일,1
+12,SKIP_TIME_AMBIGUOUS,[3월~4월] <RANGE> [5월~8월] <RANGE> [9월~10월] <RANGE> [11월~2월] <RANGE>,연중무휴,1
+14,SKIP_REST_AMBIGUOUS,<RANGE> (입장마감 <TIME>),"매주 월요일(단, 월요일이 공휴일인 경우 그 다음날 휴관) / 1월 1일 / 설·추석 연휴",1
+39,SKIP_TIME_AMBIGUOUS,[평일] - <RANGE> - 준비시간 <RANGE> - 마지막 주문 <TIME> [일요일] - <RANGE> - 마지막 주문 <TIME>,매주 토요일,1
+39,SKIP_TIME_AMBIGUOUS,[평일] - <RANGE> - 준비 시간 <RANGE> - 마지막 주문 <TIME> [토요일] - <RANGE> - 마지막 주문 <TIME>,매주 일요일,1
+14,SKIP_REST_AMBIGUOUS,<RANGE> (입장마감 <TIME>),"매주 월요일 (단, 월요일이 공휴일인 경우 개관하며, 화요일에 대체 휴관) / 1월 1일 / 설·추석 당일",1
+14,SKIP_REST_AMBIGUOUS,[기획전시] 월요일~토요일 <RANGE> [상설전시] 월요일~금요일 <RANGE>,매주 일요일 / 공휴일,1
+14,SKIP_REST_AMBIGUOUS,[평일] - <RANGE> ※ 매월 말 마지막 평일은 15시부터 관람 가능 [토요일] - <RANGE>,매주 일요일 / 공휴일,1
+14,SKIP_REST_AMBIGUOUS,<RANGE>,"매주 일요일, 월요일 / 법정공휴일",1
+12,PARSE_SIMPLE_WEEKLY,"<RANGE> ※ 토요일의 경우, 소재은행은 새활용 탐방, 공간 및 장비사용 신청 사전 예약자에 한하여 방문 가능",매주 일요일,1
+14,SKIP_REST_AMBIGUOUS,[야외공원] 상시 개방 [탱크 T1~T6] 화요일~일요일 <RANGE> ※ 공간 사용 일정에 따라 탱크 출입이 제한될 수 있음 [카페 Tank6] 화요일~일요일 <RANGE>,<EMPTY>,1
+12,PARSE_SIMPLE_WEEKLY,<RANGE> (입장마감 <TIME>),매주 월요일 / 1월 1일 / 설·추석 연휴,1
+12,SKIP_REST_AMBIGUOUS,<RANGE>,주말 및 공휴일,1
+12,PARSE_SIMPLE_WEEKLY,<RANGE> (입장마감 <TIME>),매주 일요일 / 1월 1일 / 설·추석 연휴,1
+12,SKIP_TIME_AMBIGUOUS,"둘째 주, 넷째 주 수요일 <RANGE> ※ 사전 예약 필수",매주 토요일~일요일 / 공휴일,1
+14,SKIP_REST_AMBIGUOUS,화요일~토요일 <RANGE> ※ 단체교육이 진행 중인 경우 관람에 제한이 있음,매주 일요일~월요일 / 공휴일,1
+39,PARSE_SIMPLE_WEEKLY,- 화요일~토요일 <TIME>~24:00 - 일요일 <RANGE>,매주 월요일,1
+39,SKIP_TIME_AMBIGUOUS,- 월요일~금요일 <RANGE> - 토요일 <RANGE>,매주 일요일,1
+38,SKIP_REST_AMBIGUOUS,<RANGE>,매월 넷째 화요일,1
+12,SKIP_TIME_AMBIGUOUS,업체 별로 상이함,업체 별로 상이함,1
+14,SKIP_TIME_AMBIGUOUS,- 하절기(3월~10월) <RANGE> - 동절기(11월~2월) 110:00~<TIME> - 주말 <RANGE>,매주 화요일 / 법정 공휴일,1
+38,NO_TIME_TEXT,<EMPTY>,매월 첫째 주 월요일,1
+12,SKIP_TIME_AMBIGUOUS,- 화요일~금요일 <RANGE> - 토요일 <RANGE> ※<RANGE> 점심시간,매주 일요일~월요일,1
+39,PARSE_WEEKDAY_WEEKEND,- 평일 <RANGE> (준비시간 <RANGE>) - 주말 <RANGE>,연중무휴,1
+12,SKIP_TIME_AMBIGUOUS,- 워터파크 <RANGE> - 찜질스파 <RANGE>,[워터파크] 매주 화요일~수요일 [찜질스파] 연중무휴 ※ 매달 마지막 주 수요일은 전체(워터&찜질&스파) 휴장,1
+14,SKIP_TIME_AMBIGUOUS,- 화~목요일 <RANGE> - 금요일 <RANGE> - 토요일 <RANGE> - 일요일 및 공휴일 <RANGE>,매주 월요일 / 설·추석 당일,1
+32,RAW_ONLY_LODGING,입실시간: 자유 퇴실시간: 자유,<EMPTY>,1
+39,PARSE_SIMPLE_WEEKLY,- <RANGE> - 준비 시간 <RANGE> - 마지막 주문 <TIME>,연중무휴,1
+39,PARSE_SIMPLE_WEEKLY,- <RANGE> - 준비시간 <RANGE> - 마지막 주문 <TIME> ※ 주말은 준비시간 없이 영업함,연중무휴,1
+39,SKIP_TIME_AMBIGUOUS,[월요일~금요일] - <RANGE> - 준비시간 <RANGE> - 마지막 주문 <TIME> [토요일] - <RANGE> - 마지막 주문 <TIME>,매주 일요일,1
+39,PARSE_SIMPLE_WEEKLY,- <RANGE> - 준비시간 <RANGE> - 마지막 주문 <TIME>,매주 월요일 / 설·추석 당일,1
+12,SKIP_TIME_AMBIGUOUS,[교육시간] - 평일 <RANGE> / <RANGE> ※ 성인 위주로 하되 학교 등 단체 교육 가능 - 첫째 주 토요일 <RANGE> ※ 가족단위 교육(8세 이상) - 둘째 주 목요일 <RANGE> ※ 성인 위주 교육 - 마지막 주 금요일 <RANGE> ※ 중복교육이수자 및 교직원 위주 교육 [외상(현장)응급처치 교육] - 마지막 주 월요일~금요일 <RANGE> ※ 사전 전화 예약 필수...,<EMPTY>,1
+14,SKIP_REST_AMBIGUOUS,[종합자료실] - 평일 <RANGE> - 주말 <RANGE> [어린이자료실] - 평일 <RANGE> - 주말 <RANGE>,매주 월요일 / 법정공휴일,1
+14,SKIP_REST_AMBIGUOUS,[음악도서관 / 종합자료실] - 평일 <RANGE> - 주말 <RANGE> [어린이자료실 / 정보검색실] - 평일 <RANGE> - 주말 <RANGE>,매주 월요일 / 공휴일,1
+14,SKIP_TIME_AMBIGUOUS,- 평일 <RANGE> - 토요일 <RANGE> - 일요일 및 공휴일 <RANGE>,연중무휴,1
+12,SKIP_TIME_AMBIGUOUS,점포별 상이,연중무휴,1
+39,SKIP_TIME_AMBIGUOUS,[평일] - <RANGE> - 준비시간 <RANGE> - 마지막 주문 <TIME> [토요일] <RANGE> (마지막 주문 <TIME>) [일요일] <RANGE> (마지막 주문 <TIME>),연중무휴,1
+14,SKIP_REST_AMBIGUOUS,- 평일 <RANGE> - 주말 <RANGE>,매주 일요일 / 법정공휴일,1
+15,RAW_ONLY_EVENT,09.26 <RANGE> 09.27 <RANGE>,<EMPTY>,1
+39,SKIP_REST_AMBIGUOUS,- <RANGE> - 준비 시간 <RANGE> - 마지막 주문 <TIME>,1월 1일,1
+39,SKIP_REST_AMBIGUOUS,<RANGE> (마지막 주문 <TIME>),백화점 휴무일,1
+14,SKIP_REST_AMBIGUOUS,<RANGE> (입장마감 <TIME>) ※ 어린이 체험실은 사전예약제로 운영,<EMPTY>,1
+14,PARSE_SIMPLE_WEEKLY,<RANGE>,"매주 일요일, 월요일",1
+12,SKIP_TIME_AMBIGUOUS,상시 개방 (강남메디컬투어센터 평일 <RANGE>),연중무휴,1
+39,SKIP_REST_AMBIGUOUS,<RANGE>,명절당일,1
+12,SKIP_TIME_AMBIGUOUS,※ 시설 별 상이하므로 전화문의 요망,※ 시설 별 상이하므로 전화문의 요망,1
+39,SKIP_REST_AMBIGUOUS,평일 <TIME>-24:00 / 토요일 <RANGE>(라스트오더 24:00)/ 일요일 <RANGE>(라스트오더 <TIME>),<EMPTY>,1
+12,SKIP_TIME_AMBIGUOUS,- 화요일~목요일 / 일요일 <RANGE> - 금요일~토요일 <RANGE>,매주 월요일,1
+12,PARSE_SIMPLE_WEEKLY,<RANGE> ※ 주민배려 정숙관광 필요,연중무휴,1
+12,SKIP_TIME_AMBIGUOUS,[하절기(3월~10월)] - 평일 <RANGE> - 주말 <RANGE> [동절기(11월~2월)] - 평일 <RANGE> - 주말 <RANGE>,매주 월요일 / 1월 1일 / 설·추석 당일,1
+39,PARSE_SIMPLE_WEEKLY,<RANGE> (준비시간 <RANGE>),매주 토요일~일요일,1
+39,PARSE_SIMPLE_WEEKLY,<RANGE> (마지막 주문 <TIME>),매주 토요일~일요일,1
+39,PARSE_SIMPLE_WEEKLY,<RANGE>,매주 토요일~일요일 / 설·추석 당일,1
+39,PARSE_SIMPLE_WEEKLY,- <RANGE> - 준비시간 <RANGE> - 마지막 주문 <TIME>,매주 토요일~일요일,1
+39,SKIP_TIME_AMBIGUOUS,- 평일 <RANGE> (준비시간 <RANGE>) - 토요일 <RANGE>,매주 일요일,1
+39,PARSE_SIMPLE_WEEKLY,<RANGE> (브레이크타임 <RANGE> / 라스트오더 <TIME>),매주 일요일,1
+39,SKIP_TIME_AMBIGUOUS,<TIME>~24:00,매주 일요일,1
+14,PARSE_WEEKDAY_WEEKEND,- 평일 <RANGE> - 주말 <RANGE>,매주 월요일 / 1월 1일 / 설·추석 연휴,1
+14,PARSE_SIMPLE_WEEKLY,<RANGE>,매주 월요일 / 1월 1일 / 설·추석 연휴 / 성탄절,1
+14,SKIP_TIME_AMBIGUOUS,"[화요일~목요일, 일요일] - <RANGE> - 입장 마감 <TIME> [금요일~토요일] - <RANGE> - 입장 마감 <TIME>",매주 월요일,1
+14,SKIP_REST_AMBIGUOUS,<RANGE> (입장마감 <TIME>),"매주 월요일 (단, 월요일이 공휴일인 경우 개관) / 1월 1일",1
+39,SKIP_REST_AMBIGUOUS,- <RANGE> - 준비시간 <RANGE> - 마지막 주문 <TIME>,설·추석 당일,1
+38,SKIP_TIME_AMBIGUOUS,[화요일~토요일] - <RANGE> [일요일] - <RANGE>,매주 월요일,1
+12,SKIP_TIME_AMBIGUOUS,매장 별 상이,<EMPTY>,1
+39,PARSE_SIMPLE_WEEKLY,- <RANGE> - 준비시간 <RANGE> - 마지막 주문 <TIME> ※ 주말에는 준비시간 없이 영업함,연중무휴,1
+39,SKIP_REST_AMBIGUOUS,- <RANGE> - 일요일 <RANGE>,<EMPTY>,1
+39,SKIP_TIME_AMBIGUOUS,- 본관 <RANGE> - 신관 <RANGE>,연중무휴,1
+39,SKIP_REST_AMBIGUOUS,<RANGE> (<RANGE> 브레이크타임),명절 휴무,1
+39,SKIP_TIME_AMBIGUOUS,- <TIME>~24:00 - 점심 준비시간 <RANGE> / 저녁 준비시간 <RANGE> - 마지막 주문 <TIME> ※ 22시부터 주류 고객만 이용 가능,연중무휴,1
+12,SKIP_TIME_AMBIGUOUS,[미사 및 성사 시간] - 월요일 <TIME> / <TIME> - 화요일 <TIME> / <TIME> / <TIME> - 수요일 <TIME> / <TIME> / <TIME> - 목요일 <TIME> / <TIME> / <TIME> - 금요일 <TIME> / <TIME> / <TIME> - 토요일 <TIME> / <TIME> - 일요일 <TIME> / <TIME> / <TIME> / <TI...,연중무휴,1
+12,SKIP_TIME_AMBIGUOUS,상시 개방 ※ 미사시간은 홈페이지 확인 요망,연중무휴,1
+39,SKIP_TIME_AMBIGUOUS,주중 <RANGE> (휴게시간 <RANGE>) 주말 <RANGE>,연중무휴,1
+12,SKIP_TIME_AMBIGUOUS,<RANGE> ※ 자세한 사항은 전화문의 요망,연중무휴,1
+39,SKIP_TIME_AMBIGUOUS,주중 <RANGE> 주말 <RANGE>,연중무휴,1
+12,SKIP_TIME_AMBIGUOUS,- 동절기(11월~2월) <RANGE> - 하절기(3월~10월) <RANGE>,연중무휴,1
+28,SKIP_TIME_AMBIGUOUS,- 입실 <TIME>- 퇴실 <TIME>- 피크닉장 퇴실 <TIME>,매주 화요일 / 설·추석 당일,1
+38,SKIP_REST_AMBIGUOUS,<RANGE>,월요일 / 명절은 별도 공지,1
+38,SKIP_REST_AMBIGUOUS,- 월요일~목요일 <RANGE> - 금요일~일요일 <RANGE>,월 1회 ※ 홈페이지 참조,1
+38,SKIP_REST_AMBIGUOUS,<RANGE>,"방문 전, 홈페이지 확인 요망",1
+14,PARSE_SIMPLE_WEEKLY,<RANGE>,매주 월요일 / 1월1일,1
+14,PARSE_SIMPLE_WEEKLY,<RANGE>,매주 일요일~월요일,1
+14,SKIP_TIME_AMBIGUOUS,<RANGE>(입장마감 <TIME>) ※ 매일 30분간(<RANGE>) 청소 및 소독 시간,매주 월요일 / 1월 1일 / 설·추석 당일,1
+14,SKIP_TIME_AMBIGUOUS,- 하절기 (3월~10월) <RANGE> - 동절기 (11월~2월) <RANGE>,매주 월요일 / 1월 1일 / 설·추석 당일,1
+39,PARSE_SIMPLE_WEEKLY,"[월요일, 수요일~목요일] - <RANGE> - 마지막 주문 <TIME> [금요일~일요일] - <TIME>~24:00 - 마지막 주문 <TIME>",매주 화요일,1
+38,SKIP_TIME_AMBIGUOUS,점포 별로 상이,점포 별로 상이,1
+12,PARSE_SIMPLE_WEEKLY,<RANGE>,"매주 토요일, 일요일",1
+38,SKIP_TIME_AMBIGUOUS,<RANGE> ※ 점포 별로 상이함,매월 셋째 주 화요일 ※ 점포 별로 상이함,1
+38,SKIP_TIME_AMBIGUOUS,- 유창상가 <RANGE> - 명선상가 <RANGE> - 명선상가 <RANGE> - 현대·협동상가 <RANGE> ※ 점포 별로 상이할 수 있으므로 자세한 영업시간은 점포에 문의 요망,연중무휴,1
+39,PARSE_WEEKDAY_WEEKEND,평일 <RANGE> (브레이크타임 <RANGE>) <TIME> 라스트오더 주말 <RANGE> (<RANGE> 브레이크타임) <TIME> 라스트오더,연중무휴,1
+39,PARSE_SIMPLE_WEEKLY,<RANGE> (브레이크타임 <RANGE>) <TIME> 라스트오더,연중무휴,1
+39,PARSE_SIMPLE_WEEKLY,<RANGE> (브레이크타임 <RANGE>),매주 일요일,1
+39,PARSE_SIMPLE_WEEKLY,<RANGE> 브레이크타임 <RANGE>,매주 일요일,1
+14,SKIP_TIME_AMBIGUOUS,<RANGE> ※ 점포 별로 상이함,연중무휴 ※ 점포 별로 상이함,1
+14,PARSE_SIMPLE_WEEKLY,<RANGE> (입장마감 <TIME>),매주 월요일 / 1월 1일,1
+14,SKIP_TIME_AMBIGUOUS,[전시관] - <RANGE> (입장마감 <TIME>) ※ 전시물 점검 및 정비 시간 : <RANGE> [천문대 주간 관측] - 평일 <TIME> / <TIME> - 주말 <TIME> / <TIME> / <TIME> / <TIME> [천문대 야간 관측] - 금~토요일 <RANGE> (하절기 <RANGE>),매주 월요일 / 1월 1일 / 설·추석 당일,1
+14,SKIP_TIME_AMBIGUOUS,[한국영상자료원] <RANGE> [한국영화박물관] <RANGE>,"매주 일요일, 월요일 / 1월 1일 / 설·추석 연휴 / 창립기념일 / 근로자의 날",1
+14,SKIP_REST_AMBIGUOUS,<RANGE> (주 4회 운영),매주 금요일~일요일 / 공휴일,1
+14,SKIP_REST_AMBIGUOUS,<RANGE> (<TIME>까지 입장),"명절 (신정, 설, 추석) 연휴, 주말, 공휴일",1
+12,SKIP_REST_AMBIGUOUS,[1월 / 12월] <RANGE> [2월 / 10월~11월] <RANGE> [3월~4월] <RANGE> [5월] <RANGE> [6월~7월] <RANGE> [8월~9월] <RANGE> ※ 일출·일몰 시간에 따라 월별 운영,1월 1일 / 설·추석 연휴 / 평일 법정공휴일 / 대체 공휴일 / 근로자의 날 / 대학수학능력시험일 / 기타 시설정비일,1
+38,SKIP_TIME_AMBIGUOUS,<RANGE> ※ 점포 별로 상이함,점포 별로 상이함,1
+39,PARSE_WEEKDAY_WEEKEND,[평일] - <RANGE> - 준비시간 <RANGE> - 마지막 주문 <TIME> [주말] - <RANGE> - 마지막 주문 <TIME>,연중무휴,1
+39,SKIP_REST_AMBIGUOUS,<RANGE> (마지막 주문 <TIME>),설·추석 연휴,1
+39,SKIP_TIME_AMBIGUOUS,[월요일~금요일] - <RANGE> - 마지막 주문 <TIME> [토요일] - <RANGE> - 마지막 주문 <TIME> ※ 공휴일이 없는 주간 수요일 <TIME> 마감,매주 일요일 / 공휴일,1
+39,PARSE_WEEKDAY_WEEKEND,[평일] - <RANGE> - 준비시간 <RANGE> - 마지막 주문 <TIME> [주말] - <RANGE> - 준비시간 <RANGE> - 마지막 주문 <TIME>,매주 월요일,1
+39,SKIP_TIME_AMBIGUOUS,- 주중 <RANGE> - 주말 <RANGE>,연중무휴,1
+39,SKIP_TIME_AMBIGUOUS,- <RANGE> - 준비시간 <RANGE> - 마지막 주문 <TIME>,연중무휴,1
+14,SKIP_TIME_AMBIGUOUS,전시별 상이,연중무휴,1
+14,PARSE_WEEKDAY_WEEKEND,- 평일 <RANGE> - 주말 <RANGE> - 점심시간 <RANGE> ※ 사전 예약 필수,매주 월요일 / 설·추석 연휴,1
+39,PARSE_SIMPLE_WEEKLY,<RANGE> (준비 시간 <RANGE>),매주 월요일,1
+12,SKIP_TIME_AMBIGUOUS,<RANGE> ※ 매월 첫째 금요일 <RANGE> 능엄주 기도,<EMPTY>,1
+38,SKIP_TIME_AMBIGUOUS,점포별 상이,연중무휴 (점포별 상이),1
+39,SKIP_TIME_AMBIGUOUS,[레스토랑] - <RANGE> - 준비시간 <RANGE> - 점심 마지막 주문 <TIME> - 저녁 마지막 주문 <TIME> [카페] - <RANGE> - 마지막 주문 <TIME>,연중무휴,1
+39,SKIP_TIME_AMBIGUOUS,상시 개방,연중무휴,1
+12,SKIP_REST_AMBIGUOUS,<RANGE>,1월 1일 / 설·추석 연휴,1
+39,SKIP_TIME_AMBIGUOUS,[평일] - <TIME>~24:00 - 준비시간 <RANGE> - 점심 마지막 주문 <TIME> / 저녁 마지막 주문 <TIME> [주말] - <TIME>~24:00 - 마지막 주문 <TIME>,연중무휴,1
+39,SKIP_REST_AMBIGUOUS,<TIME>~24:00,"매월 첫째, 셋째 월요일",1
+39,PARSE_SIMPLE_WEEKLY,- <RANGE> - 준비시간 <RANGE>,매주 일요일,1
+12,SKIP_TIME_AMBIGUOUS,"상시 개방 ※ 단, 계곡 출입은 한시적으로 허용하고 있으므로 자세한 사항은 홈페이지 확인 또는 전화 문의",연중무휴,1
+38,SKIP_TIME_AMBIGUOUS,<RANGE> (점포별 상이함),연중무휴 (점포별 상이함),1
+14,SKIP_TIME_AMBIGUOUS,<TIME> / <TIME> / <TIME> ※ 사전 예약제로 운영,매주 월요일 / 1월 1일 / 설·추석 연휴,1
+38,SKIP_REST_AMBIGUOUS,<RANGE>,주말,1
+38,SKIP_REST_AMBIGUOUS,- 의류 <RANGE> - 가방 24:00~<TIME>,금요일 / 토요일,1
+38,SKIP_TIME_AMBIGUOUS,※ 점포 별로 상이함,※ 점포 별로 상이함,1
+12,SKIP_REST_AMBIGUOUS,상시 개방,<EMPTY>,1
+12,SKIP_TIME_AMBIGUOUS,- 공원 상시 개방 - 홍보관 <RANGE>,연중무휴,1
+14,SKIP_TIME_AMBIGUOUS,※ 공연 및 행사 별 상이하므로 홈페이지 참고,※ 공연 및 행사 별 상이하므로 홈페이지 참고,1
+39,SKIP_REST_AMBIGUOUS,- <RANGE> - 준비시간 <RANGE> - 마지막 주문 <TIME>,설·추석 연휴,1
+39,SKIP_TIME_AMBIGUOUS,[월요일~목요일] - <RANGE> - 마지막 주문 <TIME> [금요일~일요일] - <RANGE> - 마지막 주문 <TIME>,연중무휴,1
+12,SKIP_TIME_AMBIGUOUS,"- 공원 상시 개방 - 축구장, 풋살장 <RANGE>",연중무휴,1
+12,PARSE_SIMPLE_WEEKLY,<RANGE>,매주 월요일 / 1월1일 / 설·추석 기념 행사시(사전공지 예정),1
+12,SKIP_TIME_AMBIGUOUS,[축구장] <RANGE> [배드민턴장] - 1부 <RANGE> - 2부 <RANGE> - 3부 <RANGE> - 4부 <RANGE> [테니스장] - 실내 <RANGE> / <RANGE> ※ 주말 및 공휴일은 <TIME>까지 운영 - 실외 <RANGE>,※ 시설별 상이하므로 홈페이지 참고,1
+38,SKIP_TIME_AMBIGUOUS,"[야시장] - 하절기(3~10월) <RANGE> - 동절기(11~2월) <RANGE> ※ 단, 시장 점포 별로 상이함","[야시장] 매월 셋째주 일요일 ※ 단, 시장 점포 별로 상이함",1
+14,PARSE_SIMPLE_WEEKLY,<RANGE> (입장마감 <TIME>),매주 월요일 / 1월 1일 / 설·추석 당일,1
+14,PARSE_SIMPLE_WEEKLY,<RANGE> (18시 입장 마감),연중무휴,1
+38,SKIP_REST_AMBIGUOUS,<RANGE> (준비시간 <RANGE>),매월 5번째 월요일,1
+14,PARSE_SIMPLE_WEEKLY,"<RANGE> (입장마감 <TIME>) ※ 단, 필요에 따라 부정기적 연장개관 있음",매주 월요일 / 1월 1일 / 설·추석 연휴,1
+12,SKIP_TIME_AMBIGUOUS,<RANGE> ※ 시설별 상이하므로 전화 문의,<EMPTY>,1
+12,SKIP_REST_AMBIGUOUS,일몰 전 30분~<TIME>,"매주 월요일 / 우천, 태풍, 혹한 등 기상 악화 시",1
+38,SKIP_REST_AMBIGUOUS,<RANGE>,홈페이지 확인,1
+12,SKIP_TIME_AMBIGUOUS,- 화요일~토요일 <RANGE> - 일요일 <RANGE>,매주 월요일 / 설·추석 당일,1
+38,SKIP_TIME_AMBIGUOUS,[과일류] - 1차(동절기) <TIME> - 1차(하절기) <TIME> - 2차 <TIME> [채소류] - <RANGE>,홈페이지 확인,1
+39,SKIP_TIME_AMBIGUOUS,월요일 <RANGE> 화요일~금요일 <RANGE> 토요일~일요일 <RANGE>,연중무휴,1
+39,SKIP_REST_AMBIGUOUS,홈페이지 확인,홈페이지 확인,1
+12,SKIP_TIME_AMBIGUOUS,[피트니스센터] - 평일 <RANGE> - 주말 및 공휴일 <RANGE> [사우나 및 찜질방] 상시 개방 [뉴트리션센터] 상시 개방,<EMPTY>,1
+39,SKIP_TIME_AMBIGUOUS,<RANGE> (<RANGE> 브레이크타임) <TIME> 라스트오더,매주 일요일,1
+28,PARSE_SIMPLE_WEEKLY,<RANGE>,연중무휴,1
+14,PARSE_WEEKDAY_WEEKEND,- 평일 <RANGE> - 주말 <RANGE>,매주 월요일~ 화요일,1
+39,SKIP_REST_AMBIGUOUS,<RANGE>,매월 마지막 주 월요일,1
+39,PARSE_WEEKDAY_WEEKEND,[평일] - <RANGE> (마지막 주문 <TIME>) [주말] - <RANGE> (라스트오더 <TIME>),연중무휴,1
+12,SKIP_TIME_AMBIGUOUS,- 하절기 <RANGE> - 동절기 <RANGE>,<EMPTY>,1
+39,PARSE_SIMPLE_WEEKLY,<RANGE>,연중 무휴,1
+12,SKIP_TIME_AMBIGUOUS,[하절기(4월~10월] <RANGE> [동절기(11월~3월)] <RANGE> ※ 자세한 사항은 전화문의 요망,연중무휴,1
+12,SKIP_REST_AMBIGUOUS,"- 화요일~목요일, 주말 <RANGE> - 금요일 <RANGE>",매주 월요일 / 공휴일,1
+39,PARSE_SIMPLE_WEEKLY,<RANGE>,"매주 월요일, 화요일",1
+38,SKIP_REST_AMBIGUOUS,홈페이지 확인,홈페이지 확인,1
+12,SKIP_TIME_AMBIGUOUS,상시 개방 ※ 자세한 사항은 전화문의 요망,연중무휴,1
+38,PARSE_SIMPLE_WEEKLY,<RANGE>,매주 월요일,1
+39,PARSE_SIMPLE_WEEKLY,<RANGE> (라스트오더 <TIME>),"매주 일요일, 월요일",1
+39,PARSE_SIMPLE_WEEKLY,<RANGE> (브레이크타임 <RANGE>),매주 월요일,1
+39,SKIP_TIME_AMBIGUOUS,- 월요일~화요일 / 목요일~일요일 <RANGE> - 수요일 <RANGE>,연중무휴,1
+39,SKIP_TIME_AMBIGUOUS,"[평일] - <RANGE> - 준비시간 <RANGE> - 마지막 주문 <TIME>, <TIME> [토요일] - <RANGE> - 준비시간 <RANGE> - 마지막 주문 <TIME>, <TIME>",매주 일요일,1
+39,PARSE_SIMPLE_WEEKLY,- <RANGE> - 준비시간 <RANGE>,연중무휴,1
+39,SKIP_TIME_AMBIGUOUS,주중 <RANGE> (브레이크타임 <RANGE>) 토요일 <RANGE>,매주 일요일,1
+39,SKIP_TIME_AMBIGUOUS,<RANGE> (라스트오더 <TIME>),연중무휴,1
+39,PARSE_SIMPLE_WEEKLY,<RANGE> (브레이크타임 <RANGE>),"매주 토요일, 일요일",1
+39,SKIP_TIME_AMBIGUOUS,- <RANGE> - 준비시간(평일) <RANGE> - 마지막 주문 <TIME>,매주 수요일,1
+39,SKIP_TIME_AMBIGUOUS,영업시간 유동적으로 운영하므로 전화 문의 후 방문,연중무휴 ※ 전화 문의 후 방문,1
+39,SKIP_TIME_AMBIGUOUS,- <RANGE> - 토요일 <RANGE>,매주 일요일 / 설·추석 연휴,1
+39,SKIP_TIME_AMBIGUOUS,- 일요일~목요일 <RANGE> - 금요일~토요일 <RANGE>,연중무휴,1
+39,SKIP_REST_AMBIGUOUS,[월요일~토요일] - <TIME>~24:00 - 마지막 주문 <TIME> [일요일] - <RANGE> - 마지막 주문 <TIME>,설·추석 연휴,1
+39,SKIP_TIME_AMBIGUOUS,- 평일 <RANGE> - 토요일 <RANGE>,매주 일요일 / 설·추석 당일,1
+39,SKIP_TIME_AMBIGUOUS,- 월요일 <RANGE> - 화요일~일요일 <RANGE> - 마지막 주문 <TIME>,연중무휴,1
+39,PARSE_SIMPLE_WEEKLY,<RANGE>,매주 월요일~수요일,1
+39,PARSE_SIMPLE_WEEKLY,- <RANGE> - 준비시간 <RANGE>,매주 토요일,1
+39,SKIP_REST_AMBIGUOUS,<RANGE> (마지막 주문 <TIME>),설·추석 당일,1
+39,PARSE_SIMPLE_WEEKLY,- <RANGE> - 마지막 주문 <TIME> ※ 재료 소진 시 조기 마감,연중무휴,1
+39,PARSE_SIMPLE_WEEKLY,- <RANGE> - 준비 시간 <RANGE> - 마지막 주문 <TIME>/<TIME>,매주 월요일,1
+39,PARSE_SIMPLE_WEEKLY,- <RANGE> - 준비시간 <RANGE> - 마지막 주문 <TIME>,"매주 일요일 (1~2월, 7~8월에는 토요일도 휴무)",1
+39,SKIP_TIME_AMBIGUOUS,[일요일~목요일] - <RANGE> [금요일~토요일] - <RANGE>,연중무휴,1
+38,NO_TIME_TEXT,<EMPTY>,매주 일요일 ※ 매장 별로 상이할 수 있음,1
+39,SKIP_TIME_AMBIGUOUS,- 평일 <RANGE> (마지막 주문 <TIME>) - 토요일 <RANGE> (마지막 주문 <TIME>),매주 일요일,1
