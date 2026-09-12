@@ -1,0 +1,2168 @@
+﻿content_id,content_type_id,place_id,place_name,has_item,operating_raw,rest_raw,classification,normalized_candidate,reason,operating_pattern,rest_pattern
+1013076,38,4155,남대문 종합상가,True,※ 점포별 상이함,※ 점포별 상이함,SKIP_TIME_AMBIGUOUS,False,dangerous operating marker: 상이,※ 점포별 상이함,※ 점포별 상이함
+1013079,38,4156,숭례문(남대문) 수입상가,True,06:30~18:30,매주 일요일,PARSE_SIMPLE_WEEKLY,True,single time range + supported rest rule,<RANGE>,매주 일요일
+1013388,38,4157,장안 악세사리상가,True,"[평일] 
+- 09:00~17:00 
+[토요일(자유 오픈)]
+- 09:00~14:00 
+※ 점포별 상이","매주 일요일 / 공휴일 
+※ 점포별 상이",SKIP_TIME_AMBIGUOUS,False,dangerous operating marker: 상이,[평일] - <RANGE> [토요일(자유 오픈)] - <RANGE> ※ 점포별 상이,매주 일요일 / 공휴일 ※ 점포별 상이
+1013394,38,4158,청자 수입상가,True,※ 점포별 상이함,※ 점포별 상이함,SKIP_TIME_AMBIGUOUS,False,dangerous operating marker: 상이,※ 점포별 상이함,※ 점포별 상이함
+1013527,38,4159,광장시장 한복매장,True,"09:00~18:00
+※ 점포 별로 상이함","연중무휴
+※ 점포 별로 상이함",SKIP_TIME_AMBIGUOUS,False,dangerous operating marker: 상이,<RANGE> ※ 점포 별로 상이함,연중무휴 ※ 점포 별로 상이함
+1013559,38,4160,동대문종합시장 액세서리상가,True,09:30~19:00,매주 일요일,PARSE_SIMPLE_WEEKLY,True,single time range + supported rest rule,<RANGE>,매주 일요일
+1013584,38,4161,동대문종합시장 한복상가,True,"08:00~18:00 
+※ 매장별 상이","매주 일요일 
+※ 혼수용품 일요일 자율영업",SKIP_TIME_AMBIGUOUS,False,dangerous operating marker: 상이,<RANGE> ※ 매장별 상이,매주 일요일 ※ 혼수용품 일요일 자율영업
+1017547,12,4162,중명전,True,09:30~17:30 (입장 마감 17:00),매주 월요일,PARSE_SIMPLE_WEEKLY,True,single time range + supported rest rule,<RANGE> (입장 마감 <TIME>),매주 월요일
+1017568,28,4163,강동그린웨이 가족캠핑장,False,,,NO_DATA,False,detailIntro2 returned no item,<EMPTY>,<EMPTY>
+1019041,12,4164,와룡공원,True,상시 개방,연중무휴,SKIP_TIME_AMBIGUOUS,False,always-open/24h cannot be represented safely with current Time fields,상시 개방,연중무휴
+1019294,14,4165,서울특별시교육청 정독도서관,True,"[인문사회자연과학실, 어문학·족보실]
+
+- 평일 09:00~20:00
+
+- 주말 09:00~17:00
+
+[어린이실, 청소년관, 다국어·연속간행물실, 디지털자료실, 서울교육박물관]
+
+- 평일 09:00~18:00
+
+- 주말 09:00~17:00 
+
+[자율학습실, 노트북실]
+
+- 하절기 (3월~10월) 07:00~22:00
+
+- 동절기 (11월~2월) 08:00~22:00","매월 첫째, 셋째 수요일 / 일요일을 제외한 법정공휴일 (단, 공휴일과 일요일이 겹칠 경우 휴관) / 도서관 사정으로 임시로 정하는 휴일",SKIP_TIME_AMBIGUOUS,False,dangerous operating marker: 하절기,"[인문사회자연과학실, 어문학·족보실] - 평일 <RANGE> - 주말 <RANGE> [어린이실, 청소년관, 다국어·연속간행물실, 디지털자료실, 서울교육박물관] - 평일 <RANGE> - 주말 <RANGE> [자율학습실, 노트북실] - 하절기 (3월~10월) <RANGE> - 동절기 (11월~2월) <RANGE>","매월 첫째, 셋째 수요일 / 일요일을 제외한 법정공휴일 (단, 공휴일과 일요일이 겹칠 경우 휴관) / 도서관 사정으로 임시로 정하는 휴일"
+1019327,14,4166,긱 라이브하우스,True,공연 별로 상이함,공연 별로 상이함,SKIP_TIME_AMBIGUOUS,False,dangerous operating marker: 상이,공연 별로 상이함,공연 별로 상이함
+1019638,38,4167,삼익패션타운,True,매장 별로 상이함,매장 별로 상이함,SKIP_TIME_AMBIGUOUS,False,dangerous operating marker: 상이,매장 별로 상이함,매장 별로 상이함
+1021125,39,4168,씨네 드 쉐프(CINE de CHEF),True,"- 11:30~21:00
+- 준비시간 16:00~17:30
+- 마지막 주문 20:00",연중무휴,PARSE_SIMPLE_WEEKLY,True,single time range + supported rest rule,- <RANGE> - 준비시간 <RANGE> - 마지막 주문 <TIME>,연중무휴
+1021339,12,4169,서래마을,True,"상시 개방
+※ 단, 매장 이용 시 매장 별로 상이할 수 있음","연중무휴
+※ 단, 매장 이용 시 매장 별로 상이할 수 있음",SKIP_TIME_AMBIGUOUS,False,dangerous operating marker: 상이,"상시 개방 ※ 단, 매장 이용 시 매장 별로 상이할 수 있음","연중무휴 ※ 단, 매장 이용 시 매장 별로 상이할 수 있음"
+1029885,28,4170,난지한강공원 익스트림장,False,,,NO_DATA,False,detailIntro2 returned no item,<EMPTY>,<EMPTY>
+1030763,12,4171,뚝섬한강공원,True,상시 개방,연중무휴,SKIP_TIME_AMBIGUOUS,False,always-open/24h cannot be represented safely with current Time fields,상시 개방,연중무휴
+1037020,28,4172,[북악하늘길 2산책로] 하늘교~성북천발원지,False,,,NO_DATA,False,detailIntro2 returned no item,<EMPTY>,<EMPTY>
+1037027,28,4173,[북악하늘길 3산책로] 북카페~숲속다리,False,,,NO_DATA,False,detailIntro2 returned no item,<EMPTY>,<EMPTY>
+1037031,28,4174,[북악하늘길 스카이웨이] 하늘한마당~하늘마루,False,,,NO_DATA,False,detailIntro2 returned no item,<EMPTY>,<EMPTY>
+1045657,32,4175,반얀트리 클럽 앤 스파 서울,True,"입실시간: 15:00
+퇴실시간: 11:00",,RAW_ONLY_LODGING,False,check-in/out is not a recurring weekly place schedule,입실시간: <TIME> 퇴실시간: <TIME>,<EMPTY>
+1052741,39,4176,가문,True,11:00~21:00,연중무휴,PARSE_SIMPLE_WEEKLY,True,single time range + supported rest rule,<RANGE>,연중무휴
+1054888,28,4177,여의도 둘레길(여의도 자전거도로),False,,,NO_DATA,False,detailIntro2 returned no item,<EMPTY>,<EMPTY>
+1059479,12,4178,여의도한강공원,True,상시 개방,연중무휴,SKIP_TIME_AMBIGUOUS,False,always-open/24h cannot be represented safely with current Time fields,상시 개방,연중무휴
+1059638,12,4179,망원한강공원,True,상시 개방,연중무휴,SKIP_TIME_AMBIGUOUS,False,always-open/24h cannot be represented safely with current Time fields,상시 개방,연중무휴
+1063403,39,4180,인사동찻집,True,10:00~21:00,연중무휴,PARSE_SIMPLE_WEEKLY,True,single time range + supported rest rule,<RANGE>,연중무휴
+1063408,39,4181,옛찻집,True,11:00~21:00,연중무휴,PARSE_SIMPLE_WEEKLY,True,single time range + supported rest rule,<RANGE>,연중무휴
+1105871,14,4182,금나래아트홀,True,공연장 및 갤러리 운영 프로그램별 상이,관공서의 공휴일에 관한 규정 / 대관규정에 근거한 휴무일 운영,SKIP_TIME_AMBIGUOUS,False,dangerous operating marker: 상이,공연장 및 갤러리 운영 프로그램별 상이,관공서의 공휴일에 관한 규정 / 대관규정에 근거한 휴무일 운영
+1105980,12,4183,양천구어린이교통안전교육장,True,10:00 / 11:00 / 13:00,매주 토요일~일요일 / 법정공휴일,SKIP_REST_AMBIGUOUS,False,dangerous rest marker: 공휴일,<TIME> / <TIME> / <TIME>,매주 토요일~일요일 / 법정공휴일
+1106194,14,4184,상상톡톡 미술관,True,10:00~18:00 (입장 마감 17:00),매주 월요일,PARSE_SIMPLE_WEEKLY,True,single time range + supported rest rule,<RANGE> (입장 마감 <TIME>),매주 월요일
+1112029,14,4185,창덕궁 소극장,True,공연 별로 상이함,공연 별로 상이함,SKIP_TIME_AMBIGUOUS,False,dangerous operating marker: 상이,공연 별로 상이함,공연 별로 상이함
+1113537,14,4186,양천문화회관,True,"- 평일 08:00~22:00
+
+- 주말 및 공휴일 09:00~22:00",연중무휴,SKIP_TIME_AMBIGUOUS,False,dangerous operating marker: 공휴일,- 평일 <RANGE> - 주말 및 공휴일 <RANGE>,연중무휴
+1115042,12,4187,봉화산(서울),True,상시 개방,연중무휴,SKIP_TIME_AMBIGUOUS,False,always-open/24h cannot be represented safely with current Time fields,상시 개방,연중무휴
+1115299,12,4188,봉화산근린공원,True,상시 개방,연중무휴,SKIP_TIME_AMBIGUOUS,False,always-open/24h cannot be represented safely with current Time fields,상시 개방,연중무휴
+1116022,12,4189,호암산성,True,상시 개방,연중무휴,SKIP_TIME_AMBIGUOUS,False,always-open/24h cannot be represented safely with current Time fields,상시 개방,연중무휴
+1116925,12,4190,갈산공원,True,상시 개방,연중무휴,SKIP_TIME_AMBIGUOUS,False,always-open/24h cannot be represented safely with current Time fields,상시 개방,연중무휴
+1117141,12,4191,사가정공원,True,상시 개방,연중무휴,SKIP_TIME_AMBIGUOUS,False,always-open/24h cannot be represented safely with current Time fields,상시 개방,연중무휴
+1131275,12,4192,매헌시민의 숲,True,상시 개방,연중무휴,SKIP_TIME_AMBIGUOUS,False,always-open/24h cannot be represented safely with current Time fields,상시 개방,연중무휴
+1188653,14,4193,예림당아트홀,True,10:00~18:00,매주 월요일,PARSE_SIMPLE_WEEKLY,True,single time range + supported rest rule,<RANGE>,매주 월요일
+1190304,32,4194,하이서울유스호스텔,True,"입실시간: 14:00
+퇴실시간: 10:00",,RAW_ONLY_LODGING,False,check-in/out is not a recurring weekly place schedule,입실시간: <TIME> 퇴실시간: <TIME>,<EMPTY>
+1196871,28,4195,[북한산 둘레길 4구간] 솔샘길,False,,,NO_DATA,False,detailIntro2 returned no item,<EMPTY>,<EMPTY>
+1197225,28,4196,[북한산 둘레길 10구간] 내시묘역길,False,,,NO_DATA,False,detailIntro2 returned no item,<EMPTY>,<EMPTY>
+1198901,14,4197,배재학당역사박물관,True,10:00~17:00 (입장 마감 16:30),"매주 일요일, 월요일 / 1월1일 / 개교기념일 / 설·추석 연휴 / 법정공휴일 / 근로자의 날",SKIP_REST_AMBIGUOUS,False,dangerous rest marker: 공휴일,<RANGE> (입장 마감 <TIME>),"매주 일요일, 월요일 / 1월1일 / 개교기념일 / 설·추석 연휴 / 법정공휴일 / 근로자의 날"
+1221790,38,4198,센트럴시티,True,"[정상영업]
+- 10:30~20:00
+[연장영업] 
+- 10:30~20:30
+[식당가 영업]
+- 11:30~21:30 (마지막 주문 21:00) 
+※ 유동가능성 있으므로 홈페이지 참고",점포별 상이,SKIP_REST_AMBIGUOUS,False,dangerous rest marker: 상이,[정상영업] - <RANGE> [연장영업] - <RANGE> [식당가 영업] - <RANGE> (마지막 주문 <TIME>) ※ 유동가능성 있으므로 홈페이지 참고,점포별 상이
+1245865,12,4199,심산기념문화센터,True,"09:00~18:00
+
+※ 시설 별로 상이함",,SKIP_TIME_AMBIGUOUS,False,dangerous operating marker: 상이,<RANGE> ※ 시설 별로 상이함,<EMPTY>
+1250301,14,4200,CTS아트홀,True,공연 별로 상이함,연중무휴,SKIP_TIME_AMBIGUOUS,False,dangerous operating marker: 상이,공연 별로 상이함,연중무휴
+1253230,38,4201,마장 축산물시장,True,"03:00~23:00 
+※ 점포별 상이","연중무휴 
+※ 점포별 상이",SKIP_TIME_AMBIGUOUS,False,dangerous operating marker: 상이,<RANGE> ※ 점포별 상이,연중무휴 ※ 점포별 상이
+1253279,38,4202,이태원시장,True,점포별 상이,점포별 상이,SKIP_TIME_AMBIGUOUS,False,dangerous operating marker: 상이,점포별 상이,점포별 상이
+125452,12,4203,청계산,True,상시 개방,연중무휴,SKIP_TIME_AMBIGUOUS,False,always-open/24h cannot be represented safely with current Time fields,상시 개방,연중무휴
+126480,12,4204,관악산,True,,연중무휴,NO_TIME_TEXT,False,operating text empty,<EMPTY>,연중무휴
+126482,12,4205,불암산,True,상시 개방,연중무휴,SKIP_TIME_AMBIGUOUS,False,always-open/24h cannot be represented safely with current Time fields,상시 개방,연중무휴
+126485,12,4206,남산공원(서울),True,상시개방,연중무휴,SKIP_TIME_AMBIGUOUS,False,always-open/24h cannot be represented safely with current Time fields,상시개방,연중무휴
+126487,12,4207,마로니에공원,True,상시 개방,연중무휴,SKIP_TIME_AMBIGUOUS,False,always-open/24h cannot be represented safely with current Time fields,상시 개방,연중무휴
+126488,12,4208,삼청공원,True,상시 개방,연중무휴,SKIP_TIME_AMBIGUOUS,False,always-open/24h cannot be represented safely with current Time fields,상시 개방,연중무휴
+126490,12,4209,서울어린이대공원,True,[공원]- 05:00~22:00[동물원]- 10:00~17:00[놀이동산]- 평일 10:00~18:30- 주말 10:00~19:30,연중무휴,PARSE_WEEKDAY_WEEKEND,True,explicit weekday/weekend schedule + supported rest rule,[공원]- <RANGE>[동물원]- <RANGE>[놀이동산]- 평일 <RANGE>- 주말 <RANGE>,연중무휴
+126491,12,4210,장충단공원,True,상시 개방,연중무휴,SKIP_TIME_AMBIGUOUS,False,always-open/24h cannot be represented safely with current Time fields,상시 개방,연중무휴
+126492,12,4211,종묘광장공원,True,상시 개방,연중무휴,SKIP_TIME_AMBIGUOUS,False,always-open/24h cannot be represented safely with current Time fields,상시 개방,연중무휴
+126494,12,4212,세검정 터,True,상시 개방,연중무휴,SKIP_TIME_AMBIGUOUS,False,always-open/24h cannot be represented safely with current Time fields,상시 개방,연중무휴
+126495,12,4213,우이령 숲속문화마을(구 우이동 먹거리마을),True,점포 별로 상이함,점포 별로 상이함,SKIP_TIME_AMBIGUOUS,False,dangerous operating marker: 상이,점포 별로 상이함,점포 별로 상이함
+126499,12,4214,용산가족공원,True,상시 개방,연중무휴,SKIP_TIME_AMBIGUOUS,False,always-open/24h cannot be represented safely with current Time fields,상시 개방,연중무휴
+126502,12,4215,도선사(서울),True,09:00~18:00,연중무휴,PARSE_SIMPLE_WEEKLY,True,single time range + supported rest rule,<RANGE>,연중무휴
+126503,12,4216,봉원사(서울),True,05:00~18:00,연중무휴,PARSE_SIMPLE_WEEKLY,True,single time range + supported rest rule,<RANGE>,연중무휴
+126505,12,4217,승가사(서울),True,09:00~18:00,연중무휴,PARSE_SIMPLE_WEEKLY,True,single time range + supported rest rule,<RANGE>,연중무휴
+126511,12,4218,창경궁,True,09:00~21:00 (입장마감 20:00),"매주 월요일
+※ 단, 정기휴일이 공휴일 및 대체공휴일과 겹칠 경우에는 개방하며, 그 다음의 첫 번째 비공휴일이 정기휴일임",SKIP_REST_AMBIGUOUS,False,dangerous rest marker: 공휴일,<RANGE> (입장마감 <TIME>),"매주 월요일 ※ 단, 정기휴일이 공휴일 및 대체공휴일과 겹칠 경우에는 개방하며, 그 다음의 첫 번째 비공휴일이 정기휴일임"
+126514,12,4219,흥인지문,True,상시 개방,연중무휴,SKIP_TIME_AMBIGUOUS,False,always-open/24h cannot be represented safely with current Time fields,상시 개방,연중무휴
+126516,12,4220,보신각터,True,상시 개방,연중무휴,SKIP_TIME_AMBIGUOUS,False,always-open/24h cannot be represented safely with current Time fields,상시 개방,연중무휴
+126519,12,4221,서울 암사동 유적,True,09:30~18:00 (입장마감 17:30),"매주 월요일 / 1월 1일
+(※ 단, 월요일이 공휴일인 경우 그 다음 첫 번째 평일 휴관)",SKIP_REST_AMBIGUOUS,False,dangerous rest marker: 공휴일,<RANGE> (입장마감 <TIME>),"매주 월요일 / 1월 1일 (※ 단, 월요일이 공휴일인 경우 그 다음 첫 번째 평일 휴관)"
+126520,12,4222,서울 풍납동 토성,True,상시 개방,연중무휴,SKIP_TIME_AMBIGUOUS,False,always-open/24h cannot be represented safely with current Time fields,상시 개방,연중무휴
+126523,12,4223,사육신공원,True,"[공원]
+
+상시 개방
+
+[사육신묘]
+
+- 하절기 09:00~17:30
+
+- 동절기 09:00~17:00",연중무휴,SKIP_TIME_AMBIGUOUS,False,dangerous operating marker: 하절기,[공원] 상시 개방 [사육신묘] - 하절기 <RANGE> - 동절기 <RANGE>,연중무휴
+126524,12,4224,국립4·19민주묘지,True,"[출입문 개방시간]
+
+- 하절기(3월~10월) 06:00~18:00
+
+- 동절기(11월~2월) 07:00~17:00
+
+[기념관 / 봉안소]
+
+- 하절기(3월~10월) 09:30~17:30
+
+- 동절기(11월~2월) 09:30~16:30","- 묘지 : 연중무휴 
+- 기념관 : 매주 월요일
+※ 단, 월요일이 휴일일 경우 익일 휴무",SKIP_TIME_AMBIGUOUS,False,dangerous operating marker: 하절기,[출입문 개방시간] - 하절기(3월~10월) <RANGE> - 동절기(11월~2월) <RANGE> [기념관 / 봉안소] - 하절기(3월~10월) <RANGE> - 동절기(11월~2월) <RANGE>,"- 묘지 : 연중무휴 - 기념관 : 매주 월요일 ※ 단, 월요일이 휴일일 경우 익일 휴무"
+126525,12,4225,서울 선릉과 정릉 [유네스코 세계유산],True,06:00~21:00,매주 월요일,PARSE_SIMPLE_WEEKLY,True,single time range + supported rest rule,<RANGE>,매주 월요일
+126526,12,4226,서울 태릉(문정왕후)과 강릉(명종·인순왕후) [유네스코 세계유산],True,"- 2월~5월 09:00~18:00 (입장마감 17:00)
+
+- 6월~8월 09:00~18:30 (입장마감 17:30)
+
+- 9월~10월 09:00~18:00 (입장마감 17:00)
+
+- 11월~1월 09:00~17:30 (입장마감 16:30)","매주 월요일
+※ 단, 월요일이 공휴일인 경우 개방하며, 그 다음 첫 번째 평일에 휴관",SKIP_REST_AMBIGUOUS,False,dangerous rest marker: 공휴일,- 2월~5월 <RANGE> (입장마감 <TIME>) - 6월~8월 <RANGE> (입장마감 <TIME>) - 9월~10월 <RANGE> (입장마감 <TIME>) - 11월~1월 <RANGE> (입장마감 <TIME>),"매주 월요일 ※ 단, 월요일이 공휴일인 경우 개방하며, 그 다음 첫 번째 평일에 휴관"
+126527,12,4227,서울 영휘원(순헌황귀비)과 숭인원(이진),True,"- 11월~1월 09:00~17:30 (입장 마감 16:30)
+
+- 2월~5월 / 9월~10월 09:00~18:00 (입장 마감 17:00)
+
+- 6월~8월 09:00~18:30 (입장 마감 17:30)","매주 월요일 (단, 월요일이 공휴일일 경우 다음날 휴무)",SKIP_REST_AMBIGUOUS,False,dangerous rest marker: 공휴일,- 11월~1월 <RANGE> (입장 마감 <TIME>) - 2월~5월 / 9월~10월 <RANGE> (입장 마감 <TIME>) - 6월~8월 <RANGE> (입장 마감 <TIME>),"매주 월요일 (단, 월요일이 공휴일일 경우 다음날 휴무)"
+126528,12,4228,절두산 순교성지,True,09:30~17:00,매주 월요일,PARSE_SIMPLE_WEEKLY,True,single time range + supported rest rule,<RANGE>,매주 월요일
+126530,12,4229,서울 헌릉(태종·원경왕후)과 인릉(순조·순원황후) [유네스코 세계유산],True,"[2월~5월] 09:00~18:00 (입장마감 17:00)
+
+[6월~8월] 09:00~18:30 (입장마감 17:30)
+
+[9월~10월] 09:00~18:00 (입장마감 17:00)
+
+[11월~1월] 09:00~17:30 (입장마감 16:30)","매주 월요일
+※ 단, 월요일이 공휴일인 경우 개방하며, 그 다음 첫 번째 평일에 휴관",SKIP_REST_AMBIGUOUS,False,dangerous rest marker: 공휴일,[2월~5월] <RANGE> (입장마감 <TIME>) [6월~8월] <RANGE> (입장마감 <TIME>) [9월~10월] <RANGE> (입장마감 <TIME>) [11월~1월] <RANGE> (입장마감 <TIME>),"매주 월요일 ※ 단, 월요일이 공휴일인 경우 개방하며, 그 다음 첫 번째 평일에 휴관"
+126537,12,4230,북촌한옥마을,True,"10:00~17:00
+
+※ 방문 제한시간(특별관리지역(레드존) 방문 금지) : 17:00~익일 10:00",연중무휴,PARSE_SIMPLE_WEEKLY,True,single time range + supported rest rule,<RANGE> ※ 방문 제한시간(특별관리지역(레드존) 방문 금지) : <TIME>~익일 <TIME>,연중무휴
+126701,12,4231,이랜드크루즈(한강유람선),True,"- 월요일 15:00~22:00
+
+- 화요일~금요일 13:00~22:00
+
+- 주말 11:00~22:00",연중무휴,SKIP_TIME_AMBIGUOUS,False,"expected exactly 1 main range after break extraction, found 3",- 월요일 <RANGE> - 화요일~금요일 <RANGE> - 주말 <RANGE>,연중무휴
+126747,12,4232,남산골한옥마을,True,"- 하절기(04~10월) 09:00~21:00
+
+- 동절기(11~03월) 09:00~20:00","매주 월요일(단, 월요일이 공휴일일 경우 익일 휴관)",SKIP_TIME_AMBIGUOUS,False,dangerous operating marker: 하절기,- 하절기(04~10월) <RANGE> - 동절기(11~03월) <RANGE>,"매주 월요일(단, 월요일이 공휴일일 경우 익일 휴관)"
+126803,12,4233,당고개순교성지,True,성지개방시간 09:00~17:00,연중무휴,PARSE_SIMPLE_WEEKLY,True,single time range + supported rest rule,성지개방시간 <RANGE>,연중무휴
+126824,12,4234,허준근린공원,True,상시 개방,연중무휴,SKIP_TIME_AMBIGUOUS,False,always-open/24h cannot be represented safely with current Time fields,상시 개방,연중무휴
+126827,12,4235,국회의사당,True,홈페이지 참조,홈페이지 참조,SKIP_REST_AMBIGUOUS,False,rest rule is not a supported simple weekly rule,홈페이지 참조,홈페이지 참조
+126914,12,4236,효민공 이경직 묘역,True,상시 개방,연중무휴,SKIP_TIME_AMBIGUOUS,False,always-open/24h cannot be represented safely with current Time fields,상시 개방,연중무휴
+126938,12,4237,양화진외국인선교사묘원(외인묘지),True,월요일~토요일 10:00~17:00,매주 일요일,PARSE_SIMPLE_WEEKLY,True,single time range + supported rest rule,월요일~토요일 <RANGE>,매주 일요일
+126943,12,4238,북악스카이 팔각정,True,상시 개방,연중무휴,SKIP_TIME_AMBIGUOUS,False,always-open/24h cannot be represented safely with current Time fields,상시 개방,연중무휴
+127015,12,4239,대한성공회 서울주교좌성당,True,11:00~16:00,주말,SKIP_REST_AMBIGUOUS,False,rest rule is not a supported simple weekly rule,<RANGE>,주말
+127016,12,4240,옛 용산신학교와 원효로 예수성심성당,True,주말 09:00~17:00,평일 (학생 안전강화로 인해 주말에만 개방),SKIP_REST_AMBIGUOUS,False,rest rule is not a supported simple weekly rule,주말 <RANGE>,평일 (학생 안전강화로 인해 주말에만 개방)
+127216,12,4241,서울 양천고성지,True,상시 개방,연중무휴,SKIP_TIME_AMBIGUOUS,False,always-open/24h cannot be represented safely with current Time fields,상시 개방,연중무휴
+127269,12,4242,청담근린공원,True,상시 개방,연중무휴,SKIP_TIME_AMBIGUOUS,False,always-open/24h cannot be represented safely with current Time fields,상시 개방,연중무휴
+127307,12,4243,망원정 터,True,상시 개방,연중무휴,SKIP_TIME_AMBIGUOUS,False,always-open/24h cannot be represented safely with current Time fields,상시 개방,연중무휴
+127308,12,4244,정몽주 동상,True,상시 개방,연중무휴,SKIP_TIME_AMBIGUOUS,False,always-open/24h cannot be represented safely with current Time fields,상시 개방,연중무휴
+127376,12,4245,천호공원,True,상시 개방,연중무휴,SKIP_TIME_AMBIGUOUS,False,always-open/24h cannot be represented safely with current Time fields,상시 개방,연중무휴
+127425,12,4246,독립문,True,상시 개방,연중무휴,SKIP_TIME_AMBIGUOUS,False,always-open/24h cannot be represented safely with current Time fields,상시 개방,연중무휴
+127454,12,4247,서울 운현궁,True,"[하절기(4월~10월)]
+
+09:00~19:00 (입장 마감 18:30)
+
+[동절기(11월~3월)]
+
+09:00~18:00 (입장 마감 17:30)
+
+※ 자세한 사항은 홈페이지 참조","매주 월요일 (단, 월요일이 공휴일인 경우 정상 개장)",SKIP_TIME_AMBIGUOUS,False,dangerous operating marker: 하절기,[하절기(4월~10월)] <RANGE> (입장 마감 <TIME>) [동절기(11월~3월)] <RANGE> (입장 마감 <TIME>) ※ 자세한 사항은 홈페이지 참조,"매주 월요일 (단, 월요일이 공휴일인 경우 정상 개장)"
+127466,12,4248,서울 석촌동 고분군,True,상시 개방,연중무휴,SKIP_TIME_AMBIGUOUS,False,always-open/24h cannot be represented safely with current Time fields,상시 개방,연중무휴
+127525,12,4249,몽촌토성,True,"[몽촌토성]
+
+- 도보, 자전거 05:00~22:00
+
+- 차량 06:00~22:00
+
+[몽촌역사관]
+
+- 09:00~18:00",연중무휴,SKIP_TIME_AMBIGUOUS,False,"expected exactly 1 main range after break extraction, found 3","[몽촌토성] - 도보, 자전거 <RANGE> - 차량 <RANGE> [몽촌역사관] - <RANGE>",연중무휴
+127557,12,4250,삼천사(서울),True,상시 개방,연중무휴,SKIP_TIME_AMBIGUOUS,False,always-open/24h cannot be represented safely with current Time fields,상시 개방,연중무휴
+127859,12,4251,난지한강공원,True,상시 개방,연중무휴,SKIP_TIME_AMBIGUOUS,False,always-open/24h cannot be represented safely with current Time fields,상시 개방,연중무휴
+127942,12,4252,사직공원(서울),True,상시 개방,연중무휴,SKIP_TIME_AMBIGUOUS,False,always-open/24h cannot be represented safely with current Time fields,상시 개방,연중무휴
+127955,12,4253,여의도공원,True,상시 개방,연중무휴,SKIP_TIME_AMBIGUOUS,False,always-open/24h cannot be represented safely with current Time fields,상시 개방,연중무휴
+128028,12,4254,백련사(서대문),True,상시 개방,연중무휴,SKIP_TIME_AMBIGUOUS,False,always-open/24h cannot be represented safely with current Time fields,상시 개방,연중무휴
+128144,12,4255,조계사(서울),True,상시 개방,연중무휴,SKIP_TIME_AMBIGUOUS,False,always-open/24h cannot be represented safely with current Time fields,상시 개방,연중무휴
+128162,12,4256,숭례문,True,09:00~18:00 (입장 마감 17:50),매주 월요일,PARSE_SIMPLE_WEEKLY,True,single time range + supported rest rule,<RANGE> (입장 마감 <TIME>),매주 월요일
+128553,12,4257,쌈지길,True,10:30~20:30,연중무휴,PARSE_SIMPLE_WEEKLY,True,single time range + supported rest rule,<RANGE>,연중무휴
+128622,12,4258,서대문독립공원,True,상시 개방,연중무휴,SKIP_TIME_AMBIGUOUS,False,always-open/24h cannot be represented safely with current Time fields,상시 개방,연중무휴
+128866,12,4259,길상사(서울),True,09:00~18:00,연중무휴,PARSE_SIMPLE_WEEKLY,True,single time range + supported rest rule,<RANGE>,연중무휴
+128961,12,4260,강변스파랜드,True,"- 주간 05:00~20:00
+
+- 야간 20:00~익일 05:00",연중무휴,PARSE_SIMPLE_WEEKLY,True,single time range + supported rest rule,- 주간 <RANGE> - 야간 <TIME>~익일 <TIME>,연중무휴
+129186,12,4261,덕수궁 돌담길,True,00:00~24:00,연중무휴,SKIP_TIME_AMBIGUOUS,False,"expected exactly 1 main range after break extraction, found 0",<TIME>~24:00,연중무휴
+1292674,39,4262,춘천집닭갈비막국수,True,"- 11:00~22:30
+- 브레이크타임 15:00~16:00
+- 마지막 주문 21:30",매주 월요일 (월요일이 공휴일인 경우 화요일 휴무),SKIP_REST_AMBIGUOUS,False,dangerous rest marker: 공휴일,- <RANGE> - 브레이크타임 <RANGE> - 마지막 주문 <TIME>,매주 월요일 (월요일이 공휴일인 경우 화요일 휴무)
+129418,12,4263,백범광장(백범 김구선생 동상),True,상시 개방,연중무휴,SKIP_TIME_AMBIGUOUS,False,always-open/24h cannot be represented safely with current Time fields,상시 개방,연중무휴
+129500,12,4264,북악산 숙정문,True,"[3월~4월] 07:00~18:00 (16:00까지 입산)
+
+[5월~8월] 07:00~19:00 (17:00까지 입산)
+
+[9월~10월] 07:00~18:00 (16:00까지 입산)
+
+[11월~2월] 07:00~17:00 (15:00까지 입산)",연중무휴,SKIP_TIME_AMBIGUOUS,False,"expected exactly 1 main range after break extraction, found 4",[3월~4월] <RANGE> (<TIME>까지 입산) [5월~8월] <RANGE> (<TIME>까지 입산) [9월~10월] <RANGE> (<TIME>까지 입산) [11월~2월] <RANGE> (<TIME>까지 입산),연중무휴
+129506,12,4265,홍지문 및 탕춘대성,True,상시 개방,연중무휴,SKIP_TIME_AMBIGUOUS,False,always-open/24h cannot be represented safely with current Time fields,상시 개방,연중무휴
+129735,14,4266,세종문화회관,True,공연 및 전시 별로 상이함,공연 및 전시 별로 상이함,SKIP_TIME_AMBIGUOUS,False,dangerous operating marker: 상이,공연 및 전시 별로 상이함,공연 및 전시 별로 상이함
+129747,14,4267,예술의전당,True,공연 별로 상이함,공연 별로 상이함,SKIP_TIME_AMBIGUOUS,False,dangerous operating marker: 상이,공연 별로 상이함,공연 별로 상이함
+129760,14,4268,환기미술관,True,10:00~18:00,매주 월요일 / 1월 1일 / 설날·추석,PARSE_SIMPLE_WEEKLY,True,single time range + supported rest rule,<RANGE>,매주 월요일 / 1월 1일 / 설날·추석
+129799,14,4269,호림박물관 신림본관,True,화요일~금요일 10:00~17:00 (입장 마감 16:00),"매주 토요일, 일요일, 월요일 / 법정공휴일 / 근로자의 날(5월 1일)",SKIP_REST_AMBIGUOUS,False,dangerous rest marker: 공휴일,화요일~금요일 <RANGE> (입장 마감 <TIME>),"매주 토요일, 일요일, 월요일 / 법정공휴일 / 근로자의 날(5월 1일)"
+129804,14,4270,짚풀생활사박물관,True,10:00~17:00 (입장마감 16:00),매주 일요일~월요일 / 1월 1일 / 설·추석 연휴,PARSE_SIMPLE_WEEKLY,True,single time range + supported rest rule,<RANGE> (입장마감 <TIME>),매주 일요일~월요일 / 1월 1일 / 설·추석 연휴
+129822,14,4271,성신여자대학교박물관,True,10:00~17:00 (입장마감 16:30),매주 토요일~일요일 / 법정공휴일 / 개교기념일(4월 28일),SKIP_REST_AMBIGUOUS,False,dangerous rest marker: 공휴일,<RANGE> (입장마감 <TIME>),매주 토요일~일요일 / 법정공휴일 / 개교기념일(4월 28일)
+129831,14,4272,고려대학교 박물관,True,화요일~토요일 10:00~17:00 (입장마감 16:00),매주 일요일~월요일 / 법정공휴일 / 박물관 규정에 정한 휴관일,SKIP_REST_AMBIGUOUS,False,dangerous rest marker: 공휴일,화요일~토요일 <RANGE> (입장마감 <TIME>),매주 일요일~월요일 / 법정공휴일 / 박물관 규정에 정한 휴관일
+129838,14,4273,성균관대학교 인문사회과학캠퍼스박물관,True,10:00~16:00 (입장 마감 15:30),매주 토요일~일요일 / 개교기념일(9월 25일) / 공부자탄강일(9월 28일) / 국정 공휴일,SKIP_REST_AMBIGUOUS,False,dangerous rest marker: 공휴일,<RANGE> (입장 마감 <TIME>),매주 토요일~일요일 / 개교기념일(9월 25일) / 공부자탄강일(9월 28일) / 국정 공휴일
+129839,14,4274,서울대학교 박물관,True,10:00~17:00 (입장 마감 16:30),매주 일요일~월요일 /개교기념일(10월 15일) / 법정공휴일,SKIP_REST_AMBIGUOUS,False,dangerous rest marker: 공휴일,<RANGE> (입장 마감 <TIME>),매주 일요일~월요일 /개교기념일(10월 15일) / 법정공휴일
+129852,14,4275,표갤러리,True,09:00~18:00,매주 일요일 / 법정공휴일,SKIP_REST_AMBIGUOUS,False,dangerous rest marker: 공휴일,<RANGE>,매주 일요일 / 법정공휴일
+129903,14,4276,동산방화랑,True,"[월요일~금요일] 
+- 09:00~18:00 
+[토요일] 
+- 09:00~12:30 
+※ 전시기간에는 토요일 16시까지 운영",매주 일요일 / 공휴일,SKIP_REST_AMBIGUOUS,False,dangerous rest marker: 공휴일,[월요일~금요일] - <RANGE> [토요일] - <RANGE> ※ 전시기간에는 토요일 16시까지 운영,매주 일요일 / 공휴일
+129907,14,4277,조형갤러리,True,10:30~18:30,연중무휴,PARSE_SIMPLE_WEEKLY,True,single time range + supported rest rule,<RANGE>,연중무휴
+129912,14,4278,세종호텔 세종갤러리,True,11:00~20:00,연중무휴,PARSE_SIMPLE_WEEKLY,True,single time range + supported rest rule,<RANGE>,연중무휴
+129918,14,4279,국제갤러리,True,"- 월요일~토요일 10:00~18:00
+
+- 일요일 및 공휴일 10:00~17:00",연중무휴,SKIP_TIME_AMBIGUOUS,False,dangerous operating marker: 공휴일,- 월요일~토요일 <RANGE> - 일요일 및 공휴일 <RANGE>,연중무휴
+129927,14,4280,갤러리 서림,True,11:00~18:00,매주 일요일,PARSE_SIMPLE_WEEKLY,True,single time range + supported rest rule,<RANGE>,매주 일요일
+129928,14,4281,이목화랑,True,"- 평일 11:00~18:00
+
+- 주말 11:00~17:00
+
+※ 자세한 사항은 전화문의 요망",매주 월요일,SKIP_TIME_AMBIGUOUS,False,dangerous operating marker: 전화문의,- 평일 <RANGE> - 주말 <RANGE> ※ 자세한 사항은 전화문의 요망,매주 월요일
+130124,14,4282,국립국악원,True,공연 별로 상이함,공연 별로 상이함,SKIP_TIME_AMBIGUOUS,False,dangerous operating marker: 상이,공연 별로 상이함,공연 별로 상이함
+130125,14,4283,국립국악박물관,True,10:00~18:00 (입장마감 17:30),"매주 월요일 (단, 월요일이 공휴일인 경우 정상 운영 후 익일 화요일 휴관) / 1월 1일",SKIP_REST_AMBIGUOUS,False,dangerous rest marker: 공휴일,<RANGE> (입장마감 <TIME>),"매주 월요일 (단, 월요일이 공휴일인 경우 정상 운영 후 익일 화요일 휴관) / 1월 1일"
+130155,14,4284,동덕아트갤러리,True,10:00~18:00,연중무휴,PARSE_SIMPLE_WEEKLY,True,single time range + supported rest rule,<RANGE>,연중무휴
+130156,14,4285,외교사료관,True,"[외교사전시실 / 외교체험실 / 기획전시실]
+
+- 월요일~금요일 09:30~17:00
+
+- 점심시간 12:00~13:00
+
+- 오전 입장마감 11:00
+
+- 오후 입장마감 16:00
+
+※ 외교사료관 입장 시 본인 확인을 위해 신분증 제시 필수(성인만 해당)
+
+※ 부처일정 및 여건에 따라 변동될 수 있음
+
+[외교문서열람실]
+
+월요일~금요일 09:30~17:00 (점심시간 12:00~13:00)","[외교사전시실 / 외교체험실 / 기획전시실]
+프로그램이 없는 토요일~일요일 / 법정공휴일
+[외교문서열람실]
+매주 토요일~일요일 / 법정공휴일",SKIP_TIME_AMBIGUOUS,False,dangerous operating marker: 변동,[외교사전시실 / 외교체험실 / 기획전시실] - 월요일~금요일 <RANGE> - 점심시간 <RANGE> - 오전 입장마감 <TIME> - 오후 입장마감 <TIME> ※ 외교사료관 입장 시 본인 확인을 위해 신분증 제시 필수(성인만 해당) ※ 부처일정 및 여건에 따라 변동될 수 있음 [외교문서열람실] 월요일~금요일 <RANGE> (점심시간 <RANGE>),[외교사전시실 / 외교체험실 / 기획전시실] 프로그램이 없는 토요일~일요일 / 법정공휴일 [외교문서열람실] 매주 토요일~일요일 / 법정공휴일
+130179,14,4286,분재박물관,True,"- 월요일~토요일 09:00~19:00
+
+- 일요일 12:00~19:00",1월 1일 / 설·추석 연휴,SKIP_REST_AMBIGUOUS,False,rest rule is not a supported simple weekly rule,- 월요일~토요일 <RANGE> - 일요일 <RANGE>,1월 1일 / 설·추석 연휴
+130183,14,4287,서울도서관,True,"[일반자료실, 디지털자료실, 장애인자료실]
+
+평일 09:00 ~ 21:00, 주말 09:00 ~ 18:00
+
+[서울자료실, 세계자료실]
+
+평일 09:00 ~ 18:00, 주말 09:00 ~ 18:00","[정기휴관일] 매주 월요일
+
+[임시휴관일] 관공서의 휴관일(토․일요일이 법정공휴일과 겹칠 경우) 및 국가가 정한 임시휴일
+
+-기타 관장이 필요하다고 인정한 날",SKIP_REST_AMBIGUOUS,False,dangerous rest marker: 공휴일,"[일반자료실, 디지털자료실, 장애인자료실] 평일 <RANGE>, 주말 <RANGE> [서울자료실, 세계자료실] 평일 <RANGE>, 주말 <RANGE>",[정기휴관일] 매주 월요일 [임시휴관일] 관공서의 휴관일(토․일요일이 법정공휴일과 겹칠 경우) 및 국가가 정한 임시휴일 -기타 관장이 필요하다고 인정한 날
+130198,14,4288,국가무형유산전수교육관,True,"- 평일 09:00~21:00
+
+- 주말 09:00~20:00
+
+※ 변동 될 수 있으므로 전화문의 요망",설·추석 당일,SKIP_TIME_AMBIGUOUS,False,dangerous operating marker: 변동,- 평일 <RANGE> - 주말 <RANGE> ※ 변동 될 수 있으므로 전화문의 요망,설·추석 당일
+130209,14,4289,서울 중구문화원,True,10:00~17:00,연중무휴,PARSE_SIMPLE_WEEKLY,True,single time range + supported rest rule,<RANGE>,연중무휴
+130212,14,4290,관악문화원,True,09:00~17:00,연중무휴,PARSE_SIMPLE_WEEKLY,True,single time range + supported rest rule,<RANGE>,연중무휴
+130213,14,4291,성북문화원,True,09:00~18:00,매주 토요일~일요일 / 법정공휴일,SKIP_REST_AMBIGUOUS,False,dangerous rest marker: 공휴일,<RANGE>,매주 토요일~일요일 / 법정공휴일
+130215,14,4292,양천문화원,True,09:00~21:30,매주 일요일 / 법정 공휴일,SKIP_REST_AMBIGUOUS,False,dangerous rest marker: 공휴일,<RANGE>,매주 일요일 / 법정 공휴일
+130223,14,4293,광진문화원,True,"- 월요일~금요일 09:00~22:00
+
+- 토요일 09:00~17:00",매주 일요일 / 법정공휴일,SKIP_REST_AMBIGUOUS,False,dangerous rest marker: 공휴일,- 월요일~금요일 <RANGE> - 토요일 <RANGE>,매주 일요일 / 법정공휴일
+130226,14,4294,포스코미술관,True,"- 월요일~금요일10:00~18:00
+
+- 화요일 10:00~20:00
+
+- 토요일~일요일11:00~16:00",4월 1일 창립기념일,SKIP_REST_AMBIGUOUS,False,rest rule is not a supported simple weekly rule,- 월요일~금요일<RANGE> - 화요일 <RANGE> - 토요일~일요일<RANGE>,4월 1일 창립기념일
+130227,14,4295,일민미술관,True,11:00~19:00,매주 월요일,PARSE_SIMPLE_WEEKLY,True,single time range + supported rest rule,<RANGE>,매주 월요일
+130230,14,4296,아르코예술극장,True,공연 별로 상이함,공연 별로 상이함,SKIP_TIME_AMBIGUOUS,False,dangerous operating marker: 상이,공연 별로 상이함,공연 별로 상이함
+130231,14,4297,국립극장,True,공연 별로 상이함,공연 별로 상이함,SKIP_TIME_AMBIGUOUS,False,dangerous operating marker: 상이,공연 별로 상이함,공연 별로 상이함
+130259,14,4298,위니아트(건국대학교 새천년관 대공연장),True,공연 및 전시 별로 상이함,공연 및 전시 별로 상이함,SKIP_TIME_AMBIGUOUS,False,dangerous operating marker: 상이,공연 및 전시 별로 상이함,공연 및 전시 별로 상이함
+130263,14,4299,초전섬유·퀼트박물관,True,"10:00~17:00 (입장마감 16:30)
+
+※ 사전 예약 필수",매주 토요일~일요일,PARSE_SIMPLE_WEEKLY,True,single time range + supported rest rule,<RANGE> (입장마감 <TIME>) ※ 사전 예약 필수,매주 토요일~일요일
+130279,14,4300,모인화랑,True,"- 하절기 11:00~18:00
+
+- 동절기 11:00~17:00",매주 일요일,SKIP_TIME_AMBIGUOUS,False,dangerous operating marker: 하절기,- 하절기 <RANGE> - 동절기 <RANGE>,매주 일요일
+130284,12,4301,코엑스 아쿠아리움,True,10:00~20:00 (입장 마감 19:00),,SKIP_REST_AMBIGUOUS,False,rest text empty,<RANGE> (입장 마감 <TIME>),<EMPTY>
+130285,14,4302,교보문고,True,09:30~22:00,설·추석 당일,SKIP_REST_AMBIGUOUS,False,rest rule is not a supported simple weekly rule,<RANGE>,설·추석 당일
+130289,14,4303,LG아트센터 서울,True,10:00~23:00,매주 월요일,PARSE_SIMPLE_WEEKLY,True,single time range + supported rest rule,<RANGE>,매주 월요일
+130301,14,4304,한전갤러리,True,화요일~토요일 10:00~18:00 (입장마감 17:30),매주 일요일~월요일 / 법정공휴일,SKIP_REST_AMBIGUOUS,False,dangerous rest marker: 공휴일,화요일~토요일 <RANGE> (입장마감 <TIME>),매주 일요일~월요일 / 법정공휴일
+130306,14,4305,유 아트 스페이스,True,화요일~토요일 12:00~19:00,매주 일요일~월요일 / 공휴일,SKIP_REST_AMBIGUOUS,False,dangerous rest marker: 공휴일,화요일~토요일 <RANGE>,매주 일요일~월요일 / 공휴일
+130315,14,4306,한전아트센터 공연장,True,공연 별로 상이함,연중무휴,SKIP_TIME_AMBIGUOUS,False,dangerous operating marker: 상이,공연 별로 상이함,연중무휴
+130348,14,4307,대안공간 루프,True,※ 전시마다 상이하므로 전화문의 요망,※ 전시마다 상이하므로 전화문의 요망,SKIP_TIME_AMBIGUOUS,False,dangerous operating marker: 상이,※ 전시마다 상이하므로 전화문의 요망,※ 전시마다 상이하므로 전화문의 요망
+130352,14,4308,서울특별시교육청 남산도서관,True,"[인문사회과학실, 문학실·한국문학자료관]
+
+- 평일 09:00~20:00
+
+- 주말 09:00~17:00
+
+[자연과학실, 독서치료·어학실, 디지털라운지]
+
+- 평일 09:00~18:00
+
+- 주말 09:00~17:00
+
+[일반열람실]
+
+- 하절기(3월~10월) 07:00~22:00
+
+- 동절기(11월~2월) 08:00~22:00","매월 첫째, 셋째 월요일",SKIP_TIME_AMBIGUOUS,False,dangerous operating marker: 하절기,"[인문사회과학실, 문학실·한국문학자료관] - 평일 <RANGE> - 주말 <RANGE> [자연과학실, 독서치료·어학실, 디지털라운지] - 평일 <RANGE> - 주말 <RANGE> [일반열람실] - 하절기(3월~10월) <RANGE> - 동절기(11월~2월) <RANGE>","매월 첫째, 셋째 월요일"
+130355,14,4309,서울특별시교육청 용산도서관,True,"[문헌정보실]
+
+- 평일 09:00~20:00
+
+- 주말 09:00~17:00
+
+[디지털·간행물실/어린이실]
+
+- 평일 09:00~18:00 
+
+- 주말 09:00~17:00
+
+[자율학습실]
+
+- 하절기(3~10월) 07:00~22:00 
+
+- 동절기(11월~2월) 08:00~22:00","매월 둘째주, 넷째주 화요일 / 법정공휴일 (일요일을 제외한 관공서 공휴일) / 도서관 및 기타 사정으로 도서관장이 정한 날",SKIP_TIME_AMBIGUOUS,False,dangerous operating marker: 하절기,[문헌정보실] - 평일 <RANGE> - 주말 <RANGE> [디지털·간행물실/어린이실] - 평일 <RANGE> - 주말 <RANGE> [자율학습실] - 하절기(3~10월) <RANGE> - 동절기(11월~2월) <RANGE>,"매월 둘째주, 넷째주 화요일 / 법정공휴일 (일요일을 제외한 관공서 공휴일) / 도서관 및 기타 사정으로 도서관장이 정한 날"
+130361,14,4310,서울역사박물관,True,09:00~18:00 (입장 마감 17:30),매주 월요일 / 1월 1일,PARSE_SIMPLE_WEEKLY,True,single time range + supported rest rule,<RANGE> (입장 마감 <TIME>),매주 월요일 / 1월 1일
+130365,14,4311,떡박물관,True,월요일~토요일 10:00~18:00 (입장마감 17:30),매주 일요일 / 설·추석,PARSE_SIMPLE_WEEKLY,True,single time range + supported rest rule,월요일~토요일 <RANGE> (입장마감 <TIME>),매주 일요일 / 설·추석
+130369,14,4312,마포문화원,True,09:00~18:00,매주 토요일~일요일 / 법정공휴일,SKIP_REST_AMBIGUOUS,False,dangerous rest marker: 공휴일,<RANGE>,매주 토요일~일요일 / 법정공휴일
+130371,14,4313,노원문화원,True,09:00~18:00,"매주 토요일, 일요일 / 법정공휴일",SKIP_REST_AMBIGUOUS,False,dangerous rest marker: 공휴일,<RANGE>,"매주 토요일, 일요일 / 법정공휴일"
+130372,14,4314,용산문화원,True,09:00~18:00,매주 토요일~일요일 / 법정공휴일,SKIP_REST_AMBIGUOUS,False,dangerous rest marker: 공휴일,<RANGE>,매주 토요일~일요일 / 법정공휴일
+130374,14,4315,은평문화원,True,09:00~18:00 (휴게시간 12:00~13:00),매주 토요일~일요일,PARSE_SIMPLE_WEEKLY,True,single time range + supported rest rule,<RANGE> (휴게시간 <RANGE>),매주 토요일~일요일
+130375,14,4316,동대문문화원,True,09:00~17:30,매주 토요일~일요일 / 법정공휴일,SKIP_REST_AMBIGUOUS,False,dangerous rest marker: 공휴일,<RANGE>,매주 토요일~일요일 / 법정공휴일
+130376,14,4317,강동문화원,True,"평일 09:00~21:00
+
+토요일 09:00~18:00",매주 일요일 / 법정공휴일 / 1월 1일 / 설·추석 연휴,SKIP_REST_AMBIGUOUS,False,dangerous rest marker: 공휴일,평일 <RANGE> 토요일 <RANGE>,매주 일요일 / 법정공휴일 / 1월 1일 / 설·추석 연휴
+130377,14,4318,금천문화원,True,월요일~금요일 09:00~18:00,대관 없을 시 매주 토요일~일요일,PARSE_SIMPLE_WEEKLY,True,single time range + supported rest rule,월요일~금요일 <RANGE>,대관 없을 시 매주 토요일~일요일
+130378,14,4319,영등포문화원,True,"- 월요일 / 목요일~금요일 09:00~18:00
+
+- 화요일~수요일 09:00~20:50
+
+- 토요일 09:00~15:00",매주 일요일 / 법정공휴일,SKIP_REST_AMBIGUOUS,False,dangerous rest marker: 공휴일,- 월요일 / 목요일~금요일 <RANGE> - 화요일~수요일 <RANGE> - 토요일 <RANGE>,매주 일요일 / 법정공휴일
+130403,14,4320,아르코미술관,True,11:00~19:00 (입장 마감 18:30),매주 월요일 / 1월 1일 / 설·추석 당일,PARSE_SIMPLE_WEEKLY,True,single time range + supported rest rule,<RANGE> (입장 마감 <TIME>),매주 월요일 / 1월 1일 / 설·추석 당일
+130418,14,4321,신문박물관,True,화요일~일요일 10:00~18:30 (매표 마감 18:00),"매주 월요일 / 1월 1일 / 설·추석 연휴
+※ 봄과 가을의 경우, 3월, 9월 첫째 주 화요일~일요일 정기 휴관",SKIP_REST_AMBIGUOUS,False,dangerous rest marker: 첫째,화요일~일요일 <RANGE> (매표 마감 <TIME>),"매주 월요일 / 1월 1일 / 설·추석 연휴 ※ 봄과 가을의 경우, 3월, 9월 첫째 주 화요일~일요일 정기 휴관"
+130424,14,4322,유엠갤러리,True,11:00~19:00,매주 일요일 / 법정공휴일,SKIP_REST_AMBIGUOUS,False,dangerous rest marker: 공휴일,<RANGE>,매주 일요일 / 법정공휴일
+130431,14,4323,전쟁기념관,True,09:30~18:00 (입장마감 17:00),매주 월요일,PARSE_SIMPLE_WEEKLY,True,single time range + supported rest rule,<RANGE> (입장마감 <TIME>),매주 월요일
+130446,14,4324,가회민화박물관,True,"[관람시간]
+
+- 3월~11월 10:00~18:00
+
+- 12월~2월 10:00~17:00
+
+※ 관람 시 종료 40분 전까지 입장
+
+[체험시간]
+
+- 10:00~16:00
+
+※ 체험 시 종료 1시간 전까지 입장",매주 월요일,SKIP_TIME_AMBIGUOUS,False,"expected exactly 1 main range after break extraction, found 3",[관람시간] - 3월~11월 <RANGE> - 12월~2월 <RANGE> ※ 관람 시 종료 40분 전까지 입장 [체험시간] - <RANGE> ※ 체험 시 종료 1시간 전까지 입장,매주 월요일
+130473,14,4325,백범김구기념관,True,"[3월~10월] 10:00~18:00 (입장 마감 17:00)
+
+[11월~2월] 10:00~17:00 (입장 마감 16:00)",매주 월요일 / 1월 1일 / 설·추석,SKIP_TIME_AMBIGUOUS,False,"expected exactly 1 main range after break extraction, found 2",[3월~10월] <RANGE> (입장 마감 <TIME>) [11월~2월] <RANGE> (입장 마감 <TIME>),매주 월요일 / 1월 1일 / 설·추석
+1304864,38,4326,영풍문고 종각종로본점,True,10:00~22:00,연중무휴,PARSE_SIMPLE_WEEKLY,True,single time range + supported rest rule,<RANGE>,연중무휴
+1304880,38,4327,승진완구,True,09:00~18:00,연중무휴,PARSE_SIMPLE_WEEKLY,True,single time range + supported rest rule,<RANGE>,연중무휴
+130503,14,4328,모차르트 콘서트홀,True,공연 별로 상이함,공연 별로 상이함,SKIP_TIME_AMBIGUOUS,False,dangerous operating marker: 상이,공연 별로 상이함,공연 별로 상이함
+130511,14,4329,간송미술관(서울 보화각),True,"[정기전시]
+
+- 춘계전시 4월 말~5월 초
+
+- 추계전시 9월 말~10월 초
+
+[관람시간] 
+
+- 10:00~18:00
+
+※ 일정은 미술관 및 재단 사정에 의해 변동 가능하므로 홈페이지 참조 또는 전화 문의 요망
+
+※ 전시 관람은 사전 예약제로 운영",매주 월요일 / 전시 또는 프로그램 운영 기간이 아닌 경우,SKIP_TIME_AMBIGUOUS,False,dangerous operating marker: 변동,[정기전시] - 춘계전시 4월 말~5월 초 - 추계전시 9월 말~10월 초 [관람시간] - <RANGE> ※ 일정은 미술관 및 재단 사정에 의해 변동 가능하므로 홈페이지 참조 또는 전화 문의 요망 ※ 전시 관람은 사전 예약제로 운영,매주 월요일 / 전시 또는 프로그램 운영 기간이 아닌 경우
+130568,14,4330,갤러리 미즈,True,10:30~18:30,연중무휴,PARSE_SIMPLE_WEEKLY,True,single time range + supported rest rule,<RANGE>,연중무휴
+130573,14,4331,갤러리에스피,True,10:00~18:00,"매주 일요일, 월요일 / 1월1일 / 설·추석",PARSE_SIMPLE_WEEKLY,True,single time range + supported rest rule,<RANGE>,"매주 일요일, 월요일 / 1월1일 / 설·추석"
+130577,14,4332,갤러리 라메르,True,10:30~18:00,매주 화요일,PARSE_SIMPLE_WEEKLY,True,single time range + supported rest rule,<RANGE>,매주 화요일
+130581,14,4333,갤러리 마노,True,10:30~18:00,매주 일요일~월요일 / 법정공휴일,SKIP_REST_AMBIGUOUS,False,dangerous rest marker: 공휴일,<RANGE>,매주 일요일~월요일 / 법정공휴일
+130587,14,4334,갤러리조선,True,10:30~18:30,매주 월요일,PARSE_SIMPLE_WEEKLY,True,single time range + supported rest rule,<RANGE>,매주 월요일
+130613,14,4335,갤러리도올,True,11:00~18:00 (점심시간 12:00~13:30),연중무휴,SKIP_TIME_AMBIGUOUS,False,"expected exactly 1 main range after break extraction, found 2",<RANGE> (점심시간 <RANGE>),연중무휴
+130624,14,4336,다보성 갤러리,True,"09:00~18:00 
+
+※ 토요일 09:00~16:00 (특별전 기간에만 운영)","매주 토요일~일요일 / 공휴일 
+※ 기획전 및 특별전의 경우 토요일 개관",SKIP_REST_AMBIGUOUS,False,dangerous rest marker: 공휴일,<RANGE> ※ 토요일 <RANGE> (특별전 기간에만 운영),매주 토요일~일요일 / 공휴일 ※ 기획전 및 특별전의 경우 토요일 개관
+130627,14,4337,밀알미술관,True,10:00~17:00,※ 전시 준비기간 휴무로 자세한 사항은 전화문의 요망,SKIP_REST_AMBIGUOUS,False,dangerous rest marker: 전화문의,<RANGE>,※ 전시 준비기간 휴무로 자세한 사항은 전화문의 요망
+130628,14,4338,박여숙화랑,True,10:00~18:00,매주 일요일,PARSE_SIMPLE_WEEKLY,True,single time range + supported rest rule,<RANGE>,매주 일요일
+130629,14,4339,백악미술관,True,"10:00~18:00
+
+※ 매주 목요일~다음주 수요일 (주일단위 전시)",연중무휴,PARSE_SIMPLE_WEEKLY,True,single time range + supported rest rule,<RANGE> ※ 매주 목요일~다음주 수요일 (주일단위 전시),연중무휴
+130636,14,4340,아트파크,True,11:00~18:00,매주 월요일,PARSE_SIMPLE_WEEKLY,True,single time range + supported rest rule,<RANGE>,매주 월요일
+130637,14,4341,어반아트,True,11:00~18:00,매주 일요일 / 월요일,PARSE_SIMPLE_WEEKLY,True,single time range + supported rest rule,<RANGE>,매주 일요일 / 월요일
+130688,14,4342,세계장신구박물관,True,10:00~17:00,연중무휴,PARSE_SIMPLE_WEEKLY,True,single time range + supported rest rule,<RANGE>,연중무휴
+130699,14,4343,나루아트센터,True,09:00~18:00 (준비 시간 12:00~13:00),매주 월요일,PARSE_SIMPLE_WEEKLY,True,single time range + supported rest rule,<RANGE> (준비 시간 <RANGE>),매주 월요일
+130761,14,4344,서울특별시교육청 노원평생학습관,True,"[문헌정보실]
+
+- 평일 09:00~20:00
+
+- 주말 09:00~17:00
+
+[디지털자료실, 어린이실]
+
+- 평일 09:00~18:00
+
+- 주말 09:00~17:00
+
+[자율학습실, 마음자리(간행물실)]
+
+- 하절기 (3월~10월) 07:00~22:00
+
+- 동절기 (11월~2월) 08:00~22:00","매달 둘째·넷째 월요일 / 일요일을 제외한 법정공휴일(단, 공휴일과 일요일이 겹칠 경우 휴관) / 임시휴관일",SKIP_TIME_AMBIGUOUS,False,dangerous operating marker: 하절기,"[문헌정보실] - 평일 <RANGE> - 주말 <RANGE> [디지털자료실, 어린이실] - 평일 <RANGE> - 주말 <RANGE> [자율학습실, 마음자리(간행물실)] - 하절기 (3월~10월) <RANGE> - 동절기 (11월~2월) <RANGE>","매달 둘째·넷째 월요일 / 일요일을 제외한 법정공휴일(단, 공휴일과 일요일이 겹칠 경우 휴관) / 임시휴관일"
+130771,14,4345,서울특별시교육청 구로도서관,True,"[종합자료실]
+
+- 평일 09:00~20:00
+- 주말 09:00~17:00
+
+[디지털자료실＆간행물실＆어린이자료실]
+
+- 평일 09:00~18:00
+- 주말 09:00~17:00
+
+[일반열람실(3월~10월)]
+
+- 평일 07:00~22:00
+- 주말 07:00~22:00 
+[일반열람실(11월~2월)]
+
+- 평일 08:00~22:00
+- 주말 08:00~22:00","매월 첫째, 셋째 수요일 / 법정 공휴일(일요일과 겹칠 경우 휴관) / 임시휴관일",SKIP_REST_AMBIGUOUS,False,dangerous rest marker: 공휴일,[종합자료실] - 평일 <RANGE> - 주말 <RANGE> [디지털자료실＆간행물실＆어린이자료실] - 평일 <RANGE> - 주말 <RANGE> [일반열람실(3월~10월)] - 평일 <RANGE> - 주말 <RANGE> [일반열람실(11월~2월)] - 평일 <RANGE> - 주말 <RANGE>,"매월 첫째, 셋째 수요일 / 법정 공휴일(일요일과 겹칠 경우 휴관) / 임시휴관일"
+130778,14,4346,서울특별시교육청 어린이도서관,True,"- 평일 09:00~18:00
+
+- 주말 09:00~17:00","매월 첫째주·셋째주 월요일 / 일요일을 제외한 법정공휴일 (단, 일요일과 법정공휴일이 겹칠 경우 휴관)",SKIP_REST_AMBIGUOUS,False,dangerous rest marker: 공휴일,- 평일 <RANGE> - 주말 <RANGE>,"매월 첫째주·셋째주 월요일 / 일요일을 제외한 법정공휴일 (단, 일요일과 법정공휴일이 겹칠 경우 휴관)"
+130779,14,4347,서울특별시교육청 영등포평생학습관,True,"[문헌정보실] 평일 09:00~20:00 / 주말 09:00~17:00 
+
+[디지털 간행물실] 평일 09:00~18:00 / 주말 09:00~17:00
+
+[어린이실] 평일 09:00~18:00 / 주말 09:00~17:00
+
+[자율학습실] 하절기 07:00~22:00 / 동절기 08:00~22:00","[정기휴관일] 매월 둘째, 넷째 월요일 / 공휴일
+(※ 단, 일요일은 개관하되, 일요일과 다른 공휴일이 겹치는 경우에는 휴관)",SKIP_TIME_AMBIGUOUS,False,dangerous operating marker: 하절기,[문헌정보실] 평일 <RANGE> / 주말 <RANGE> [디지털 간행물실] 평일 <RANGE> / 주말 <RANGE> [어린이실] 평일 <RANGE> / 주말 <RANGE> [자율학습실] 하절기 <RANGE> / 동절기 <RANGE>,"[정기휴관일] 매월 둘째, 넷째 월요일 / 공휴일 (※ 단, 일요일은 개관하되, 일요일과 다른 공휴일이 겹치는 경우에는 휴관)"
+130782,14,4348,서울특별시교육청 고덕평생학습관,True,"[문헌정보실 및 연속간행물실]
+
+- 평일 09:00~20:00
+
+- 주말 09:00~17:00
+
+[디지털자료실]
+
+- 평일 09:00~18:00
+
+- 주말 09:00~17:00
+
+[어린이실]
+
+- 평일 09:00~18:00
+
+- 주말 09:00~17:00
+
+[필사공감]
+
+09:00~17:00
+
+[일반열람실]
+
+07:00~22:00 (11월~2월 08:00~22:00)",매월 둘째·넷째 월요일 / 공휴일,SKIP_REST_AMBIGUOUS,False,dangerous rest marker: 공휴일,[문헌정보실 및 연속간행물실] - 평일 <RANGE> - 주말 <RANGE> [디지털자료실] - 평일 <RANGE> - 주말 <RANGE> [어린이실] - 평일 <RANGE> - 주말 <RANGE> [필사공감] <RANGE> [일반열람실] <RANGE> (11월~2월 <RANGE>),매월 둘째·넷째 월요일 / 공휴일
+130783,14,4349,서울특별시교육청 동대문도서관,True,"[종합자료1실]
+
+- 평일 09:00~20:00
+
+- 주말 09:00~17:00
+
+[종합자료2실, 어린이실]
+
+- 평일 09:00~18:00
+
+- 주말 09:00~17:00
+
+[자율학습1실, 자율학습2실]
+
+- 하절기(3월~10월) 평일 07:00~20:00
+
+- 하절기(3월~10월) 주말 07:00~22:00
+
+- 동절기(11월~2월) 평일 08:00~20:00
+
+- 동절기(11월~2월) 주말 08:00~22:00","매월 둘째, 넷째주 수요일 / 일요일을 제외한 법정공휴일(단, 공휴일과 일요일이 겹칠 경우 휴관) / 임시 휴관일",SKIP_TIME_AMBIGUOUS,False,dangerous operating marker: 하절기,"[종합자료1실] - 평일 <RANGE> - 주말 <RANGE> [종합자료2실, 어린이실] - 평일 <RANGE> - 주말 <RANGE> [자율학습1실, 자율학습2실] - 하절기(3월~10월) 평일 <RANGE> - 하절기(3월~10월) 주말 <RANGE> - 동절기(11월~2월) 평일 <RANGE> - 동절기(11월~2월) 주말 <RANGE>","매월 둘째, 넷째주 수요일 / 일요일을 제외한 법정공휴일(단, 공휴일과 일요일이 겹칠 경우 휴관) / 임시 휴관일"
+130903,12,4350,북촌문화센터,True,"- 화요일 / 목요일~금요일 09:00~18:00
+
+- 수요일 09:00~20:00
+
+- 토요일~일요일 09:00~17:00",,SKIP_REST_AMBIGUOUS,False,rest text empty,- 화요일 / 목요일~금요일 <RANGE> - 수요일 <RANGE> - 토요일~일요일 <RANGE>,<EMPTY>
+130920,14,4351,경희대학교 자연사박물관,True,"월요일~금요일 10:00~17:00
+
+※ 하계 및 동계방학 개관 시간 상이 (홈페이지 공지사항 참조)",매주 토요일~일요일 / 법정공휴일 / 개교기념일(5월 18일),SKIP_TIME_AMBIGUOUS,False,dangerous operating marker: 상이,월요일~금요일 <RANGE> ※ 하계 및 동계방학 개관 시간 상이 (홈페이지 공지사항 참조),매주 토요일~일요일 / 법정공휴일 / 개교기념일(5월 18일)
+130931,14,4352,삼성출판박물관,True,월요일~금요일 10:00~17:00,매주 토요일~일요일 / 법정공휴일,SKIP_REST_AMBIGUOUS,False,dangerous rest marker: 공휴일,월요일~금요일 <RANGE>,매주 토요일~일요일 / 법정공휴일
+130938,12,4353,광나루안전체험관,True,"09:00~17:00
+
+※ 인터넷 사전 예약 필수",,SKIP_REST_AMBIGUOUS,False,rest text empty,<RANGE> ※ 인터넷 사전 예약 필수,<EMPTY>
+130949,14,4354,이화여대 자연사박물관,True,월요일~금요일 / 2·4주차 토요일 10:00~16:00,"1, 2, 7, 8월 토요일 / 1·3·5주차 토요일(3월~6월 / 9월~12월) / 매주 일요일 / 공휴일",SKIP_REST_AMBIGUOUS,False,dangerous rest marker: 공휴일,월요일~금요일 / 2·4주차 토요일 <RANGE>,"1, 2, 7, 8월 토요일 / 1·3·5주차 토요일(3월~6월 / 9월~12월) / 매주 일요일 / 공휴일"
+130951,14,4355,전기박물관,True,화요일~토요일 10:00~17:30,매주 일요일~월요일 / 법정공휴일,SKIP_REST_AMBIGUOUS,False,dangerous rest marker: 공휴일,화요일~토요일 <RANGE>,매주 일요일~월요일 / 법정공휴일
+130958,14,4356,한양대학교 박물관,True,10:00~17:00 (입장 마감 16:30),매주 일요일 / 법정공휴일,SKIP_REST_AMBIGUOUS,False,dangerous rest marker: 공휴일,<RANGE> (입장 마감 <TIME>),매주 일요일 / 법정공휴일
+130961,14,4357,이한열기념관,True,10:00~17:00,"매주 토요일, 일요일 / 법정공휴일",SKIP_REST_AMBIGUOUS,False,dangerous rest marker: 공휴일,<RANGE>,"매주 토요일, 일요일 / 법정공휴일"
+130978,28,4358,목동아이스링크(실내),False,,,NO_DATA,False,detailIntro2 returned no item,<EMPTY>,<EMPTY>
+130999,28,4359,고덕사회체육센터,False,,,NO_DATA,False,detailIntro2 returned no item,<EMPTY>,<EMPTY>
+1310950,12,4360,청담패션거리,True,매장 별로 상이함,매장 별로 상이함,SKIP_TIME_AMBIGUOUS,False,dangerous operating marker: 상이,매장 별로 상이함,매장 별로 상이함
+131138,28,4361,서울청소년수련관,False,,,NO_DATA,False,detailIntro2 returned no item,<EMPTY>,<EMPTY>
+131140,28,4362,강서청소년회관,False,,,NO_DATA,False,detailIntro2 returned no item,<EMPTY>,<EMPTY>
+131297,28,4363,롯데월드 아이스링크,True,"- 일요일~목요일 11:00~20:50
+- 금요일~토요일 11:00~21:20
+※ 현장 운영 상황에 따라 이용시간이 조정될 수 있음",연중무휴,SKIP_TIME_AMBIGUOUS,False,"expected exactly 1 main range after break extraction, found 2",- 일요일~목요일 <RANGE> - 금요일~토요일 <RANGE> ※ 현장 운영 상황에 따라 이용시간이 조정될 수 있음,연중무휴
+131313,28,4364,정립회관 수영센터,False,,,NO_DATA,False,detailIntro2 returned no item,<EMPTY>,<EMPTY>
+131315,28,4365,한강시민공원 잠원수영장(실외),False,,,NO_DATA,False,detailIntro2 returned no item,<EMPTY>,<EMPTY>
+131317,28,4366,한강시민공원 여의도수영장(실외),False,,,NO_DATA,False,detailIntro2 returned no item,<EMPTY>,<EMPTY>
+131318,28,4367,잠실한강공원 잠실물놀이장,True,"- 6월~8월 09:00~22:00 (이용 마감 21:30)
+- 점심시간 12:00~13:00
+- 저녁시간 17:30~19:00
+※ 매시 15분간 휴식시간
+※ 휴식시간, 점심시간, 저녁시간 중에는 입수 불가
+※ 자세한 사항은 홈페이지 참조","개장 기간 중 연중무휴
+※ 단, 폭우로 인한 침수 위험 시 일시 중단",SKIP_REST_AMBIGUOUS,False,annual-open text contains exception wording,"- 6월~8월 <RANGE> (이용 마감 <TIME>) - 점심시간 <RANGE> - 저녁시간 <RANGE> ※ 매시 15분간 휴식시간 ※ 휴식시간, 점심시간, 저녁시간 중에는 입수 불가 ※ 자세한 사항은 홈페이지 참조","개장 기간 중 연중무휴 ※ 단, 폭우로 인한 침수 위험 시 일시 중단"
+131322,28,4368,태릉국제스케이트장,False,,,NO_DATA,False,detailIntro2 returned no item,<EMPTY>,<EMPTY>
+131326,28,4369,KBS스포츠월드,False,,,NO_DATA,False,detailIntro2 returned no item,<EMPTY>,<EMPTY>
+131408,28,4370,서울시립보라매청소년센터,False,,,NO_DATA,False,detailIntro2 returned no item,<EMPTY>,<EMPTY>
+131453,28,4371,관악청소년센터,True,"[수영장]
+- 평일 06:00~20:50
+- 토요일 06:00~20:50
+[헬스장]
+- 평일 06:00~20:50
+- 토요일 09:00~18:00
+[체육관]
+- 평일 06:30~21:50
+[청다락(청소년쉼터)]
+- 평일 14:00~18:00
+- 토요일 10:00~18:00",매주 일요일,SKIP_TIME_AMBIGUOUS,False,"expected exactly 1 main range after break extraction, found 7",[수영장] - 평일 <RANGE> - 토요일 <RANGE> [헬스장] - 평일 <RANGE> - 토요일 <RANGE> [체육관] - 평일 <RANGE> [청다락(청소년쉼터)] - 평일 <RANGE> - 토요일 <RANGE>,매주 일요일
+131534,28,4372,사당청소년센터,True,"- 화요일~토요일 09:00~21:00
+- 일요일 / 공휴일 09:00~18:00",매주 월요일,SKIP_TIME_AMBIGUOUS,False,dangerous operating marker: 공휴일,- 화요일~토요일 <RANGE> - 일요일 / 공휴일 <RANGE>,매주 월요일
+1316965,39,4373,사찰음식 전문점 발우공양,True,11:30~21:00 (준비시간 15:00~18:00),매주 일요일,PARSE_SIMPLE_WEEKLY,True,single time range + supported rest rule,<RANGE> (준비시간 <RANGE>),매주 일요일
+131712,28,4374,서울월드컵경기장,False,,,NO_DATA,False,detailIntro2 returned no item,<EMPTY>,<EMPTY>
+131901,28,4375,명동사격장,False,,,NO_DATA,False,detailIntro2 returned no item,<EMPTY>,<EMPTY>
+131903,28,4376,세븐럭카지노(강남코엑스점),False,,,NO_DATA,False,detailIntro2 returned no item,<EMPTY>,<EMPTY>
+131958,28,4377,창동문화체육센터,False,,,NO_DATA,False,detailIntro2 returned no item,<EMPTY>,<EMPTY>
+132180,38,4378,남대문시장,True,점포 별로 상이함,점포 별로 상이함,SKIP_TIME_AMBIGUOUS,False,dangerous operating marker: 상이,점포 별로 상이함,점포 별로 상이함
+132182,38,4379,서울 평화시장,True,22:00~익일 18:00,매주 토요일~일요일,SKIP_TIME_AMBIGUOUS,False,"expected exactly 1 main range after break extraction, found 0",<TIME>~익일 <TIME>,매주 토요일~일요일
+132183,38,4380,광장시장,True,점포 별로 상이함,점포 별로 상이함,SKIP_TIME_AMBIGUOUS,False,dangerous operating marker: 상이,점포 별로 상이함,점포 별로 상이함
+132184,38,4381,서울고속버스터미널 의류도매상가,True,"09:30~20:00
+※ 매장 별로 상이할 수 있음","매월 둘째, 넷째 주 수요일",SKIP_TIME_AMBIGUOUS,False,dangerous operating marker: 상이,<RANGE> ※ 매장 별로 상이할 수 있음,"매월 둘째, 넷째 주 수요일"
+132198,38,4382,퇴계로 오토바이상가,True,매장 별로 상이함,매장 별로 상이함,SKIP_TIME_AMBIGUOUS,False,dangerous operating marker: 상이,매장 별로 상이함,매장 별로 상이함
+132200,38,4383,동대문종합시장,True,"- 원단 및 의류부자재 08:00~18:00
+- 액세서리 부자재 09:30~19:00
+- 혼수용품 및 홈인테리어 08:00~19:00","매주 일요일 (단, 혼수용품 및 홈인테리어 첫 번째, 세 번째, 다섯 번째 일요일 부분 영업)
+※ 매달 두 번째, 네 번째 일요일 전체 휴장",SKIP_TIME_AMBIGUOUS,False,"expected exactly 1 main range after break extraction, found 3",- 원단 및 의류부자재 <RANGE> - 액세서리 부자재 <RANGE> - 혼수용품 및 홈인테리어 <RANGE>,"매주 일요일 (단, 혼수용품 및 홈인테리어 첫 번째, 세 번째, 다섯 번째 일요일 부분 영업) ※ 매달 두 번째, 네 번째 일요일 전체 휴장"
+132201,38,4384,강남고속터미널 혼수상가,True,09:30~19:00,"매주 일요일
+※ 자세한 사항은 홈페이지 참조",PARSE_SIMPLE_WEEKLY,True,single time range + supported rest rule,<RANGE>,매주 일요일 ※ 자세한 사항은 홈페이지 참조
+132202,38,4385,대학천 책방거리,True,점포 별로 상이함,점포 별로 상이함,SKIP_TIME_AMBIGUOUS,False,dangerous operating marker: 상이,점포 별로 상이함,점포 별로 상이함
+132205,38,4386,견지동 불교용품거리,True,점포 별로 상이함,점포 별로 상이함,SKIP_TIME_AMBIGUOUS,False,dangerous operating marker: 상이,점포 별로 상이함,점포 별로 상이함
+132207,38,4387,청오가방도매상가,True,전화 문의,전화 문의,SKIP_TIME_AMBIGUOUS,False,dangerous operating marker: 전화 문의,전화 문의,전화 문의
+132211,38,4388,남대문 액세사리상가,True,※ 점포별 상이함,※ 점포별 상이함,SKIP_TIME_AMBIGUOUS,False,dangerous operating marker: 상이,※ 점포별 상이함,※ 점포별 상이함
+132215,38,4389,가락농수산물종합도매시장,True,점포별 상이,점포별 상이,SKIP_TIME_AMBIGUOUS,False,dangerous operating marker: 상이,점포별 상이,점포별 상이
+132216,38,4390,노량진수산물도매시장,True,"[경매]
+- 패류뷰류 01:00~
+- 고급선어 01:30~
+- 대중부류 00:00~
+- 고급활어 03:00~
+- 냉동부류 03:00~
+
+[판매(도소매)]
+- 고급 00:00~24:00
+- 대중 01:30~22:00
+- 냉동 03:30~22:00
+- 패류 01:00~22:00
+- 건어 23:00~19:00
+- 젓갈 03:00~19:00","[경매] 매주 일요일 / 1월 1일 / 설·추석 연휴
+[판매(도소매)] 연중무휴",SKIP_TIME_AMBIGUOUS,False,"expected exactly 1 main range after break extraction, found 5",[경매] - 패류뷰류 <TIME>~ - 고급선어 <TIME>~ - 대중부류 <TIME>~ - 고급활어 <TIME>~ - 냉동부류 <TIME>~ [판매(도소매)] - 고급 <TIME>~24:00 - 대중 <RANGE> - 냉동 <RANGE> - 패류 <RANGE> - 건어 <RANGE> - 젓갈 <RANGE>,[경매] 매주 일요일 / 1월 1일 / 설·추석 연휴 [판매(도소매)] 연중무휴
+132217,38,4391,서울 중부시장,True,※ 점포별 상이함,※ 점포별 상이함,SKIP_TIME_AMBIGUOUS,False,dangerous operating marker: 상이,※ 점포별 상이함,※ 점포별 상이함
+132218,38,4392,세브도르,True,"- 평일 09:00~24:00 
+- 주말 12:00~22:00",연중무휴,PARSE_SIMPLE_WEEKLY,True,single time range + supported rest rule,- 평일 <TIME>~24:00 - 주말 <RANGE>,연중무휴
+132219,38,4393,인사동 문화의 거리,True,매장 별로 상이함,매장 별로 상이함,SKIP_TIME_AMBIGUOUS,False,dangerous operating marker: 상이,매장 별로 상이함,매장 별로 상이함
+132225,38,4394,남대문인삼시장,True,점포 별로 상이함,점포 별로 상이함,SKIP_TIME_AMBIGUOUS,False,dangerous operating marker: 상이,점포 별로 상이함,점포 별로 상이함
+132226,38,4395,낙원 악기상가,True,"10:00~18:00 
+※ 점포별 상이","매주 일요일 
+※ 점포별 상이",SKIP_TIME_AMBIGUOUS,False,dangerous operating marker: 상이,<RANGE> ※ 점포별 상이,매주 일요일 ※ 점포별 상이
+132229,38,4396,용산전자랜드,True,10:00~19:30,점포별 상이,SKIP_REST_AMBIGUOUS,False,dangerous rest marker: 상이,<RANGE>,점포별 상이
+132230,38,4397,서울고속버스터미널 꽃도매상가,True,"- 생화 23:30~익일 12:00
+- 조화 24:00~익일 18:00",매주 일요일,SKIP_TIME_AMBIGUOUS,False,"expected exactly 1 main range after break extraction, found 0",- 생화 <TIME>~익일 <TIME> - 조화 24:00~익일 <TIME>,매주 일요일
+132231,38,4398,세운전자상가,True,"09:00~20:00
+※ 단, 매장 별로 상이할 수 있음","매주 일요일 / 법정공휴일
+※ 단, 매장 별로 상이할 수 있음",SKIP_TIME_AMBIGUOUS,False,dangerous operating marker: 상이,"<RANGE> ※ 단, 매장 별로 상이할 수 있음","매주 일요일 / 법정공휴일 ※ 단, 매장 별로 상이할 수 있음"
+132235,38,4399,논현 가구거리,True,매장 별로 상이함,매장 별로 상이함,SKIP_TIME_AMBIGUOUS,False,dangerous operating marker: 상이,매장 별로 상이함,매장 별로 상이함
+132238,38,4400,을지로 철제가구거리,True,점포 별로 상이함,점포 별로 상이함,SKIP_TIME_AMBIGUOUS,False,dangerous operating marker: 상이,점포 별로 상이함,점포 별로 상이함
+132241,38,4401,방산 종합시장,True,매장 별로 상이함,매장 별로 상이함,SKIP_TIME_AMBIGUOUS,False,dangerous operating marker: 상이,매장 별로 상이함,매장 별로 상이함
+132244,38,4402,청계 조명기구상가,True,매장 별로 상이함,매장 별로 상이함,SKIP_TIME_AMBIGUOUS,False,dangerous operating marker: 상이,매장 별로 상이함,매장 별로 상이함
+132248,38,4403,롯데월드 쇼핑몰,True,10:30~20:00,연중무휴,PARSE_SIMPLE_WEEKLY,True,single time range + supported rest rule,<RANGE>,연중무휴
+132420,38,4404,구로 중앙유통단지,True,점포별 상이함,점포별 상이함,SKIP_TIME_AMBIGUOUS,False,dangerous operating marker: 상이,점포별 상이함,점포별 상이함
+132421,38,4405,종로귀금속거리,True,매장 별로 상이함,매장 별로 상이함,SKIP_TIME_AMBIGUOUS,False,dangerous operating marker: 상이,매장 별로 상이함,매장 별로 상이함
+132502,38,4406,중곡동 가구거리,True,매장 별로 상이함,매장 별로 상이함,SKIP_TIME_AMBIGUOUS,False,dangerous operating marker: 상이,매장 별로 상이함,매장 별로 상이함
+1325115,39,4407,진옥화할매원조닭한마리,True,10:30~01:00 (마지막 주문 23:30),연중무휴,SKIP_TIME_AMBIGUOUS,False,overnight/equal open-close range not normalized,<RANGE> (마지막 주문 <TIME>),연중무휴
+132522,38,4408,우석공예사,True,10:00~17:00,매주 일요일,PARSE_SIMPLE_WEEKLY,True,single time range + supported rest rule,<RANGE>,매주 일요일
+132558,38,4409,밀리오레 명동점,True,매장 별로 상이,연중무휴,SKIP_TIME_AMBIGUOUS,False,dangerous operating marker: 상이,매장 별로 상이,연중무휴
+1325623,39,4410,신승관,True,"- 11:00~23:00
+- 준비시간 15:00~16:30
+- 마지막 주문 21:00",매주 일요일,PARSE_SIMPLE_WEEKLY,True,single time range + supported rest rule,- <RANGE> - 준비시간 <RANGE> - 마지막 주문 <TIME>,매주 일요일
+132580,38,4411,해밀톤 쇼핑센터,True,점포별 상이,점포별 상이,SKIP_TIME_AMBIGUOUS,False,dangerous operating marker: 상이,점포별 상이,점포별 상이
+132593,38,4412,마리오아울렛,True,"- 월요일~목요일 10:30~21:00
+- 금요일~일요일 10:30~21:30",설·추석 당일,SKIP_REST_AMBIGUOUS,False,rest rule is not a supported simple weekly rule,- 월요일~목요일 <RANGE> - 금요일~일요일 <RANGE>,설·추석 당일
+132642,38,4413,신세계백화점 본점,True,"- 월요일~목요일 10:30~20:00
+- 금요일~일요일 10:30~20:00",,SKIP_REST_AMBIGUOUS,False,rest text empty,- 월요일~목요일 <RANGE> - 금요일~일요일 <RANGE>,<EMPTY>
+1327006,32,4414,메리어트 이그제큐티브 아파트먼트 서울 여의도,True,"입실시간: 15:00
+퇴실시간: 12:00",,RAW_ONLY_LODGING,False,check-in/out is not a recurring weekly place schedule,입실시간: <TIME> 퇴실시간: <TIME>,<EMPTY>
+132820,39,4415,용금옥,True,11:00~22:00,"매월 두번 째, 네번 째, 다섯번 째 일요일",SKIP_REST_AMBIGUOUS,False,rest rule is not a supported simple weekly rule,<RANGE>,"매월 두번 째, 네번 째, 다섯번 째 일요일"
+132832,39,4416,유진막국수,True,"- 09:00~21:00
+- 마지막 주문 20:30",설·추석 당일,SKIP_REST_AMBIGUOUS,False,rest rule is not a supported simple weekly rule,- <RANGE> - 마지막 주문 <TIME>,설·추석 당일
+132892,39,4417,삼원가든,True,"[평일]
+- 11:30~21:30
+- 준비 시간 14:30~17:30
+- 마지막 주문 20:45
+[주말]
+-11:00~21:00
+- 준비 시간 14:30~17:00
+- 마지막 주문 20:00",연중무휴,PARSE_WEEKDAY_WEEKEND,True,explicit weekday/weekend schedule + supported rest rule,[평일] - <RANGE> - 준비 시간 <RANGE> - 마지막 주문 <TIME> [주말] -<RANGE> - 준비 시간 <RANGE> - 마지막 주문 <TIME>,연중무휴
+132901,39,4418,신촌형제갈비,True,11:00~22:00,연중무휴,PARSE_SIMPLE_WEEKLY,True,single time range + supported rest rule,<RANGE>,연중무휴
+132903,39,4419,청송본관함흥냉면,True,10:30~20:20 (마지막 주문 20:00),매주 일요일,PARSE_SIMPLE_WEEKLY,True,single time range + supported rest rule,<RANGE> (마지막 주문 <TIME>),매주 일요일
+133339,39,4420,우래옥,True,11:30~21:00 (마지막 주문 20:20),매주 월요일 / 1월 1일,PARSE_SIMPLE_WEEKLY,True,single time range + supported rest rule,<RANGE> (마지막 주문 <TIME>),매주 월요일 / 1월 1일
+133381,39,4421,영등포복집,True,"11:00~21:30 (준비시간 15:00~16:30)
+※ 금요일~일요일·공휴일은 준비시간이 없으므로 자세한 사항은 전화문의",명절,SKIP_TIME_AMBIGUOUS,False,dangerous operating marker: 공휴일,<RANGE> (준비시간 <RANGE>) ※ 금요일~일요일·공휴일은 준비시간이 없으므로 자세한 사항은 전화문의,명절
+133769,39,4422,석파랑,True,"- 점심 12:00~15:00
+- 저녁 18:00~22:00
+※ 영업시간 변동 가능성 있으므로 방문 전 전화 문의 요망","매주 수요일 / 설·추석 연휴
+※ 전화 문의 요망",SKIP_TIME_AMBIGUOUS,False,dangerous operating marker: 변동,- 점심 <RANGE> - 저녁 <RANGE> ※ 영업시간 변동 가능성 있으므로 방문 전 전화 문의 요망,매주 수요일 / 설·추석 연휴 ※ 전화 문의 요망
+133785,39,4423,서석대,True,11:30~22:00 (평일 준비시간 15:00~17:00),연중무휴,PARSE_SIMPLE_WEEKLY,True,single time range + supported rest rule,<RANGE> (평일 준비시간 <RANGE>),연중무휴
+133836,39,4424,송원,True,11:00~21:30,연중무휴,PARSE_SIMPLE_WEEKLY,True,single time range + supported rest rule,<RANGE>,연중무휴
+133854,39,4425,고려삼계탕,True,"- 월요일~금요일 10:30~21:00
+- 토요일~일요일 10:30~20:30",연중무휴,SKIP_TIME_AMBIGUOUS,False,"expected exactly 1 main range after break extraction, found 2",- 월요일~금요일 <RANGE> - 토요일~일요일 <RANGE>,연중무휴
+133858,39,4426,백제삼계탕,True,09:00~22:00 (마지막 주문 21:00),연중무휴,PARSE_SIMPLE_WEEKLY,True,single time range + supported rest rule,<RANGE> (마지막 주문 <TIME>),연중무휴
+133868,39,4427,곰바위,True,11:00~22:00 (마지막 주문 21:30),연중무휴,PARSE_SIMPLE_WEEKLY,True,single time range + supported rest rule,<RANGE> (마지막 주문 <TIME>),연중무휴
+133984,39,4428,희래등,True,11:30~21:00,연중무휴,PARSE_SIMPLE_WEEKLY,True,single time range + supported rest rule,<RANGE>,연중무휴
+133996,39,4429,참숯골,True,"[평일]
+- 11:00~22:00
+- 준비시간 14:30~17:00
+- 마지막 주문 21:00
+[토요일]
+- 11:00~21:00
+- 마지막 주문 20:00",매주 일요일,SKIP_TIME_AMBIGUOUS,False,"expected exactly 1 main range after break extraction, found 2",[평일] - <RANGE> - 준비시간 <RANGE> - 마지막 주문 <TIME> [토요일] - <RANGE> - 마지막 주문 <TIME>,매주 일요일
+134201,39,4430,무등산,True,"[월요일~금요일]
+- 10:00~24:00
+- 마지막 주문 23:30
+[토요일]
+- 10:00~23:30
+- 마지막 주문 23:00",매주 일요일,PARSE_SIMPLE_WEEKLY,True,single time range + supported rest rule,[월요일~금요일] - <TIME>~24:00 - 마지막 주문 <TIME> [토요일] - <RANGE> - 마지막 주문 <TIME>,매주 일요일
+134268,39,4431,명동부대찌개 명동황기족발,True,10:00~22:00 (마지막 주문 21:30),연중무휴,PARSE_SIMPLE_WEEKLY,True,single time range + supported rest rule,<RANGE> (마지막 주문 <TIME>),연중무휴
+134691,39,4432,스시겐,True,11:30~22:00 (준비시간 15:00~17:00),매주 일요일,PARSE_SIMPLE_WEEKLY,True,single time range + supported rest rule,<RANGE> (준비시간 <RANGE>),매주 일요일
+134702,39,4433,비하인드(B-hind),True,13:00~22:00,연중무휴,PARSE_SIMPLE_WEEKLY,True,single time range + supported rest rule,<RANGE>,연중무휴
+134708,39,4434,완차이,True,"- 11:00~21:00
+- 준비시간 15:00~16:30
+- 마지막 주문 20:30",매주 월요일,PARSE_SIMPLE_WEEKLY,True,single time range + supported rest rule,- <RANGE> - 준비시간 <RANGE> - 마지막 주문 <TIME>,매주 월요일
+134733,39,4435,카나디안 랍스터,True,12:00~21:00 (준비 시간 15:00~17:00 / 마지막 주문 20:00),"매주 월요일
+※ 12월은 월요일도 영업",PARSE_SIMPLE_WEEKLY,True,single time range + supported rest rule,<RANGE> (준비 시간 <RANGE> / 마지막 주문 <TIME>),매주 월요일 ※ 12월은 월요일도 영업
+134746,39,4436,개화,True,11:30~22:30 (마지막 주문 20:50),매주 토요일,PARSE_SIMPLE_WEEKLY,True,single time range + supported rest rule,<RANGE> (마지막 주문 <TIME>),매주 토요일
+134752,39,4437,미진,True,10:30~21:00 (마지막 주문 20:30),연중무휴,PARSE_SIMPLE_WEEKLY,True,single time range + supported rest rule,<RANGE> (마지막 주문 <TIME>),연중무휴
+134793,39,4438,드럼통 참숯석쇠구이,True,12:30~23:30,"매월 둘째, 넷째 화요일",SKIP_REST_AMBIGUOUS,False,dangerous rest marker: 둘째,<RANGE>,"매월 둘째, 넷째 화요일"
+134796,39,4439,벽제갈비 방이점,True,"- 11:30~22:00
+- 마지막 주문 21:00",연중무휴,PARSE_SIMPLE_WEEKLY,True,single time range + supported rest rule,- <RANGE> - 마지막 주문 <TIME>,연중무휴
+134807,39,4440,영광밥상,True,"- 10:50~22:00
+- 준비시간 15:30~17:00
+- 마지막 주문 20:50",매주 일요일,PARSE_SIMPLE_WEEKLY,True,single time range + supported rest rule,- <RANGE> - 준비시간 <RANGE> - 마지막 주문 <TIME>,매주 일요일
+134810,39,4441,황도바지락칼국수,True,10:00~21:30,연중무휴,PARSE_SIMPLE_WEEKLY,True,single time range + supported rest rule,<RANGE>,연중무휴
+135114,39,4442,대문점,True,10:30~22:00,매주 일요일,PARSE_SIMPLE_WEEKLY,True,single time range + supported rest rule,<RANGE>,매주 일요일
+135136,39,4443,강강술래 신림동,True,11:00~22:00 (마지막 주문 21:00),연중무휴,PARSE_SIMPLE_WEEKLY,True,single time range + supported rest rule,<RANGE> (마지막 주문 <TIME>),연중무휴
+135385,39,4444,한강파라다이스,True,11:30~22:00,연중무휴,PARSE_SIMPLE_WEEKLY,True,single time range + supported rest rule,<RANGE>,연중무휴
+135683,39,4445,더플레이스다이닝,True,"- 11:00~22:00
+- 마지막 주문 21:00",연중무휴,PARSE_SIMPLE_WEEKLY,True,single time range + supported rest rule,- <RANGE> - 마지막 주문 <TIME>,연중무휴
+135708,39,4446,청수횟집,True,"[평일]
+- 11:00~23:00
+- 준비시간 14:30~16:00
+- 마지막 주문 22:30
+[토요일]
+- 11:00~22:00
+- 마지막 주문 21:30",매주 일요일,SKIP_TIME_AMBIGUOUS,False,"expected exactly 1 main range after break extraction, found 2",[평일] - <RANGE> - 준비시간 <RANGE> - 마지막 주문 <TIME> [토요일] - <RANGE> - 마지막 주문 <TIME>,매주 일요일
+136039,32,4447,서울올림픽파크텔,True,"입실시간: 15:00
+퇴실시간: 11:00",,RAW_ONLY_LODGING,False,check-in/out is not a recurring weekly place schedule,입실시간: <TIME> 퇴실시간: <TIME>,<EMPTY>
+136249,32,4448,트리아 관광호텔,True,"입실시간: 15:00
+퇴실시간: 12:00",,RAW_ONLY_LODGING,False,check-in/out is not a recurring weekly place schedule,입실시간: <TIME> 퇴실시간: <TIME>,<EMPTY>
+1364932,12,4449,세종대왕 동상,True,상시 개방,연중무휴,SKIP_TIME_AMBIGUOUS,False,always-open/24h cannot be represented safely with current Time fields,상시 개방,연중무휴
+1364975,12,4450,충무공 이순신 동상,True,상시 개방,연중무휴,SKIP_TIME_AMBIGUOUS,False,always-open/24h cannot be represented safely with current Time fields,상시 개방,연중무휴
+1369066,12,4451,서울색공원,True,상시 개방,연중무휴,SKIP_TIME_AMBIGUOUS,False,always-open/24h cannot be represented safely with current Time fields,상시 개방,연중무휴
+1395270,12,4452,최순우 옛집,True,"화요일~토요일 10:00~17:00
+
+※ 4월 1일~11월 30일에만 개관",매주 일요일~월요일 / 설·추석 당일 / 동절기(12월~3월),SKIP_REST_AMBIGUOUS,False,dangerous rest marker: 동절기,화요일~토요일 <RANGE> ※ 4월 1일~11월 30일에만 개관,매주 일요일~월요일 / 설·추석 당일 / 동절기(12월~3월)
+1413224,14,4453,양화진홀 전시관,True,10:00~15:30,매주 일요일,PARSE_SIMPLE_WEEKLY,True,single time range + supported rest rule,<RANGE>,매주 일요일
+142233,15,4454,정동문화축제,True,12:00~17:00,,RAW_ONLY_EVENT,False,event playtime is not a recurring weekly place schedule,<RANGE>,<EMPTY>
+142721,32,4455,노보텔 앰배서더 서울 강남,True,"입실시간: 15:00
+퇴실시간: 12:00",,RAW_ONLY_LODGING,False,check-in/out is not a recurring weekly place schedule,입실시간: <TIME> 퇴실시간: <TIME>,<EMPTY>
+142722,32,4456,서울가든호텔,True,"입실시간: 15:00
+퇴실시간: 12:00",,RAW_ONLY_LODGING,False,check-in/out is not a recurring weekly place schedule,입실시간: <TIME> 퇴실시간: <TIME>,<EMPTY>
+142725,32,4457,더 플라자 호텔 서울,True,"입실시간: 15:00
+퇴실시간: 11:00",,RAW_ONLY_LODGING,False,check-in/out is not a recurring weekly place schedule,입실시간: <TIME> 퇴실시간: <TIME>,<EMPTY>
+142764,32,4458,호텔리베라 청담,True,"입실시간: 15:00
+퇴실시간: 12:00",,RAW_ONLY_LODGING,False,check-in/out is not a recurring weekly place schedule,입실시간: <TIME> 퇴실시간: <TIME>,<EMPTY>
+142765,32,4459,스위스 그랜드 호텔,True,"입실시간: 15:00
+퇴실시간: 11:00",,RAW_ONLY_LODGING,False,check-in/out is not a recurring weekly place schedule,입실시간: <TIME> 퇴실시간: <TIME>,<EMPTY>
+142766,32,4460,롯데호텔 월드,True,"입실시간: 15:00
+퇴실시간: 11:00",,RAW_ONLY_LODGING,False,check-in/out is not a recurring weekly place schedule,입실시간: <TIME> 퇴실시간: <TIME>,<EMPTY>
+142769,32,4461,그랜드 인터컨티넨탈 서울 파르나스,True,"입실시간: 15:00
+퇴실시간: 11:00",,RAW_ONLY_LODGING,False,check-in/out is not a recurring weekly place schedule,입실시간: <TIME> 퇴실시간: <TIME>,<EMPTY>
+142771,32,4462,임피리얼 팰리스 부티크 호텔,True,"입실시간: 15:00
+퇴실시간: 12:00",,RAW_ONLY_LODGING,False,check-in/out is not a recurring weekly place schedule,입실시간: <TIME> 퇴실시간: <TIME>,<EMPTY>
+143122,32,4463,이비스 스타일 앰배서더 서울 강남,True,"입실시간: 14:00
+퇴실시간: 12:00",,RAW_ONLY_LODGING,False,check-in/out is not a recurring weekly place schedule,입실시간: <TIME> 퇴실시간: <TIME>,<EMPTY>
+1489369,39,4464,오다리집,True,08:10~24:00,연중무휴,SKIP_TIME_AMBIGUOUS,False,"expected exactly 1 main range after break extraction, found 0",<TIME>~24:00,연중무휴
+1511411,39,4465,왕비집,True,11:30~22:00 (21:20 라스트오더),연중무휴,PARSE_SIMPLE_WEEKLY,True,single time range + supported rest rule,<RANGE> (<TIME> 라스트오더),연중무휴
+1515607,39,4466,그란구스또,True,"[평일]
+- 11:30~22:00
+- 준비시간 14:30~17:30
+- 마지막 주문 20:30
+[주말]
+- 12:00~21:30
+- 준비시간 15:00~17:30
+- 마지막 주문 20:00",연중무휴,PARSE_WEEKDAY_WEEKEND,True,explicit weekday/weekend schedule + supported rest rule,[평일] - <RANGE> - 준비시간 <RANGE> - 마지막 주문 <TIME> [주말] - <RANGE> - 준비시간 <RANGE> - 마지막 주문 <TIME>,연중무휴
+1535690,38,4467,롯데몰 김포공항점,True,10:30~22:00,"[백화점] 1월 1일 / 설·추석 / 매월 월요일 중 하루
+[쇼핑몰] 연중무휴
+※ 자세한 사항은 홈페이지 참조",PARSE_SIMPLE_WEEKLY,True,single time range + supported rest rule,<RANGE>,[백화점] 1월 1일 / 설·추석 / 매월 월요일 중 하루 [쇼핑몰] 연중무휴 ※ 자세한 사항은 홈페이지 참조
+1541078,39,4468,오엔(ON),True,11:00~05:00 (마지막 주문 03:00),연중무휴,SKIP_TIME_AMBIGUOUS,False,overnight/equal open-close range not normalized,<RANGE> (마지막 주문 <TIME>),연중무휴
+1556008,32,4469,롯데시티호텔 김포공항,True,"입실시간: 15:00
+퇴실시간: 익일 12:00",,RAW_ONLY_LODGING,False,check-in/out is not a recurring weekly place schedule,입실시간: <TIME> 퇴실시간: 익일 <TIME>,<EMPTY>
+1560179,14,4470,창희보석예술관,True,"- 평일 10:00~18:00
+
+- 토요일 10:00~17:00",매주 일요일,SKIP_TIME_AMBIGUOUS,False,"expected exactly 1 main range after break extraction, found 2",- 평일 <RANGE> - 토요일 <RANGE>,매주 일요일
+1602451,12,4471,대모산도시자연공원,True,상시 개방,연중무휴,SKIP_TIME_AMBIGUOUS,False,always-open/24h cannot be represented safely with current Time fields,상시 개방,연중무휴
+1603175,12,4472,아시아공원,True,상시 개방,연중무휴,SKIP_TIME_AMBIGUOUS,False,always-open/24h cannot be represented safely with current Time fields,상시 개방,연중무휴
+1603296,12,4473,서빙고동 부군당,True,,,NO_TIME_TEXT,False,operating text empty,<EMPTY>,<EMPTY>
+1603336,12,4474,남산 팔각정,True,상시 개방,연중무휴,SKIP_TIME_AMBIGUOUS,False,always-open/24h cannot be represented safely with current Time fields,상시 개방,연중무휴
+1603543,12,4475,무궁화동산,True,상시 개방,연중무휴,SKIP_TIME_AMBIGUOUS,False,always-open/24h cannot be represented safely with current Time fields,상시 개방,연중무휴
+1604450,12,4476,황학정,True,10:00~17:00,매주 월요일 / 1월 1일 / 설·추석 당일,PARSE_SIMPLE_WEEKLY,True,single time range + supported rest rule,<RANGE>,매주 월요일 / 1월 1일 / 설·추석 당일
+1604580,12,4477,국립중앙박물관 전통염료식물원,True,"07:00~22:00
+※ 자세한 사항은 전화문의 요망","1월 1일 / 설·추석 연휴
+※ 자세한 사항은 전화문의 요망",SKIP_TIME_AMBIGUOUS,False,dangerous operating marker: 전화문의,<RANGE> ※ 자세한 사항은 전화문의 요망,1월 1일 / 설·추석 연휴 ※ 자세한 사항은 전화문의 요망
+1604652,12,4478,건청궁,True,"[1월~2월] 09:00~17:00 (입장마감 16:00)
+
+[3월~5월] 09:00~18:00 (입장마감 17:00)
+
+[6월~8월] 09:00~18:30 (입장마감 17:30)
+
+[9월~10월] 09:00~18:00 (입장마감 17:00)
+
+[11월~12월] 09:00~17:00 (입장마감 16:00)","매주 화요일
+※ 단, 정기휴일이 공휴일 및 대체공휴일과 겹칠 경우에는 개방하며, 그 다음의 첫 번째 비공휴일이 정기휴일임",SKIP_REST_AMBIGUOUS,False,dangerous rest marker: 공휴일,[1월~2월] <RANGE> (입장마감 <TIME>) [3월~5월] <RANGE> (입장마감 <TIME>) [6월~8월] <RANGE> (입장마감 <TIME>) [9월~10월] <RANGE> (입장마감 <TIME>) [11월~12월] <RANGE> (입장마감 <TIME>),"매주 화요일 ※ 단, 정기휴일이 공휴일 및 대체공휴일과 겹칠 경우에는 개방하며, 그 다음의 첫 번째 비공휴일이 정기휴일임"
+1604697,12,4479,세종로공원,True,상시 개방,연중무휴,SKIP_TIME_AMBIGUOUS,False,always-open/24h cannot be represented safely with current Time fields,상시 개방,연중무휴
+1604733,12,4480,숭인근린공원,True,상시 개방,연중무휴,SKIP_TIME_AMBIGUOUS,False,always-open/24h cannot be represented safely with current Time fields,상시 개방,연중무휴
+1604784,12,4481,경희궁 흥화문,True,09:00~18:00 (입장마감 17:30),매주 월요일 / 1월 1일,PARSE_SIMPLE_WEEKLY,True,single time range + supported rest rule,<RANGE> (입장마감 <TIME>),매주 월요일 / 1월 1일
+1604824,12,4482,경희궁공원,True,09:00~18:00 (입장 마감 17:30),매주 월요일 / 1월 1일,PARSE_SIMPLE_WEEKLY,True,single time range + supported rest rule,<RANGE> (입장 마감 <TIME>),매주 월요일 / 1월 1일
+1604941,12,4483,창덕궁 낙선재,True,"[2월~5월] 09:00~18:00 (입장마감 17:00)
+
+[6월~8월] 09:00~18:30 (입장마감 17:30)
+
+[9월~10월] 09:00~18:00 (입장마감 17:00)
+
+[11월~1월] 09:00~17:30 (입장마감 16:30)","매주 월요일
+※ 단, 정기휴일이 공휴일 및 대체공휴일과 겹칠 경우에는 개방하며, 그 다음의 첫 번째 비공휴일이 정기휴일임",SKIP_REST_AMBIGUOUS,False,dangerous rest marker: 공휴일,[2월~5월] <RANGE> (입장마감 <TIME>) [6월~8월] <RANGE> (입장마감 <TIME>) [9월~10월] <RANGE> (입장마감 <TIME>) [11월~1월] <RANGE> (입장마감 <TIME>),"매주 월요일 ※ 단, 정기휴일이 공휴일 및 대체공휴일과 겹칠 경우에는 개방하며, 그 다음의 첫 번째 비공휴일이 정기휴일임"
+1604953,12,4484,창덕궁 인정문,True,"[2월~5월] 09:00~18:00 (입장마감 17:00)
+
+[6월~8월] 09:00~18:30 (입장마감 17:30)
+
+[9월~10월] 09:00~18:00 (입장마감 17:00)
+
+[11월~1월] 09:00~17:30 (입장마감 16:30)","매주 월요일
+※ 단, 정기휴일이 공휴일 및 대체공휴일과 겹칠 경우에는 개방하며, 그 다음의 첫 번째 비공휴일이 정기휴일",SKIP_REST_AMBIGUOUS,False,dangerous rest marker: 공휴일,[2월~5월] <RANGE> (입장마감 <TIME>) [6월~8월] <RANGE> (입장마감 <TIME>) [9월~10월] <RANGE> (입장마감 <TIME>) [11월~1월] <RANGE> (입장마감 <TIME>),"매주 월요일 ※ 단, 정기휴일이 공휴일 및 대체공휴일과 겹칠 경우에는 개방하며, 그 다음의 첫 번째 비공휴일이 정기휴일"
+1605009,12,4485,창경궁 홍화문,True,09:00~21:00 (입장마감 20:00),"매주 월요일
+※ 단, 정기휴일이 공휴일 및 대체공휴일과 겹칠 경우에는 개방하며, 그 다음의 첫 번째 비공휴일이 정기휴일임",SKIP_REST_AMBIGUOUS,False,dangerous rest marker: 공휴일,<RANGE> (입장마감 <TIME>),"매주 월요일 ※ 단, 정기휴일이 공휴일 및 대체공휴일과 겹칠 경우에는 개방하며, 그 다음의 첫 번째 비공휴일이 정기휴일임"
+1605933,12,4486,탑골공원 팔각정,True,"- 3월~10월 09:00~18:00
+
+- 11월~2월 09:00~17:00",연중무휴,SKIP_TIME_AMBIGUOUS,False,"expected exactly 1 main range after break extraction, found 2",- 3월~10월 <RANGE> - 11월~2월 <RANGE>,연중무휴
+1605948,12,4487,대원군별장(석파정),True,10:00~18:00 (입장마감 17:00),매주 월요일~화요일,PARSE_SIMPLE_WEEKLY,True,single time range + supported rest rule,<RANGE> (입장마감 <TIME>),매주 월요일~화요일
+1605966,12,4488,훈련원공원,True,상시 개방,연중무휴,SKIP_TIME_AMBIGUOUS,False,always-open/24h cannot be represented safely with current Time fields,상시 개방,연중무휴
+1605977,12,4489,서소문역사공원,True,상시 개방,연중무휴,SKIP_TIME_AMBIGUOUS,False,always-open/24h cannot be represented safely with current Time fields,상시 개방,연중무휴
+1605981,12,4490,덕수궁 대한문,True,"[일반관람] 09:00~21:00 (입장마감 20:00)
+
+[전시관]
+
+- 석조전 09:30~17:30 (마지막 해설 16:30)
+
+- 돈덕전 09:00~17:30 (입장마감 17:00)
+
+- 중명전 09:30~17:30(입장마감 17:00)","매주 월요일
+※ 단, 정기휴일이 공휴일 및 대체공휴일과 겹칠 경우에는 개방하며, 그 다음의 첫 번째 비공휴일이 정기휴일임",SKIP_REST_AMBIGUOUS,False,dangerous rest marker: 공휴일,[일반관람] <RANGE> (입장마감 <TIME>) [전시관] - 석조전 <RANGE> (마지막 해설 <TIME>) - 돈덕전 <RANGE> (입장마감 <TIME>) - 중명전 <RANGE>(입장마감 <TIME>),"매주 월요일 ※ 단, 정기휴일이 공휴일 및 대체공휴일과 겹칠 경우에는 개방하며, 그 다음의 첫 번째 비공휴일이 정기휴일임"
+1605990,12,4491,관훈동 민씨 가옥 (구 부마도위박영효가옥),True,"- 하절기(4월~10월) 09:00~21:00
+
+- 동절기(11월~3월) 09:00~20:00","매주 월요일 (단, 월요일이 공휴일인 경우 정상 운영)",SKIP_TIME_AMBIGUOUS,False,dangerous operating marker: 하절기,- 하절기(4월~10월) <RANGE> - 동절기(11월~3월) <RANGE>,"매주 월요일 (단, 월요일이 공휴일인 경우 정상 운영)"
+1606001,12,4492,해풍부원군윤택영댁재실,True,"- 하절기 09:00~21:00
+
+- 동절기 09:00~20:00",매주 월요일,SKIP_TIME_AMBIGUOUS,False,dangerous operating marker: 하절기,- 하절기 <RANGE> - 동절기 <RANGE>,매주 월요일
+1606014,12,4493,순정효황후윤씨친가,True,"- 하절기(4월~10월) 09:00~21:00
+
+- 동절기(11월~3월) 09:00~20:00","매주 월요일 (단, 월요일이 공휴일인 경우 정상 운영)",SKIP_TIME_AMBIGUOUS,False,dangerous operating marker: 하절기,- 하절기(4월~10월) <RANGE> - 동절기(11월~3월) <RANGE>,"매주 월요일 (단, 월요일이 공휴일인 경우 정상 운영)"
+1606052,12,4494,극락사(서울),True,상시 개방,연중무휴,SKIP_TIME_AMBIGUOUS,False,always-open/24h cannot be represented safely with current Time fields,상시 개방,연중무휴
+1606096,12,4495,성덕사,True,상시 개방,연중무휴,SKIP_TIME_AMBIGUOUS,False,always-open/24h cannot be represented safely with current Time fields,상시 개방,연중무휴
+1628531,14,4496,동덕여자대학교 박물관,True,"- 월요일~금요일 10:00~17:00
+
+- 방학기간 10:30~15:00",매주 토요일~일요일 / 법정공휴일,SKIP_REST_AMBIGUOUS,False,dangerous rest marker: 공휴일,- 월요일~금요일 <RANGE> - 방학기간 <RANGE>,매주 토요일~일요일 / 법정공휴일
+1664105,39,4497,수연산방,True,"[수요일~금요일] 11:30~17:50 (마지막 주문 17:00)
+[토요일] 11:30~20:00 (마지막 주문 19:10)
+[일요일] 11:30~19:50 (마지막 주문 19:00)",매주 월요일~화요일,SKIP_TIME_AMBIGUOUS,False,"expected exactly 1 main range after break extraction, found 3",[수요일~금요일] <RANGE> (마지막 주문 <TIME>) [토요일] <RANGE> (마지막 주문 <TIME>) [일요일] <RANGE> (마지막 주문 <TIME>),매주 월요일~화요일
+1750737,14,4498,강동아트센터,True,10:00~22:00,매주 일요일~월요일 / 설·추석,PARSE_SIMPLE_WEEKLY,True,single time range + supported rest rule,<RANGE>,매주 일요일~월요일 / 설·추석
+1754832,38,4499,서울풍물시장,True,"- 시장 10:00~19:00
+- 식당가 10:00~22:00",매주 화요일,SKIP_TIME_AMBIGUOUS,False,"expected exactly 1 main range after break extraction, found 2",- 시장 <RANGE> - 식당가 <RANGE>,매주 화요일
+1756249,39,4500,강남목장,True,11:30~22:00,매주 일요일,PARSE_SIMPLE_WEEKLY,True,single time range + supported rest rule,<RANGE>,매주 일요일
+1799798,14,4501,손기정기념관,True,10:00~18:00 (입장 마감 17:00),1월 1일 / 설·추석 연휴 / 매주 월요일 / 기타 관장이 정하는 휴일,PARSE_SIMPLE_WEEKLY,True,single time range + supported rest rule,<RANGE> (입장 마감 <TIME>),1월 1일 / 설·추석 연휴 / 매주 월요일 / 기타 관장이 정하는 휴일
+1806376,15,4502,강동북페스티벌,True,10:00~17:00,,RAW_ONLY_EVENT,False,event playtime is not a recurring weekly place schedule,<RANGE>,<EMPTY>
+1828571,12,4503,독립관,True,상시 개방,연중무휴,SKIP_TIME_AMBIGUOUS,False,always-open/24h cannot be represented safely with current Time fields,상시 개방,연중무휴
+1829573,12,4504,서울학도병참전기념비,True,,연중무휴,NO_TIME_TEXT,False,operating text empty,<EMPTY>,연중무휴
+1829586,12,4505,윌리엄해밀턴쇼 동상,True,상시 개방,연중무휴,SKIP_TIME_AMBIGUOUS,False,always-open/24h cannot be represented safely with current Time fields,상시 개방,연중무휴
+1829744,12,4506,우남 이승만박사 동상,True,"상시 개방
+
+※ 교내에 위치함으로 전화 문의 후 방문 바람",연중무휴,SKIP_TIME_AMBIGUOUS,False,dangerous operating marker: 전화 문의,상시 개방 ※ 교내에 위치함으로 전화 문의 후 방문 바람,연중무휴
+1829827,12,4507,의열사(용산),True,09:00~18:00,주말 / 공휴일,SKIP_REST_AMBIGUOUS,False,dangerous rest marker: 공휴일,<RANGE>,주말 / 공휴일
+1835201,12,4508,이원등 상사상,True,상시 개방,연중무휴,SKIP_TIME_AMBIGUOUS,False,always-open/24h cannot be represented safely with current Time fields,상시 개방,연중무휴
+1835206,12,4509,이탈리아 의무부대 6·25전쟁 참전기념비,True,상시 개방,연중무휴,SKIP_TIME_AMBIGUOUS,False,always-open/24h cannot be represented safely with current Time fields,상시 개방,연중무휴
+1835256,12,4510,일성이준열사동상,True,상시 개방,연중무휴,SKIP_TIME_AMBIGUOUS,False,always-open/24h cannot be represented safely with current Time fields,상시 개방,연중무휴
+1836254,12,4511,존비코올터장군상,True,05:00~22:00,연중무휴,PARSE_SIMPLE_WEEKLY,True,single time range + supported rest rule,<RANGE>,연중무휴
+1836261,12,4512,한강방어 백골부대 전적비,True,상시 개방,연중무휴,SKIP_TIME_AMBIGUOUS,False,always-open/24h cannot be represented safely with current Time fields,상시 개방,연중무휴
+1836300,12,4513,해공신익희선생동상,True,상시 개방,연중무휴,SKIP_TIME_AMBIGUOUS,False,always-open/24h cannot be represented safely with current Time fields,상시 개방,연중무휴
+1837037,12,4514,호국무공수훈자공적비,True,상시 개방,연중무휴,SKIP_TIME_AMBIGUOUS,False,always-open/24h cannot be represented safely with current Time fields,상시 개방,연중무휴
+1845410,14,4515,서울에너지드림센터,True,09:30~17:30 (입장 마감 17:00),매주 월요일 / 1월 1일 / 설·추석 연휴 / 12월 12일(개관기념일),PARSE_SIMPLE_WEEKLY,True,single time range + supported rest rule,<RANGE> (입장 마감 <TIME>),매주 월요일 / 1월 1일 / 설·추석 연휴 / 12월 12일(개관기념일)
+1845434,14,4516,래미안 갤러리,True,10:00~18:00,매주 월요일 / 설·추석,PARSE_SIMPLE_WEEKLY,True,single time range + supported rest rule,<RANGE>,매주 월요일 / 설·추석
+1849416,14,4517,대한민국역사박물관,True,- 월요일~화요일/목요일~금요일/일요일 10:00~18:00 (입장 마감 17:30)- 수요일/토요일 10:00~21:00 (입장 마감 20:30),1월 1일 / 설·추석 당일,SKIP_REST_AMBIGUOUS,False,rest rule is not a supported simple weekly rule,- 월요일~화요일/목요일~금요일/일요일 <RANGE> (입장 마감 <TIME>)- 수요일/토요일 <RANGE> (입장 마감 <TIME>),1월 1일 / 설·추석 당일
+1853800,32,4518,콘래드 서울,True,"입실시간: 16:00
+퇴실시간: 11:00",,RAW_ONLY_LODGING,False,check-in/out is not a recurring weekly place schedule,입실시간: <TIME> 퇴실시간: <TIME>,<EMPTY>
+1866427,14,4519,서울시립 북서울미술관,True,"[평일] 10:00~18:00 (입장마감 17:00)
+
+[주말]
+
+- 하절기(3월~10월) 10:00~19:00 (입장마감 18:00)
+
+- 동절기(11월~2월) 10:00~18:00 (입장마감 17:00)
+
+[서울 문화의 밤] 10:00~21:00 (입장마감 20:00)","매주 월요일 / 1월 1일
+※ 단, 월요일이 공휴일인 경우 정상 개관",SKIP_TIME_AMBIGUOUS,False,dangerous operating marker: 하절기,[평일] <RANGE> (입장마감 <TIME>) [주말] - 하절기(3월~10월) <RANGE> (입장마감 <TIME>) - 동절기(11월~2월) <RANGE> (입장마감 <TIME>) [서울 문화의 밤] <RANGE> (입장마감 <TIME>),"매주 월요일 / 1월 1일 ※ 단, 월요일이 공휴일인 경우 정상 개관"
+1874704,39,4520,하모,True,"- 11:30~22:00
+- 준비시간 15:00~17:30
+- 마지막 주문 20:30",연중무휴,PARSE_SIMPLE_WEEKLY,True,single time range + supported rest rule,- <RANGE> - 준비시간 <RANGE> - 마지막 주문 <TIME>,연중무휴
+1876565,32,4521,호텔 마누,True,"입실시간: 15:00
+퇴실시간: 12:00",,RAW_ONLY_LODGING,False,check-in/out is not a recurring weekly place schedule,입실시간: <TIME> 퇴실시간: <TIME>,<EMPTY>
+1885495,39,4522,은주정,True,11:30~22:00 (마지막 주문 21:30),매주 일요일 / 설·추석 연휴,PARSE_SIMPLE_WEEKLY,True,single time range + supported rest rule,<RANGE> (마지막 주문 <TIME>),매주 일요일 / 설·추석 연휴
+1887499,39,4523,셀프하우스,True,10:00~21:00,매주 일요일,PARSE_SIMPLE_WEEKLY,True,single time range + supported rest rule,<RANGE>,매주 일요일
+1887505,39,4524,일방통행 국물즉석떡볶이&화덕피자,True,10:30~22:00,연중무휴,PARSE_SIMPLE_WEEKLY,True,single time range + supported rest rule,<RANGE>,연중무휴
+1889832,39,4525,왕돈까스&왕냉면,True,전화 문의,연중무휴,SKIP_TIME_AMBIGUOUS,False,dangerous operating marker: 전화 문의,전화 문의,연중무휴
+1906334,12,4526,동대문역사문화공원,True,상시 개방,연중무휴,SKIP_TIME_AMBIGUOUS,False,always-open/24h cannot be represented safely with current Time fields,상시 개방,연중무휴
+1916296,14,4527,한성백제박물관,True,"[하절기(3월~10월)]
+
+- 평일 09:00~19:00
+
+- 주말 09:00~19:00
+
+- 금요일 09:00~21:00
+
+[동절기(11월~2월)]
+
+- 평일 09:00~19:00
+
+- 주말 09:00~18:00
+
+- 금요일 09:00~21:00
+
+※ 자세한 사항은 홈페이지 참조","매주 월요일 (단, 월요일이 공휴일인 경우 정상 운영) / 1월 1일 / 시장이 정하는 휴관일",SKIP_TIME_AMBIGUOUS,False,dangerous operating marker: 하절기,[하절기(3월~10월)] - 평일 <RANGE> - 주말 <RANGE> - 금요일 <RANGE> [동절기(11월~2월)] - 평일 <RANGE> - 주말 <RANGE> - 금요일 <RANGE> ※ 자세한 사항은 홈페이지 참조,"매주 월요일 (단, 월요일이 공휴일인 경우 정상 운영) / 1월 1일 / 시장이 정하는 휴관일"
+1932502,39,4528,외양간,True,※ 전화문의 요망,※ 전화문의 요망,SKIP_TIME_AMBIGUOUS,False,dangerous operating marker: 전화문의,※ 전화문의 요망,※ 전화문의 요망
+1934593,14,4529,국립현대미술관 서울,True,"10:00~18:00
+
+수,토 10:00~21:00
+
+※ 발권시간 : 관람종료 1시간 전까지 가능",1월1일 / 설날 / 추석,SKIP_REST_AMBIGUOUS,False,rest rule is not a supported simple weekly rule,"<RANGE> 수,토 <RANGE> ※ 발권시간 : 관람종료 1시간 전까지 가능",1월1일 / 설날 / 추석
+1941669,39,4530,제비다방,True,11:30~02:00,연중무휴,SKIP_TIME_AMBIGUOUS,False,overnight/equal open-close range not normalized,<RANGE>,연중무휴
+1947036,39,4531,스미스가 좋아하는 한옥,True,11:30~21:00 (준비시간 15:00~17:00),연중무휴,PARSE_SIMPLE_WEEKLY,True,single time range + supported rest rule,<RANGE> (준비시간 <RANGE>),연중무휴
+1957600,12,4532,명동 남대문 북창동 다동무교동 관광특구,True,점포 별로 상이함,점포 별로 상이함,SKIP_TIME_AMBIGUOUS,False,dangerous operating marker: 상이,점포 별로 상이함,점포 별로 상이함
+1964978,39,4533,은호식당,True,"- 평일 06:05~21:00 (마지막 주문 20:40)
+- 주말 06:05~16:00 (마지막 주문 15:40)",연중무휴,PARSE_WEEKDAY_WEEKEND,True,explicit weekday/weekend schedule + supported rest rule,- 평일 <RANGE> (마지막 주문 <TIME>) - 주말 <RANGE> (마지막 주문 <TIME>),연중무휴
+1966366,39,4534,오양회참치,True,"- 평일 11:30~23:00
+- 토요일 11:30~21:00",매주 일요일,SKIP_TIME_AMBIGUOUS,False,"expected exactly 1 main range after break extraction, found 2",- 평일 <RANGE> - 토요일 <RANGE>,매주 일요일
+1985338,39,4535,영일분식,True,10:00~20:00 (마지막 주문 19:20),매주 월요일,PARSE_SIMPLE_WEEKLY,True,single time range + supported rest rule,<RANGE> (마지막 주문 <TIME>),매주 월요일
+1985351,39,4536,문배동 육칼,True,09:00~19:30 (마지막 주문 19:00),연중무휴,PARSE_SIMPLE_WEEKLY,True,single time range + supported rest rule,<RANGE> (마지막 주문 <TIME>),연중무휴
+1998192,39,4537,순희네빈대떡,True,11:00~21:00 (마지막 주문 20:30),매주 화요일,PARSE_SIMPLE_WEEKLY,True,single time range + supported rest rule,<RANGE> (마지막 주문 <TIME>),매주 화요일
+1998333,39,4538,모녀김밥,True,09:00~21:00,설·추석 연휴,SKIP_REST_AMBIGUOUS,False,rest rule is not a supported simple weekly rule,<RANGE>,설·추석 연휴
+1998567,39,4539,노천파전,True,17:00~05:00,매주 일요일,SKIP_TIME_AMBIGUOUS,False,overnight/equal open-close range not normalized,<RANGE>,매주 일요일
+2000790,39,4540,성북동 구포국수,True,"- 11:00~23:00
+- 마지막 주문 22:00",격주 일요일,SKIP_REST_AMBIGUOUS,False,rest rule is not a supported simple weekly rule,- <RANGE> - 마지막 주문 <TIME>,격주 일요일
+2003909,12,4541,롯데월드타워&롯데월드몰,True,"매장 별로 상이함
+
+※ 홈페이지 참조","매장 별로 상이함
+※ 홈페이지 참조",SKIP_TIME_AMBIGUOUS,False,dangerous operating marker: 상이,매장 별로 상이함 ※ 홈페이지 참조,매장 별로 상이함 ※ 홈페이지 참조
+2008490,32,4542,오크우드 프리미어 코엑스 센터,True,"입실시간: 15:00
+퇴실시간: 11:00",,RAW_ONLY_LODGING,False,check-in/out is not a recurring weekly place schedule,입실시간: <TIME> 퇴실시간: <TIME>,<EMPTY>
+2010617,14,4543,응암정보도서관,True,09:00~18:00,매주 금요일 / 법정공휴일,SKIP_REST_AMBIGUOUS,False,dangerous rest marker: 공휴일,<RANGE>,매주 금요일 / 법정공휴일
+2011019,32,4544,써미트 호텔 서울,True,"입실시간: 15:00
+퇴실시간: 11:00",,RAW_ONLY_LODGING,False,check-in/out is not a recurring weekly place schedule,입실시간: <TIME> 퇴실시간: <TIME>,<EMPTY>
+2023561,39,4545,아승지,True,"[사찰음식점] 12:00~15:00
+※ 예약제로 운영
+[베이커리] 10:00~20:00",매주 일요일~월요일,SKIP_TIME_AMBIGUOUS,False,"expected exactly 1 main range after break extraction, found 2",[사찰음식점] <RANGE> ※ 예약제로 운영 [베이커리] <RANGE>,매주 일요일~월요일
+2024964,39,4546,플랜트,True,"- 11:00~22:00
+- 준비시간 15:00~17:00
+- 마지막 주문 21:00",매주 월요일,PARSE_SIMPLE_WEEKLY,True,single time range + supported rest rule,- <RANGE> - 준비시간 <RANGE> - 마지막 주문 <TIME>,매주 월요일
+2025260,39,4547,마지,True,"[수요일~토요일]
+- 11:30~20:00
+- 준비시간 15:00~17:30
+- 마지막 주문 19:10
+[일요일]
+- 11:30~15:00
+- 마지막 주문 14:10","매주 월요일, 화요일",SKIP_TIME_AMBIGUOUS,False,"expected exactly 1 main range after break extraction, found 2",[수요일~토요일] - <RANGE> - 준비시간 <RANGE> - 마지막 주문 <TIME> [일요일] - <RANGE> - 마지막 주문 <TIME>,"매주 월요일, 화요일"
+2028176,15,4548,허준축제,True,11:00~21:00,,RAW_ONLY_EVENT,False,event playtime is not a recurring weekly place schedule,<RANGE>,<EMPTY>
+2029564,12,4549,오미요리연구소,True,"10:00~13:00
+
+※ 예약 필수",연중무휴,PARSE_SIMPLE_WEEKLY,True,single time range + supported rest rule,<RANGE> ※ 예약 필수,연중무휴
+2029960,39,4550,기와,True,"- 11:30~21:30
+- 준비시간 15:00~17:00
+- 마지막 주문 20:30",연중무휴,PARSE_SIMPLE_WEEKLY,True,single time range + supported rest rule,- <RANGE> - 준비시간 <RANGE> - 마지막 주문 <TIME>,연중무휴
+2031668,12,4551,초안산,True,상시 개방,연중무휴,SKIP_TIME_AMBIGUOUS,False,always-open/24h cannot be represented safely with current Time fields,상시 개방,연중무휴
+2039626,39,4552,평래옥,True,"- 11:00~22:00
+- 준비시간 15:30~17:00
+- 마지막 주문 21:00",연중무휴,PARSE_SIMPLE_WEEKLY,True,single time range + supported rest rule,- <RANGE> - 준비시간 <RANGE> - 마지막 주문 <TIME>,연중무휴
+229057,15,4553,서울와우북페스티벌,False,,,NO_DATA,False,detailIntro2 returned no item,<EMPTY>,<EMPTY>
+229901,14,4554,코엑스,True,※ 시설 별로 상이하므로 홈페이지 참조,연중무휴,SKIP_TIME_AMBIGUOUS,False,dangerous operating marker: 상이,※ 시설 별로 상이하므로 홈페이지 참조,연중무휴
+229910,14,4555,남산골공원서울천년타임캡슐광장,True,"- 하절기(4월~10월) 09:00~21:00
+
+- 동절기(11월~3월) 09:00~20:00",매주 월요일,SKIP_TIME_AMBIGUOUS,False,dangerous operating marker: 하절기,- 하절기(4월~10월) <RANGE> - 동절기(11월~3월) <RANGE>,매주 월요일
+231897,12,4556,서울 삼전도비,True,상시 개방,연중무휴,SKIP_TIME_AMBIGUOUS,False,always-open/24h cannot be represented safely with current Time fields,상시 개방,연중무휴
+231962,14,4557,이스탄불문화원,True,10:00~17:00 (휴게시간 12:00~13:00),연중무휴,PARSE_SIMPLE_WEEKLY,True,single time range + supported rest rule,<RANGE> (휴게시간 <RANGE>),연중무휴
+231976,14,4558,목인박물관 목석원,True,"- 하절기 10:30~19:00 (입장마감 18:00)
+
+- 동절기 10:30~18:00 (입장마감 17:00)",매주 월요일 / 설·추석 연휴,SKIP_TIME_AMBIGUOUS,False,dangerous operating marker: 하절기,- 하절기 <RANGE> (입장마감 <TIME>) - 동절기 <RANGE> (입장마감 <TIME>),매주 월요일 / 설·추석 연휴
+232206,39,4559,에베레스트 레스토랑 동대문본점,True,11:00~22:00,연중무휴,PARSE_SIMPLE_WEEKLY,True,single time range + supported rest rule,<RANGE>,연중무휴
+232218,39,4560,궁나라냉면묵밥,True,10:00~20:00,설·추석 연휴,SKIP_REST_AMBIGUOUS,False,rest rule is not a supported simple weekly rule,<RANGE>,설·추석 연휴
+232225,39,4561,양반댁,True,11:30~21:00 (주중 브레이크타임 15:00~17:00 / 라스트오더 20:00),연중무휴,PARSE_SIMPLE_WEEKLY,True,single time range + supported rest rule,<RANGE> (주중 브레이크타임 <RANGE> / 라스트오더 <TIME>),연중무휴
+232231,39,4562,남문토방,True,10:00~22:00,연중무휴,PARSE_SIMPLE_WEEKLY,True,single time range + supported rest rule,<RANGE>,연중무휴
+232241,39,4563,대문한정식,True,"- 11:30~21:00
+- 준비시간 15:00~17:00
+- 마지막 주문 20:00",연중무휴,PARSE_SIMPLE_WEEKLY,True,single time range + supported rest rule,- <RANGE> - 준비시간 <RANGE> - 마지막 주문 <TIME>,연중무휴
+232242,39,4564,태림산채정식,True,11:00~21:00 (준비 시간 15:00~17:00 / 마지막 주문 20:00),매주 일요일,PARSE_SIMPLE_WEEKLY,True,single time range + supported rest rule,<RANGE> (준비 시간 <RANGE> / 마지막 주문 <TIME>),매주 일요일
+232261,39,4565,버드나무집 본점,True,11:00~21:30,연중무휴,PARSE_SIMPLE_WEEKLY,True,single time range + supported rest rule,<RANGE>,연중무휴
+232271,39,4566,광양불고기본가,True,"- 11:30~22:00
+- 준비시간 15:00~17:00
+- 마지막 주문 21:00",연중무휴,PARSE_SIMPLE_WEEKLY,True,single time range + supported rest rule,- <RANGE> - 준비시간 <RANGE> - 마지막 주문 <TIME>,연중무휴
+232277,39,4567,충무로부산복집,True,11:00~21:30,1월 1일 / 설·추석 연휴,SKIP_REST_AMBIGUOUS,False,rest rule is not a supported simple weekly rule,<RANGE>,1월 1일 / 설·추석 연휴
+2357761,12,4568,구룡산(서울),True,상시 개방,연중무휴,SKIP_TIME_AMBIGUOUS,False,always-open/24h cannot be represented safely with current Time fields,상시 개방,연중무휴
+2367770,39,4569,계림식당,True,"- 11:30~21:45
+- 준비시간 15:30~16:30
+- 마지막 주문 20:30",매주 일요일,PARSE_SIMPLE_WEEKLY,True,single time range + supported rest rule,- <RANGE> - 준비시간 <RANGE> - 마지막 주문 <TIME>,매주 일요일
+2371881,39,4570,고성막국수,True,"- 평일 11:30~15:00
+- 토요일 11:30~20:00",매주 일요일,SKIP_TIME_AMBIGUOUS,False,"expected exactly 1 main range after break extraction, found 2",- 평일 <RANGE> - 토요일 <RANGE>,매주 일요일
+2372228,14,4571,우리옛돌박물관,True,"[하절기(3월~11월)]
+
+- 평일 10:00~17:00 (입장 마감 16:00)
+
+- 주말 10:00~18:00 (입장 마감 17:00)
+
+[동절기(12월~2월)]
+
+- 10:00~17:00 (입장 마감 16:00)
+
+※ 박물관 사정에 따라 변동될 수 있으므로 홈페이지 참조","매주 월요일 (단, 월요일이 공휴일인 경우 다음날 휴관) / 1월 1일",SKIP_TIME_AMBIGUOUS,False,dangerous operating marker: 하절기,[하절기(3월~11월)] - 평일 <RANGE> (입장 마감 <TIME>) - 주말 <RANGE> (입장 마감 <TIME>) [동절기(12월~2월)] - <RANGE> (입장 마감 <TIME>) ※ 박물관 사정에 따라 변동될 수 있으므로 홈페이지 참조,"매주 월요일 (단, 월요일이 공휴일인 경우 다음날 휴관) / 1월 1일"
+2373204,12,4572,경성 부민관 폭탄 의거지,True,상시 개방,매주 토요일~일요일 / 법정공휴일,SKIP_REST_AMBIGUOUS,False,dangerous rest marker: 공휴일,상시 개방,매주 토요일~일요일 / 법정공휴일
+2373247,12,4573,마포전차종점 3·1운동 만세 시위지,True,상시 개방,연중무휴,SKIP_TIME_AMBIGUOUS,False,always-open/24h cannot be represented safely with current Time fields,상시 개방,연중무휴
+2373320,12,4574,맥아더 사령관 한강방어선 시찰지,True,상시 개방,연중무휴,SKIP_TIME_AMBIGUOUS,False,always-open/24h cannot be represented safely with current Time fields,상시 개방,연중무휴
+2373326,12,4575,반공 청년운동 순국 열사 기념비,True,상시 개방,연중무휴,SKIP_TIME_AMBIGUOUS,False,always-open/24h cannot be represented safely with current Time fields,상시 개방,연중무휴
+2373333,12,4576,신석구 사택 터,True,상시 개방,연중무휴,SKIP_TIME_AMBIGUOUS,False,always-open/24h cannot be represented safely with current Time fields,상시 개방,연중무휴
+2373360,12,4577,우당 이회영 선생 흉상,True,상시 개방,매주 월요일,SKIP_TIME_AMBIGUOUS,False,always-open/24h cannot be represented safely with current Time fields,상시 개방,매주 월요일
+2373363,12,4578,이재명 의거지,True,상시 개방,연중무휴,SKIP_TIME_AMBIGUOUS,False,always-open/24h cannot be represented safely with current Time fields,상시 개방,연중무휴
+2373364,12,4579,이충순 자결 터,True,상시 개방,연중무휴,SKIP_TIME_AMBIGUOUS,False,always-open/24h cannot be represented safely with current Time fields,상시 개방,연중무휴
+2373384,39,4580,송림식당,True,"- 평일 10:00~22:00 (마지막 주문 21:20)
+- 주말 09:00~22:00 (마지막 주문 21:20)",연중무휴,PARSE_WEEKDAY_WEEKEND,True,explicit weekday/weekend schedule + supported rest rule,- 평일 <RANGE> (마지막 주문 <TIME>) - 주말 <RANGE> (마지막 주문 <TIME>),연중무휴
+2373394,39,4581,성수족발,True,"- 12:00~22:00
+- 준비시간 15:00~17:00
+- 마지막 주문 21:00",연중무휴,PARSE_SIMPLE_WEEKLY,True,single time range + supported rest rule,- <RANGE> - 준비시간 <RANGE> - 마지막 주문 <TIME>,연중무휴
+2373420,12,4582,아띠인력거,True,10:00~18:00,연중무휴,PARSE_SIMPLE_WEEKLY,True,single time range + supported rest rule,<RANGE>,연중무휴
+2383448,39,4583,미자식당,True,전화 문의,전화 문의,SKIP_TIME_AMBIGUOUS,False,dangerous operating marker: 전화 문의,전화 문의,전화 문의
+2384192,39,4584,용궁횟집,True,10:00~22:00,연중무휴,PARSE_SIMPLE_WEEKLY,True,single time range + supported rest rule,<RANGE>,연중무휴
+2384776,15,4585,2025 한강명산트레킹(2차),True,09:00~14:00,,RAW_ONLY_EVENT,False,event playtime is not a recurring weekly place schedule,<RANGE>,<EMPTY>
+2390314,12,4586,한복남 경복궁점,True,09:00~19:00 (입장 마감 18:30),연중무휴,PARSE_SIMPLE_WEEKLY,True,single time range + supported rest rule,<RANGE> (입장 마감 <TIME>),연중무휴
+2390748,14,4587,전통주갤러리,True,10:00~19:00,,SKIP_REST_AMBIGUOUS,False,rest text empty,<RANGE>,<EMPTY>
+2391348,12,4588,여의천,True,상시 개방,연중무휴,SKIP_TIME_AMBIGUOUS,False,always-open/24h cannot be represented safely with current Time fields,상시 개방,연중무휴
+2401757,12,4589,자양동 양꼬치거리 (중국음식문화거리),True,점포별 상이,점포별 상이,SKIP_TIME_AMBIGUOUS,False,dangerous operating marker: 상이,점포별 상이,점포별 상이
+2402981,12,4590,대림동 차이나타운,True,점포별 상이함,점포별 상이함,SKIP_TIME_AMBIGUOUS,False,dangerous operating marker: 상이,점포별 상이함,점포별 상이함
+2405329,15,4591,종로K축제,True,10:00~20:00,,RAW_ONLY_EVENT,False,event playtime is not a recurring weekly place schedule,<RANGE>,<EMPTY>
+2406564,28,4592,북한산 자락길,True,,,NO_TIME_TEXT,False,operating text empty,<EMPTY>,<EMPTY>
+2438633,39,4593,역전회관,True,11:00~22:00 (준비시간 15:00~17:00),연중무휴,PARSE_SIMPLE_WEEKLY,True,single time range + supported rest rule,<RANGE> (준비시간 <RANGE>),연중무휴
+2451912,12,4594,크라운해태 키즈뮤지엄,True,10:00~17:00,매주 월요일~화요일,PARSE_SIMPLE_WEEKLY,True,single time range + supported rest rule,<RANGE>,매주 월요일~화요일
+2452842,12,4595,아리수나라,True,"09:30~17:40
+
+※ 회차 별로 운영
+
+※ 사전 예약제",매주 월요일 / 1월 1일 / 설·추석 연휴,PARSE_SIMPLE_WEEKLY,True,single time range + supported rest rule,<RANGE> ※ 회차 별로 운영 ※ 사전 예약제,매주 월요일 / 1월 1일 / 설·추석 연휴
+2452856,12,4596,서울 구의정수장 제1·2공장(구의 아리수 정수센터),True,"10:00 / 14:00
+
+※ 사전 예약 필수",매주 토요일~일요일 / 법정공휴일,SKIP_REST_AMBIGUOUS,False,dangerous rest marker: 공휴일,<TIME> / <TIME> ※ 사전 예약 필수,매주 토요일~일요일 / 법정공휴일
+2453179,12,4597,고촌이종근기념관,True,"- 하절기(3~10월) 10:00~17:00
+
+- 동절기(11~2월) 10:00~16:00",국경일 / 공휴일,SKIP_TIME_AMBIGUOUS,False,dangerous operating marker: 하절기,- 하절기(3~10월) <RANGE> - 동절기(11~2월) <RANGE>,국경일 / 공휴일
+2453996,14,4598,수도박물관,True,09:00~18:00,,SKIP_REST_AMBIGUOUS,False,rest text empty,<RANGE>,<EMPTY>
+2456536,12,4599,강남 마이스 관광특구,True,,,NO_TIME_TEXT,False,operating text empty,<EMPTY>,<EMPTY>
+2465041,39,4600,최수사 대게마을,True,11:30~22:30 (준비시간 14:30~17:00),,SKIP_REST_AMBIGUOUS,False,rest text empty,<RANGE> (준비시간 <RANGE>),<EMPTY>
+2465890,32,4601,시은재,True,"입실시간: 15:00
+퇴실시간: 11:00",,RAW_ONLY_LODGING,False,check-in/out is not a recurring weekly place schedule,입실시간: <TIME> 퇴실시간: <TIME>,<EMPTY>
+2469474,39,4602,하단,True,"- 12:00~20:00
+- 준비시간 14:00~17:00
+- 마지막 주문 19:00",매주 화요일,PARSE_SIMPLE_WEEKLY,True,single time range + supported rest rule,- <RANGE> - 준비시간 <RANGE> - 마지막 주문 <TIME>,매주 화요일
+2470006,12,4603,동대문디자인플라자(DDP),True,"10:00~20:00
+
+※ 프로그램에 따라 일부공간 탄력운영","1월 1일 / 설·추석 당일
+※ 시설 별로 상이하므로 자세한 사항은 홈페이지 참조",SKIP_REST_AMBIGUOUS,False,dangerous rest marker: 상이,<RANGE> ※ 프로그램에 따라 일부공간 탄력운영,1월 1일 / 설·추석 당일 ※ 시설 별로 상이하므로 자세한 사항은 홈페이지 참조
+2476731,12,4604,롯데월드 아쿠아리움,True,10:00~20:00 (입장마감 19:00),,SKIP_REST_AMBIGUOUS,False,rest text empty,<RANGE> (입장마감 <TIME>),<EMPTY>
+2481866,12,4605,백인제가옥,True,09:00~18:00 (입장마감 17:30),"매주 월요일 / 1월 1일
+※ 단, 월요일이 공휴일인 경우 개관",SKIP_REST_AMBIGUOUS,False,dangerous rest marker: 공휴일,<RANGE> (입장마감 <TIME>),"매주 월요일 / 1월 1일 ※ 단, 월요일이 공휴일인 경우 개관"
+2487684,32,4606,남산호스텔,True,"입실시간: 14:00
+퇴실시간: 11:00",,RAW_ONLY_LODGING,False,check-in/out is not a recurring weekly place schedule,입실시간: <TIME> 퇴실시간: <TIME>,<EMPTY>
+2487791,15,4607,서울아프리카페스티벌,True,11:00~21:00,,RAW_ONLY_EVENT,False,event playtime is not a recurring weekly place schedule,<RANGE>,<EMPTY>
+2488585,14,4608,헬로우뮤지움,True,10:00~18:00,매주 월요일~수요일 / 설·추석 당일,PARSE_SIMPLE_WEEKLY,True,single time range + supported rest rule,<RANGE>,매주 월요일~수요일 / 설·추석 당일
+2495404,39,4609,텅앤그루브조인트,True,"- 11:30~22:50
+- 마지막 주문 21:30",연중무휴,PARSE_SIMPLE_WEEKLY,True,single time range + supported rest rule,- <RANGE> - 마지막 주문 <TIME>,연중무휴
+2495458,39,4610,명문막국수,True,"- 11:10~20:00
+- 준비시간 14:30~17:00
+- 점심 마지막 주문 14:00 / 저녁 마지막 주문 19:30",연중무휴,PARSE_SIMPLE_WEEKLY,True,single time range + supported rest rule,- <RANGE> - 준비시간 <RANGE> - 점심 마지막 주문 <TIME> / 저녁 마지막 주문 <TIME>,연중무휴
+2495465,39,4611,봉파레트,True,"- 11:30~22:00
+- 준비시간 15:30~17:30
+- 마지막 주문 20:30",매주 월요일,PARSE_SIMPLE_WEEKLY,True,single time range + supported rest rule,- <RANGE> - 준비시간 <RANGE> - 마지막 주문 <TIME>,매주 월요일
+2495561,12,4612,서울로 7017,True,상시 개방,연중무휴,SKIP_TIME_AMBIGUOUS,False,always-open/24h cannot be represented safely with current Time fields,상시 개방,연중무휴
+2495915,39,4613,성북동누룽지백숙,True,"- 11:30~21:00
+- 마지막 주문 20:00
+※ 매년 초·중·말복은 11:00 영업 시작",매주 월요일,PARSE_SIMPLE_WEEKLY,True,single time range + supported rest rule,- <RANGE> - 마지막 주문 <TIME> ※ 매년 초·중·말복은 <TIME> 영업 시작,매주 월요일
+2496274,39,4614,손국수,True,"- 11:40~20:00
+- 준비시간 15:00~17:30
+- 마지막 주문 19:00",매주 일요일,PARSE_SIMPLE_WEEKLY,True,single time range + supported rest rule,- <RANGE> - 준비시간 <RANGE> - 마지막 주문 <TIME>,매주 일요일
+2496493,39,4615,옛날중국집,True,"- 11:00~21:00
+- 준비시간 15:00~16:00
+- 마지막 주문 20:00",매주 월요일,PARSE_SIMPLE_WEEKLY,True,single time range + supported rest rule,- <RANGE> - 준비시간 <RANGE> - 마지막 주문 <TIME>,매주 월요일
+2500201,12,4616,연남동 공방거리,True,상시 개방,연중무휴,SKIP_TIME_AMBIGUOUS,False,always-open/24h cannot be represented safely with current Time fields,상시 개방,연중무휴
+2500207,12,4617,상수동 카페거리,True,상시 개방,연중무휴,SKIP_TIME_AMBIGUOUS,False,always-open/24h cannot be represented safely with current Time fields,상시 개방,연중무휴
+2500214,12,4618,로렌스길,True,※ 점포별 상이,※ 점포별 상이,SKIP_TIME_AMBIGUOUS,False,dangerous operating marker: 상이,※ 점포별 상이,※ 점포별 상이
+2500218,12,4619,광흥당,True,09:00~18:00,매주 토요일~일요일,PARSE_SIMPLE_WEEKLY,True,single time range + supported rest rule,<RANGE>,매주 토요일~일요일
+2500229,12,4620,경의선책거리,True,11:00~20:00,매주 월요일,PARSE_SIMPLE_WEEKLY,True,single time range + supported rest rule,<RANGE>,매주 월요일
+250131,12,4621,올림픽대교,True,상시 개방,연중무휴,SKIP_TIME_AMBIGUOUS,False,always-open/24h cannot be represented safely with current Time fields,상시 개방,연중무휴
+250134,12,4622,율곡로,True,상시 개방,연중무휴,SKIP_TIME_AMBIGUOUS,False,always-open/24h cannot be represented safely with current Time fields,상시 개방,연중무휴
+250166,12,4623,방화대교,True,상시 개방,연중무휴,SKIP_TIME_AMBIGUOUS,False,always-open/24h cannot be represented safely with current Time fields,상시 개방,연중무휴
+250330,12,4624,서울 약현성당,True,※ 자세한 사항은 전화문의 요망,연중무휴,SKIP_TIME_AMBIGUOUS,False,dangerous operating marker: 전화문의,※ 자세한 사항은 전화문의 요망,연중무휴
+250350,12,4625,목멱산 봉수대 터,True,상시 개방,연중무휴,SKIP_TIME_AMBIGUOUS,False,always-open/24h cannot be represented safely with current Time fields,상시 개방,연중무휴
+250364,12,4626,문화역 서울 284,True,11:00~19:00 (입장 마감 : 관람 종료 1시간 전),"매주 월요일
+※전시 기간 확인 후 방문 요망(전시 준비 기간 미운영)",PARSE_SIMPLE_WEEKLY,True,single time range + supported rest rule,<RANGE> (입장 마감 : 관람 종료 1시간 전),매주 월요일 ※전시 기간 확인 후 방문 요망(전시 준비 기간 미운영)
+2504510,32,4627,롯데시티호텔 명동,True,"입실시간: 15:00
+퇴실시간: 익일 12:00",,RAW_ONLY_LODGING,False,check-in/out is not a recurring weekly place schedule,입실시간: <TIME> 퇴실시간: 익일 <TIME>,<EMPTY>
+2504658,32,4628,딜라이트 호텔,True,"입실시간: 15:00
+퇴실시간: 12:00",,RAW_ONLY_LODGING,False,check-in/out is not a recurring weekly place schedule,입실시간: <TIME> 퇴실시간: <TIME>,<EMPTY>
+250466,14,4629,aT센터,True,홈페이지 참조,홈페이지 참조,SKIP_REST_AMBIGUOUS,False,rest rule is not a supported simple weekly rule,홈페이지 참조,홈페이지 참조
+250469,14,4630,서울무역전시컨벤션센터(SETEC),True,"09:00~18:00
+
+※ 전시마다 상이하므로 전화문의 요망",연중무휴,SKIP_TIME_AMBIGUOUS,False,dangerous operating marker: 상이,<RANGE> ※ 전시마다 상이하므로 전화문의 요망,연중무휴
+250470,12,4631,서울 고려대학교 중앙도서관,True,09:00~22:00,시설별 상이,SKIP_REST_AMBIGUOUS,False,dangerous rest marker: 상이,<RANGE>,시설별 상이
+2505619,38,4632,디타워 광화문,True,매장 별로 상이함,매장 별로 상이함,SKIP_TIME_AMBIGUOUS,False,dangerous operating marker: 상이,매장 별로 상이함,매장 별로 상이함
+250564,39,4633,산띠,True,11:30~22:00,연중무휴,PARSE_SIMPLE_WEEKLY,True,single time range + supported rest rule,<RANGE>,연중무휴
+2505908,32,4634,롯데시티호텔 구로,True,"입실시간: 15:00
+퇴실시간: 12:00",,RAW_ONLY_LODGING,False,check-in/out is not a recurring weekly place schedule,입실시간: <TIME> 퇴실시간: <TIME>,<EMPTY>
+2507433,12,4635,삼해소주,True,"10:00~17:00
+
+※ 방문 전 연락 필수",매주 화요일 / 수요일,PARSE_SIMPLE_WEEKLY,True,single time range + supported rest rule,<RANGE> ※ 방문 전 연락 필수,매주 화요일 / 수요일
+2507822,14,4636,별마당도서관,True,10:30~22:00,연중무휴,PARSE_SIMPLE_WEEKLY,True,single time range + supported rest rule,<RANGE>,연중무휴
+2522037,38,4637,인현시장,True,점포별 상이,점포별 상이,SKIP_TIME_AMBIGUOUS,False,dangerous operating marker: 상이,점포별 상이,점포별 상이
+252527,12,4638,서울 고려대학교 본관,True,상시 개방,연중무휴,SKIP_TIME_AMBIGUOUS,False,always-open/24h cannot be represented safely with current Time fields,상시 개방,연중무휴
+252529,12,4639,중앙고등학교,True,,,NO_TIME_TEXT,False,operating text empty,<EMPTY>,<EMPTY>
+252532,12,4640,서울 연세대학교 스팀슨관,True,상시 개방,연중무휴,SKIP_TIME_AMBIGUOUS,False,always-open/24h cannot be represented safely with current Time fields,상시 개방,연중무휴
+252547,12,4641,창의문(자하문),True,"[3월~4월] 07:00~18:00
+
+[5월~8월] 07:00~19:00
+
+[9월~10월] 07:00~18:00
+
+[11월~2월] 09:00~17:00",연중무휴,SKIP_TIME_AMBIGUOUS,False,"expected exactly 1 main range after break extraction, found 4",[3월~4월] <RANGE> [5월~8월] <RANGE> [9월~10월] <RANGE> [11월~2월] <RANGE>,연중무휴
+2528117,32,4642,교대게스트하우스,True,"입실시간: 15:00
+퇴실시간: 11:00",,RAW_ONLY_LODGING,False,check-in/out is not a recurring weekly place schedule,입실시간: <TIME> 퇴실시간: <TIME>,<EMPTY>
+2535347,14,4643,근현대사기념관,True,09:00~18:00 (입장마감 17:30),"매주 월요일(단, 월요일이 공휴일인 경우 그 다음날 휴관) / 1월 1일 / 설·추석 연휴",SKIP_REST_AMBIGUOUS,False,dangerous rest marker: 공휴일,<RANGE> (입장마감 <TIME>),"매주 월요일(단, 월요일이 공휴일인 경우 그 다음날 휴관) / 1월 1일 / 설·추석 연휴"
+2535439,39,4644,우성식당,True,09:00~22:30,연중무휴,PARSE_SIMPLE_WEEKLY,True,single time range + supported rest rule,<RANGE>,연중무휴
+2535455,39,4645,아르모니움,True,"- 11:30~22:00
+- 준비시간 15:00~17:30
+- 마지막 주문 21:00",연중무휴,PARSE_SIMPLE_WEEKLY,True,single time range + supported rest rule,- <RANGE> - 준비시간 <RANGE> - 마지막 주문 <TIME>,연중무휴
+2535556,39,4646,린스시,True,"[평일]
+- 10:30~21:30
+- 준비시간 14:00~15:40
+- 마지막 주문 20:30
+[일요일]
+- 11:00~20:30
+- 마지막 주문 19:30",매주 토요일,SKIP_TIME_AMBIGUOUS,False,"expected exactly 1 main range after break extraction, found 2",[평일] - <RANGE> - 준비시간 <RANGE> - 마지막 주문 <TIME> [일요일] - <RANGE> - 마지막 주문 <TIME>,매주 토요일
+2541308,32,4647,잠실 상주호텔,True,"입실시간: 15:00
+퇴실시간: 12:00",,RAW_ONLY_LODGING,False,check-in/out is not a recurring weekly place schedule,입실시간: <TIME> 퇴실시간: <TIME>,<EMPTY>
+2542167,39,4648,연화산,True,"[평일]
+- 11:00~21:30
+- 준비 시간 14:30~17:00
+- 마지막 주문 21:10
+[토요일]
+- 11:30~20:00
+- 마지막 주문 19:40",매주 일요일,SKIP_TIME_AMBIGUOUS,False,"expected exactly 1 main range after break extraction, found 2",[평일] - <RANGE> - 준비 시간 <RANGE> - 마지막 주문 <TIME> [토요일] - <RANGE> - 마지막 주문 <TIME>,매주 일요일
+2543919,39,4649,광화문 세종클럽,True,11:30~24:00,연중무휴,SKIP_TIME_AMBIGUOUS,False,"expected exactly 1 main range after break extraction, found 0",<TIME>~24:00,연중무휴
+2544497,39,4650,스시 카이신(鮨海信),True,18:00~22:00,연중무휴,PARSE_SIMPLE_WEEKLY,True,single time range + supported rest rule,<RANGE>,연중무휴
+2544579,39,4651,금용문,True,11:30~22:00 (준비시간 15:00~17:00),연중무휴,PARSE_SIMPLE_WEEKLY,True,single time range + supported rest rule,<RANGE> (준비시간 <RANGE>),연중무휴
+2544584,39,4652,일품당프리미엄,True,"- 11:30~22:00
+- 준비시간 15:00~17:00
+- 마지막 주문 21:00",연중무휴,PARSE_SIMPLE_WEEKLY,True,single time range + supported rest rule,- <RANGE> - 준비시간 <RANGE> - 마지막 주문 <TIME>,연중무휴
+2545920,14,4653,국립어린이과학관,True,09:30~17:30 (입장마감 16:30),"매주 월요일 (단, 월요일이 공휴일인 경우 개관하며, 화요일에 대체 휴관) / 1월 1일 / 설·추석 당일",SKIP_REST_AMBIGUOUS,False,dangerous rest marker: 공휴일,<RANGE> (입장마감 <TIME>),"매주 월요일 (단, 월요일이 공휴일인 경우 개관하며, 화요일에 대체 휴관) / 1월 1일 / 설·추석 당일"
+2552251,14,4654,경기여고 경운박물관(서울),True,"[기획전시] 월요일~토요일 10:00~16:00
+
+[상설전시] 월요일~금요일 10:00~16:00",매주 일요일 / 공휴일,SKIP_REST_AMBIGUOUS,False,dangerous rest marker: 공휴일,[기획전시] 월요일~토요일 <RANGE> [상설전시] 월요일~금요일 <RANGE>,매주 일요일 / 공휴일
+2553377,14,4655,김달진미술자료박물관,True,"[평일]
+
+- 10:00~17:00
+
+※ 매월 말 마지막 평일은 15시부터 관람 가능
+
+[토요일]
+
+- 10:00~14:00",매주 일요일 / 공휴일,SKIP_REST_AMBIGUOUS,False,dangerous rest marker: 공휴일,[평일] - <RANGE> ※ 매월 말 마지막 평일은 15시부터 관람 가능 [토요일] - <RANGE>,매주 일요일 / 공휴일
+2553390,14,4656,우석뮤지엄,True,10:00~17:00,"매주 일요일, 월요일 / 법정공휴일",SKIP_REST_AMBIGUOUS,False,dangerous rest marker: 공휴일,<RANGE>,"매주 일요일, 월요일 / 법정공휴일"
+2553876,12,4657,세운상가,True,점포별 상이,점포별 상이,SKIP_TIME_AMBIGUOUS,False,dangerous operating marker: 상이,점포별 상이,점포별 상이
+2553908,12,4658,서울새활용플라자,True,"10:00~18:00
+
+※ 토요일의 경우, 소재은행은 새활용 탐방, 공간 및 장비사용 신청 사전 예약자에 한하여 방문 가능",매주 일요일,PARSE_SIMPLE_WEEKLY,True,single time range + supported rest rule,"<RANGE> ※ 토요일의 경우, 소재은행은 새활용 탐방, 공간 및 장비사용 신청 사전 예약자에 한하여 방문 가능",매주 일요일
+2553929,14,4659,문화비축기지,True,"[야외공원] 상시 개방
+
+[탱크 T1~T6] 화요일~일요일 10:00~18:00
+
+※ 공간 사용 일정에 따라 탱크 출입이 제한될 수 있음
+
+[카페 Tank6] 화요일~일요일 10:00~18:00",,SKIP_REST_AMBIGUOUS,False,rest text empty,[야외공원] 상시 개방 [탱크 T1~T6] 화요일~일요일 <RANGE> ※ 공간 사용 일정에 따라 탱크 출입이 제한될 수 있음 [카페 Tank6] 화요일~일요일 <RANGE>,<EMPTY>
+2553942,12,4660,조선일보 뉴지엄,True,10:00~18:00 (입장마감 17:30),매주 월요일 / 1월 1일 / 설·추석 연휴,PARSE_SIMPLE_WEEKLY,True,single time range + supported rest rule,<RANGE> (입장마감 <TIME>),매주 월요일 / 1월 1일 / 설·추석 연휴
+2553946,12,4661,금천예술공장,True,09:00~18:00,주말 및 공휴일,SKIP_REST_AMBIGUOUS,False,dangerous rest marker: 공휴일,<RANGE>,주말 및 공휴일
+2553960,12,4662,구로공단 노동자생활체험관,True,10:00~17:00 (입장마감 16:30),매주 일요일 / 1월 1일 / 설·추석 연휴,PARSE_SIMPLE_WEEKLY,True,single time range + supported rest rule,<RANGE> (입장마감 <TIME>),매주 일요일 / 1월 1일 / 설·추석 연휴
+2554065,12,4663,서울교통공사 고덕차량사업소,True,"둘째 주, 넷째 주 수요일 10:00~11:30
+
+※ 사전 예약 필수",매주 토요일~일요일 / 공휴일,SKIP_TIME_AMBIGUOUS,False,dangerous operating marker: 둘째,"둘째 주, 넷째 주 수요일 <RANGE> ※ 사전 예약 필수",매주 토요일~일요일 / 공휴일
+2554142,14,4664,유금와당박물관,True,"화요일~토요일 14:00~17:00
+
+※ 단체교육이 진행 중인 경우 관람에 제한이 있음",매주 일요일~월요일 / 공휴일,SKIP_REST_AMBIGUOUS,False,dangerous rest marker: 공휴일,화요일~토요일 <RANGE> ※ 단체교육이 진행 중인 경우 관람에 제한이 있음,매주 일요일~월요일 / 공휴일
+2560282,39,4665,호재래,True,15:00~24:00,연중무휴,SKIP_TIME_AMBIGUOUS,False,"expected exactly 1 main range after break extraction, found 0",<TIME>~24:00,연중무휴
+2561208,12,4666,디키디키,True,10:30~18:30,매주 월요일 / 설·추석 당일,PARSE_SIMPLE_WEEKLY,True,single time range + supported rest rule,<RANGE>,매주 월요일 / 설·추석 당일
+2563182,39,4667,[백년가게] 선천집,True,11:00~21:00,매주 일요일,PARSE_SIMPLE_WEEKLY,True,single time range + supported rest rule,<RANGE>,매주 일요일
+2563211,39,4668,[백년가게] 삼거리 먼지막 순대국,True,08:00~19:30,매주 화요일,PARSE_SIMPLE_WEEKLY,True,single time range + supported rest rule,<RANGE>,매주 화요일
+2563380,39,4669,[백년가게] 장군숯불족발,True,"- 화요일~토요일 17:00~24:00
+- 일요일 17:00~23:00",매주 월요일,PARSE_SIMPLE_WEEKLY,True,single time range + supported rest rule,- 화요일~토요일 <TIME>~24:00 - 일요일 <RANGE>,매주 월요일
+2568938,32,4670,Jeong's family(정스패밀리),True,"입실시간: 15:00
+퇴실시간: 11:00",,RAW_ONLY_LODGING,False,check-in/out is not a recurring weekly place schedule,입실시간: <TIME> 퇴실시간: <TIME>,<EMPTY>
+2569150,32,4671,서울이야기 한옥(서울이야기한옥게스트하우스),True,"입실시간: 15:00
+퇴실시간: 11:00",,RAW_ONLY_LODGING,False,check-in/out is not a recurring weekly place schedule,입실시간: <TIME> 퇴실시간: <TIME>,<EMPTY>
+2569959,32,4672,아리하우스,True,"입실시간: 15:00
+퇴실시간: 11:00",,RAW_ONLY_LODGING,False,check-in/out is not a recurring weekly place schedule,입실시간: <TIME> 퇴실시간: <TIME>,<EMPTY>
+2570164,32,4673,지유,True,"입실시간: 15:00
+퇴실시간: 11:00",,RAW_ONLY_LODGING,False,check-in/out is not a recurring weekly place schedule,입실시간: <TIME> 퇴실시간: <TIME>,<EMPTY>
+2570238,32,4674,능마루게스트하우스(Nungmaru Guesthouse),True,"입실시간: 15:00
+퇴실시간: 11:00",,RAW_ONLY_LODGING,False,check-in/out is not a recurring weekly place schedule,입실시간: <TIME> 퇴실시간: <TIME>,<EMPTY>
+2570293,32,4675,서울 타이완 게스트하우스,True,"입실시간: 15:00
+퇴실시간: 11:00",,RAW_ONLY_LODGING,False,check-in/out is not a recurring weekly place schedule,입실시간: <TIME> 퇴실시간: <TIME>,<EMPTY>
+2570447,32,4676,애플트리(Apple tree)(애플트리게스트하우스),True,"입실시간: 14:00
+퇴실시간: 11:00",,RAW_ONLY_LODGING,False,check-in/out is not a recurring weekly place schedule,입실시간: <TIME> 퇴실시간: <TIME>,<EMPTY>
+2570692,32,4677,엘스테이(Gangnam AN guesthouse),True,"입실시간: 15:00
+퇴실시간: 11:00",,RAW_ONLY_LODGING,False,check-in/out is not a recurring weekly place schedule,입실시간: <TIME> 퇴실시간: <TIME>,<EMPTY>
+2571971,32,4678,한스하우스(Hans house),True,"입실시간: 14:00
+퇴실시간: 11:00",,RAW_ONLY_LODGING,False,check-in/out is not a recurring weekly place schedule,입실시간: <TIME> 퇴실시간: <TIME>,<EMPTY>
+2572829,32,4679,큐브 게스트하우스,True,"입실시간: 15:00
+퇴실시간: 12:00",,RAW_ONLY_LODGING,False,check-in/out is not a recurring weekly place schedule,입실시간: <TIME> 퇴실시간: <TIME>,<EMPTY>
+2572933,32,4680,오케이 게스트하우스,True,"입실시간: 16:00
+퇴실시간: 11:00",,RAW_ONLY_LODGING,False,check-in/out is not a recurring weekly place schedule,입실시간: <TIME> 퇴실시간: <TIME>,<EMPTY>
+2573604,32,4681,티롤관광호텔,True,"입실시간: 15:00
+퇴실시간: 익일 12:00",,RAW_ONLY_LODGING,False,check-in/out is not a recurring weekly place schedule,입실시간: <TIME> 퇴실시간: 익일 <TIME>,<EMPTY>
+2573944,32,4682,Cozy Lodge,True,"입실시간: 17:00
+퇴실시간: 12:00",,RAW_ONLY_LODGING,False,check-in/out is not a recurring weekly place schedule,입실시간: <TIME> 퇴실시간: <TIME>,<EMPTY>
+2574082,32,4683,이브(이브게스트하우스),True,"입실시간: 13:00
+퇴실시간: 12:00",,RAW_ONLY_LODGING,False,check-in/out is not a recurring weekly place schedule,입실시간: <TIME> 퇴실시간: <TIME>,<EMPTY>
+2574118,32,4684,강남스테이힐(Gangnam Stay Hill),True,"입실시간: 15:00
+퇴실시간: 11:00",,RAW_ONLY_LODGING,False,check-in/out is not a recurring weekly place schedule,입실시간: <TIME> 퇴실시간: <TIME>,<EMPTY>
+2574202,32,4685,서울 성북 홈스테이,True,"입실시간: 12:00
+퇴실시간: 11:00",,RAW_ONLY_LODGING,False,check-in/out is not a recurring weekly place schedule,입실시간: <TIME> 퇴실시간: <TIME>,<EMPTY>
+2575171,32,4686,아름다운 황토집,True,"입실시간: 15:00
+퇴실시간: 11:00",,RAW_ONLY_LODGING,False,check-in/out is not a recurring weekly place schedule,입실시간: <TIME> 퇴실시간: <TIME>,<EMPTY>
+2575836,32,4687,북촌 게스트하우스,True,"입실시간: 15:00
+퇴실시간: 11:00",,RAW_ONLY_LODGING,False,check-in/out is not a recurring weekly place schedule,입실시간: <TIME> 퇴실시간: <TIME>,<EMPTY>
+2576334,32,4688,Tina`s Homestay,True,"입실시간: 14:00
+퇴실시간: 11:00",,RAW_ONLY_LODGING,False,check-in/out is not a recurring weekly place schedule,입실시간: <TIME> 퇴실시간: <TIME>,<EMPTY>
+2576479,32,4689,레드,True,"입실시간: 15:00
+퇴실시간: 11:00",,RAW_ONLY_LODGING,False,check-in/out is not a recurring weekly place schedule,입실시간: <TIME> 퇴실시간: <TIME>,<EMPTY>
+2576511,32,4690,어반우드,True,"입실시간: 15:00
+퇴실시간: 11:00",,RAW_ONLY_LODGING,False,check-in/out is not a recurring weekly place schedule,입실시간: <TIME> 퇴실시간: <TIME>,<EMPTY>
+2576513,32,4691,예하도예 게스트하우스(YEHADOYE guesthouse),True,"입실시간: 15:00
+퇴실시간: 11:00",,RAW_ONLY_LODGING,False,check-in/out is not a recurring weekly place schedule,입실시간: <TIME> 퇴실시간: <TIME>,<EMPTY>
+2581396,14,4692,신촌문화발전소,True,10:00~21:00,매주 일요일 / 월요일,PARSE_SIMPLE_WEEKLY,True,single time range + supported rest rule,<RANGE>,매주 일요일 / 월요일
+2583699,32,4693,소소하우스,True,"입실시간: 15:00
+퇴실시간: 11:00",,RAW_ONLY_LODGING,False,check-in/out is not a recurring weekly place schedule,입실시간: <TIME> 퇴실시간: <TIME>,<EMPTY>
+2586384,32,4694,레스케이프 호텔(L’Escape Hotel),True,"입실시간: 15:00
+퇴실시간: 11:00",,RAW_ONLY_LODGING,False,check-in/out is not a recurring weekly place schedule,입실시간: <TIME> 퇴실시간: <TIME>,<EMPTY>
+2587214,32,4695,제이한옥(JAY Hanok),True,"입실시간: 16:00
+퇴실시간: 11:00",,RAW_ONLY_LODGING,False,check-in/out is not a recurring weekly place schedule,입실시간: <TIME> 퇴실시간: <TIME>,<EMPTY>
+2588198,32,4696,삼청동 코리아 게스트하우스,True,"입실시간: 14:00
+퇴실시간: 11:00",,RAW_ONLY_LODGING,False,check-in/out is not a recurring weekly place schedule,입실시간: <TIME> 퇴실시간: <TIME>,<EMPTY>
+2588389,39,4697,엘 샌드위치,True,"- 월요일~금요일 07:00~20:00
+- 토요일 10:00~14:00",매주 일요일,SKIP_TIME_AMBIGUOUS,False,"expected exactly 1 main range after break extraction, found 2",- 월요일~금요일 <RANGE> - 토요일 <RANGE>,매주 일요일
+2589070,38,4698,서울 중앙시장,True,점포 별로 상이함,점포 별로 상이함,SKIP_TIME_AMBIGUOUS,False,dangerous operating marker: 상이,점포 별로 상이함,점포 별로 상이함
+2591755,38,4699,남구로시장,True,09:00~21:00,매월 넷째 화요일,SKIP_REST_AMBIGUOUS,False,dangerous rest marker: 넷째,<RANGE>,매월 넷째 화요일
+2591792,12,4700,개봉유수지 생태공원,True,상시 개방,연중무휴,SKIP_TIME_AMBIGUOUS,False,always-open/24h cannot be represented safely with current Time fields,상시 개방,연중무휴
+2591797,12,4701,고척근린공원,True,상시 개방,연중무휴,SKIP_TIME_AMBIGUOUS,False,always-open/24h cannot be represented safely with current Time fields,상시 개방,연중무휴
+2591799,12,4702,고척동 고인돌,True,상시 개방,연중무휴,SKIP_TIME_AMBIGUOUS,False,always-open/24h cannot be represented safely with current Time fields,상시 개방,연중무휴
+2591803,12,4703,구로기계공구단지,True,업체 별로 상이함,업체 별로 상이함,SKIP_TIME_AMBIGUOUS,False,dangerous operating marker: 상이,업체 별로 상이함,업체 별로 상이함
+2591805,12,4704,국제음식문화거리(INTERNATIONAL FOOD STREET),True,점포별 상이,점포별 상이,SKIP_TIME_AMBIGUOUS,False,dangerous operating marker: 상이,점포별 상이,점포별 상이
+2591809,12,4705,궁동저수지 생태공원,True,상시 개방,연중무휴,SKIP_TIME_AMBIGUOUS,False,always-open/24h cannot be represented safely with current Time fields,상시 개방,연중무휴
+2591813,12,4706,류순정·류홍 부자 묘역,True,상시 개방,연중무휴,SKIP_TIME_AMBIGUOUS,False,always-open/24h cannot be represented safely with current Time fields,상시 개방,연중무휴
+2591819,12,4707,여계묘역,True,상시 개방,연중무휴,SKIP_TIME_AMBIGUOUS,False,always-open/24h cannot be represented safely with current Time fields,상시 개방,연중무휴
+2591824,12,4708,온수도시자연공원(잣절공원),True,상시 개방,연중무휴,SKIP_TIME_AMBIGUOUS,False,always-open/24h cannot be represented safely with current Time fields,상시 개방,연중무휴
+2591826,12,4709,음식문화특화거리(깔깔거리),True,점포 별로 상이함,점포 별로 상이함,SKIP_TIME_AMBIGUOUS,False,dangerous operating marker: 상이,점포 별로 상이함,점포 별로 상이함
+2591829,12,4710,구로근린공원(이씨레물리노공원),True,상시 개방,연중무휴,SKIP_TIME_AMBIGUOUS,False,always-open/24h cannot be represented safely with current Time fields,상시 개방,연중무휴
+2591833,12,4711,정선옹주 묘역,True,상시 개방,연중무휴,SKIP_TIME_AMBIGUOUS,False,always-open/24h cannot be represented safely with current Time fields,상시 개방,연중무휴
+2591838,12,4712,천왕근린공원,True,상시 개방,연중무휴,SKIP_TIME_AMBIGUOUS,False,always-open/24h cannot be represented safely with current Time fields,상시 개방,연중무휴
+2591870,28,4713,안양천 물놀이장,False,,,NO_DATA,False,detailIntro2 returned no item,<EMPTY>,<EMPTY>
+2591873,28,4714,고척 스카이돔,False,,,NO_DATA,False,detailIntro2 returned no item,<EMPTY>,<EMPTY>
+2591878,14,4715,갤러리 구루지,True,10:00~18:00,연중무휴,PARSE_SIMPLE_WEEKLY,True,single time range + supported rest rule,<RANGE>,연중무휴
+2591885,14,4716,구로꿈나무장난감나라 오류점,True,"- 하절기(3월~10월) 10:00~19:00
+
+- 동절기(11월~2월) 110:00~18:00
+
+- 주말 10:00~17:00",매주 화요일 / 법정 공휴일,SKIP_TIME_AMBIGUOUS,False,dangerous operating marker: 하절기,- 하절기(3월~10월) <RANGE> - 동절기(11월~2월) 110:00~<TIME> - 주말 <RANGE>,매주 화요일 / 법정 공휴일
+2591914,32,4717,호텔 더 디자이너스 청량리(Hotel the designers),True,"입실시간: 15:00
+퇴실시간: 12:00",,RAW_ONLY_LODGING,False,check-in/out is not a recurring weekly place schedule,입실시간: <TIME> 퇴실시간: <TIME>,<EMPTY>
+2592394,38,4718,구로시장,True,,매월 첫째 주 월요일,NO_TIME_TEXT,False,operating text empty,<EMPTY>,매월 첫째 주 월요일
+2592489,32,4719,복합한옥공간 곳,True,"입실시간: 15:00
+퇴실시간: 11:00",,RAW_ONLY_LODGING,False,check-in/out is not a recurring weekly place schedule,입실시간: <TIME> 퇴실시간: <TIME>,<EMPTY>
+2592527,32,4720,힐하우스 호텔,True,"입실시간: 15:00
+퇴실시간: 11:30",,RAW_ONLY_LODGING,False,check-in/out is not a recurring weekly place schedule,입실시간: <TIME> 퇴실시간: <TIME>,<EMPTY>
+2592885,12,4721,엘크레,True,"- 화요일~금요일 10:00~20:00
+
+- 토요일 10:00~19:00
+
+※13:00-14:00 점심시간",매주 일요일~월요일,SKIP_TIME_AMBIGUOUS,False,"expected exactly 1 main range after break extraction, found 3",- 화요일~금요일 <RANGE> - 토요일 <RANGE> ※<RANGE> 점심시간,매주 일요일~월요일
+2594760,32,4722,호텔큐비(호텔QB),True,"입실시간: 14:00
+퇴실시간: 11:00",,RAW_ONLY_LODGING,False,check-in/out is not a recurring weekly place schedule,입실시간: <TIME> 퇴실시간: <TIME>,<EMPTY>
+2601242,15,4723,도봉한글잔치,True,11:00~17:00,,RAW_ONLY_EVENT,False,event playtime is not a recurring weekly place schedule,<RANGE>,<EMPTY>
+2602460,32,4724,자자백팩커스,True,"입실시간: 15:00
+퇴실시간: 11:00",,RAW_ONLY_LODGING,False,check-in/out is not a recurring weekly place schedule,입실시간: <TIME> 퇴실시간: <TIME>,<EMPTY>
+2602468,32,4725,B my guesthouse,True,"입실시간: 14:00
+퇴실시간: 11:30",,RAW_ONLY_LODGING,False,check-in/out is not a recurring weekly place schedule,입실시간: <TIME> 퇴실시간: <TIME>,<EMPTY>
+2602549,32,4726,96번지 트래블러스 롯지,True,"입실시간: 14:00
+퇴실시간: 11:00",,RAW_ONLY_LODGING,False,check-in/out is not a recurring weekly place schedule,입실시간: <TIME> 퇴실시간: <TIME>,<EMPTY>
+2602555,32,4727,영빈호텔,True,"입실시간: 15:00
+퇴실시간: 12:00",,RAW_ONLY_LODGING,False,check-in/out is not a recurring weekly place schedule,입실시간: <TIME> 퇴실시간: <TIME>,<EMPTY>
+2602777,32,4728,호텔 카푸치노,True,"입실시간: 15:00
+퇴실시간: 11:00",,RAW_ONLY_LODGING,False,check-in/out is not a recurring weekly place schedule,입실시간: <TIME> 퇴실시간: <TIME>,<EMPTY>
+2602869,39,4729,루위,True,11:30~22:00 (준비시간 15:00~17:00),연중무휴,PARSE_SIMPLE_WEEKLY,True,single time range + supported rest rule,<RANGE> (준비시간 <RANGE>),연중무휴
+2603070,39,4730,설마중,True,"- 평일 11:30~22:00 (준비시간 15:00~17:15)
+- 주말 11:00~22:00",연중무휴,PARSE_WEEKDAY_WEEKEND,True,explicit weekday/weekend schedule + supported rest rule,- 평일 <RANGE> (준비시간 <RANGE>) - 주말 <RANGE>,연중무휴
+2603706,32,4731,1012 하우스 남산,True,"입실시간: 15:00
+퇴실시간: 12:00",,RAW_ONLY_LODGING,False,check-in/out is not a recurring weekly place schedule,입실시간: <TIME> 퇴실시간: <TIME>,<EMPTY>
+2603723,32,4732,플랜에이호스텔,True,"입실시간: 16:00
+퇴실시간: 11:00",,RAW_ONLY_LODGING,False,check-in/out is not a recurring weekly place schedule,입실시간: <TIME> 퇴실시간: <TIME>,<EMPTY>
+2603884,32,4733,연당,True,"입실시간: 14:00
+퇴실시간: 11:00",,RAW_ONLY_LODGING,False,check-in/out is not a recurring weekly place schedule,입실시간: <TIME> 퇴실시간: <TIME>,<EMPTY>
+2604078,32,4734,숨바꼭질(Hide & Seek)(Hide & Seek (숨바꼭질) 게스트하우스),True,"입실시간: 15:00
+퇴실시간: 11:00",,RAW_ONLY_LODGING,False,check-in/out is not a recurring weekly place schedule,입실시간: <TIME> 퇴실시간: <TIME>,<EMPTY>
+2604153,32,4735,이화한옥,True,"입실시간: 18:00
+퇴실시간: 14:00",,RAW_ONLY_LODGING,False,check-in/out is not a recurring weekly place schedule,입실시간: <TIME> 퇴실시간: <TIME>,<EMPTY>
+2604211,32,4736,화이트테일,True,"입실시간: 15:00
+퇴실시간: 11:00",,RAW_ONLY_LODGING,False,check-in/out is not a recurring weekly place schedule,입실시간: <TIME> 퇴실시간: <TIME>,<EMPTY>
+2606150,12,4737,파크하비오 워터킹덤&스파,True,"- 워터파크 10:00~18:00
+
+- 찜질스파 07:00~22:00","[워터파크] 매주 화요일~수요일
+[찜질스파] 연중무휴
+※ 매달 마지막 주 수요일은 전체(워터&찜질&스파) 휴장",SKIP_TIME_AMBIGUOUS,False,"expected exactly 1 main range after break extraction, found 2",- 워터파크 <RANGE> - 찜질스파 <RANGE>,[워터파크] 매주 화요일~수요일 [찜질스파] 연중무휴 ※ 매달 마지막 주 수요일은 전체(워터&찜질&스파) 휴장
+2606224,14,4738,공평도시유적전시관,True,09:00~18:00 (입장 마감 17:30),매주 월요일 / 1월 1일,PARSE_SIMPLE_WEEKLY,True,single time range + supported rest rule,<RANGE> (입장 마감 <TIME>),매주 월요일 / 1월 1일
+2606740,14,4739,서울책보고,True,"- 화~목요일 11:00~20:00
+
+- 금요일 11:00~21:00
+
+- 토요일 10:00~21:00
+
+- 일요일 및 공휴일 10:00~18:00",매주 월요일 / 설·추석 당일,SKIP_TIME_AMBIGUOUS,False,dangerous operating marker: 공휴일,- 화~목요일 <RANGE> - 금요일 <RANGE> - 토요일 <RANGE> - 일요일 및 공휴일 <RANGE>,매주 월요일 / 설·추석 당일
+2607446,32,4740,AT 30,True,"입실시간: 자유
+퇴실시간: 자유",,RAW_ONLY_LODGING,False,check-in/out is not a recurring weekly place schedule,입실시간: 자유 퇴실시간: 자유,<EMPTY>
+2607481,32,4741,향운,True,"입실시간: 16:00
+퇴실시간: 11:00",,RAW_ONLY_LODGING,False,check-in/out is not a recurring weekly place schedule,입실시간: <TIME> 퇴실시간: <TIME>,<EMPTY>
+2607620,32,4742,게스트하우스강남,True,"입실시간: 15:00
+퇴실시간: 11:00",,RAW_ONLY_LODGING,False,check-in/out is not a recurring weekly place schedule,입실시간: <TIME> 퇴실시간: <TIME>,<EMPTY>
+2607806,32,4743,나비호스텔,True,"입실시간: 15:00
+퇴실시간: 11:00",,RAW_ONLY_LODGING,False,check-in/out is not a recurring weekly place schedule,입실시간: <TIME> 퇴실시간: <TIME>,<EMPTY>
+2608038,32,4744,USB하우스,True,"입실시간: 15:00
+퇴실시간: 11:00",,RAW_ONLY_LODGING,False,check-in/out is not a recurring weekly place schedule,입실시간: <TIME> 퇴실시간: <TIME>,<EMPTY>
+2608491,32,4745,다산하우스,True,"입실시간: 16:00
+퇴실시간: 11:00",,RAW_ONLY_LODGING,False,check-in/out is not a recurring weekly place schedule,입실시간: <TIME> 퇴실시간: <TIME>,<EMPTY>
+2608495,32,4746,둥글하우스 (Doonggle House),True,"입실시간: 16:00
+퇴실시간: 11:00",,RAW_ONLY_LODGING,False,check-in/out is not a recurring weekly place schedule,입실시간: <TIME> 퇴실시간: <TIME>,<EMPTY>
+2608496,32,4747,샤갈의 집,True,"입실시간: 15:00
+퇴실시간: 11:00",,RAW_ONLY_LODGING,False,check-in/out is not a recurring weekly place schedule,입실시간: <TIME> 퇴실시간: <TIME>,<EMPTY>
+2608499,32,4748,미담 한옥 게스트 하우스,True,"입실시간: 15:00
+퇴실시간: 11:00",,RAW_ONLY_LODGING,False,check-in/out is not a recurring weekly place schedule,입실시간: <TIME> 퇴실시간: <TIME>,<EMPTY>
+2608651,39,4749,[백년가게] 청해진,True,"- 11:00~22:00
+- 준비 시간 15:00~17:00
+- 마지막 주문 21:30",연중무휴,PARSE_SIMPLE_WEEKLY,True,single time range + supported rest rule,- <RANGE> - 준비 시간 <RANGE> - 마지막 주문 <TIME>,연중무휴
+2608909,39,4750,[백년가게]창성옥,True,06:00~23:00,연중무휴,PARSE_SIMPLE_WEEKLY,True,single time range + supported rest rule,<RANGE>,연중무휴
+2608924,39,4751,[백년가게]새만포면옥,True,"- 11:00~21:00
+- 준비시간 16:00~17:00
+- 마지막 주문 20:30
+※ 주말은 준비시간 없이 영업함",연중무휴,PARSE_SIMPLE_WEEKLY,True,single time range + supported rest rule,- <RANGE> - 준비시간 <RANGE> - 마지막 주문 <TIME> ※ 주말은 준비시간 없이 영업함,연중무휴
+2608933,39,4752,[백년가게]신안촌,True,"[월요일~금요일]
+- 11:45~21:40
+- 준비시간 15:00~17:00
+- 마지막 주문 20:30
+[토요일]
+- 12:00~19:30
+- 마지막 주문 18:20",매주 일요일,SKIP_TIME_AMBIGUOUS,False,"expected exactly 1 main range after break extraction, found 2",[월요일~금요일] - <RANGE> - 준비시간 <RANGE> - 마지막 주문 <TIME> [토요일] - <RANGE> - 마지막 주문 <TIME>,매주 일요일
+2609645,39,4753,선동보리밥,True,"- 10:30~20:30
+- 준비시간 15:00~16:00
+- 마지막 주문 19:40",매주 월요일 / 설·추석 당일,PARSE_SIMPLE_WEEKLY,True,single time range + supported rest rule,- <RANGE> - 준비시간 <RANGE> - 마지막 주문 <TIME>,매주 월요일 / 설·추석 당일
+2609911,32,4754,인 게스트하우스,True,"입실시간: 14:00
+퇴실시간: 11:00",,RAW_ONLY_LODGING,False,check-in/out is not a recurring weekly place schedule,입실시간: <TIME> 퇴실시간: <TIME>,<EMPTY>
+2610854,32,4755,야코리아호스텔 강남점,True,"입실시간: 15:00
+퇴실시간: 11:00",,RAW_ONLY_LODGING,False,check-in/out is not a recurring weekly place schedule,입실시간: <TIME> 퇴실시간: <TIME>,<EMPTY>
+2610892,32,4756,빅 존스 플레이스,True,"입실시간: 14:00
+퇴실시간: 11:00",,RAW_ONLY_LODGING,False,check-in/out is not a recurring weekly place schedule,입실시간: <TIME> 퇴실시간: <TIME>,<EMPTY>
+2610960,32,4757,회랑정,True,"입실시간: 14:00
+퇴실시간: 11:00",,RAW_ONLY_LODGING,False,check-in/out is not a recurring weekly place schedule,입실시간: <TIME> 퇴실시간: <TIME>,<EMPTY>
+2611323,38,4758,신영시장(서울),True,점포별 상이,점포별 상이,SKIP_TIME_AMBIGUOUS,False,dangerous operating marker: 상이,점포별 상이,점포별 상이
+2611482,12,4759,150년 수령 느티나무,True,상시 개방,연중무휴,SKIP_TIME_AMBIGUOUS,False,always-open/24h cannot be represented safely with current Time fields,상시 개방,연중무휴
+2611568,12,4760,계남근린공원,True,상시 개방,연중무휴,SKIP_TIME_AMBIGUOUS,False,always-open/24h cannot be represented safely with current Time fields,상시 개방,연중무휴
+2611575,12,4761,양천생활안전체험교육관,True,"[교육시간]
+
+- 평일 10:00~12:00 / 14:00~16:00
+
+※ 성인 위주로 하되 학교 등 단체 교육 가능
+
+- 첫째 주 토요일 10:00~12:00
+
+※ 가족단위 교육(8세 이상)
+
+- 둘째 주 목요일 19:00~21:00
+
+※ 성인 위주 교육
+
+- 마지막 주 금요일 14:00~17:00
+
+※ 중복교육이수자 및 교직원 위주 교육
+
+[외상(현장)응급처치 교육]
+
+- 마지막 주 월요일~금요일 10:00~12:00
+
+※ 사전 전화 예약 필수
+
+※ 교육 인원, 대상 및 강사 인력에 따라 운영시간이 변동될 수 있으므로 자세한 사항은 홈페이지 참조",,SKIP_TIME_AMBIGUOUS,False,dangerous operating marker: 첫째,[교육시간] - 평일 <RANGE> / <RANGE> ※ 성인 위주로 하되 학교 등 단체 교육 가능 - 첫째 주 토요일 <RANGE> ※ 가족단위 교육(8세 이상) - 둘째 주 목요일 <RANGE> ※ 성인 위주 교육 - 마지막 주 금요일 <RANGE> ※ 중복교육이수자 및 교직원 위주 교육 [외상(현장)응급처치 교육] - 마지막 주 월요일~금요일 <RANGE> ※ 사전 전화 예약 필수...,<EMPTY>
+2611601,12,4762,장수공원(열녀문),True,상시 개방,연중무휴,SKIP_TIME_AMBIGUOUS,False,always-open/24h cannot be represented safely with current Time fields,상시 개방,연중무휴
+2611626,14,4763,양천구 갈산도서관,True,"[종합자료실]
+
+- 평일 09:00~22:00
+
+- 주말 09:00~18:00
+
+[어린이자료실]
+
+- 평일 09:00~18:00
+
+- 주말 09:00~18:00",매주 월요일 / 법정공휴일,SKIP_REST_AMBIGUOUS,False,dangerous rest marker: 공휴일,[종합자료실] - 평일 <RANGE> - 주말 <RANGE> [어린이자료실] - 평일 <RANGE> - 주말 <RANGE>,매주 월요일 / 법정공휴일
+2611669,12,4764,양천나눔누리타운,True,09:00~18:00,,SKIP_REST_AMBIGUOUS,False,rest text empty,<RANGE>,<EMPTY>
+2611675,14,4765,신월음악도서관,True,"[음악도서관 / 종합자료실]
+
+- 평일 09:00~22:00
+
+- 주말 09:00~18:00
+
+[어린이자료실 / 정보검색실]
+
+- 평일 09:00~18:00
+
+- 주말 09:00~18:00",매주 월요일 / 공휴일,SKIP_REST_AMBIGUOUS,False,dangerous rest marker: 공휴일,[음악도서관 / 종합자료실] - 평일 <RANGE> - 주말 <RANGE> [어린이자료실 / 정보검색실] - 평일 <RANGE> - 주말 <RANGE>,매주 월요일 / 공휴일
+2611679,12,4766,연의근린공원,True,상시 개방,연중무휴,SKIP_TIME_AMBIGUOUS,False,always-open/24h cannot be represented safely with current Time fields,상시 개방,연중무휴
+2611735,12,4767,오목공원,True,상시 개방,연중무휴,SKIP_TIME_AMBIGUOUS,False,always-open/24h cannot be represented safely with current Time fields,상시 개방,연중무휴
+2611887,12,4768,신트리공원(서울),True,상시 개방,연중무휴,SKIP_TIME_AMBIGUOUS,False,always-open/24h cannot be represented safely with current Time fields,상시 개방,연중무휴
+2612093,14,4769,양천구 역사홍보관,True,"- 평일 06:30~23:00
+
+- 토요일 08:00~19:00
+
+- 일요일 및 공휴일 08:00~18:30",연중무휴,SKIP_TIME_AMBIGUOUS,False,dangerous operating marker: 공휴일,- 평일 <RANGE> - 토요일 <RANGE> - 일요일 및 공휴일 <RANGE>,연중무휴
+2612095,12,4770,안양천 사계절 테마원,True,상시 개방,연중무휴,SKIP_TIME_AMBIGUOUS,False,always-open/24h cannot be represented safely with current Time fields,상시 개방,연중무휴
+2612107,12,4771,양천구 로데오거리,True,점포별 상이,연중무휴,SKIP_TIME_AMBIGUOUS,False,dangerous operating marker: 상이,점포별 상이,연중무휴
+2612154,28,4772,[양천구 둘레길] 하천형코스,False,,,NO_DATA,False,detailIntro2 returned no item,<EMPTY>,<EMPTY>
+2612196,32,4773,서울큐브 이화,True,"입실시간: 15:00
+퇴실시간: 11:00",,RAW_ONLY_LODGING,False,check-in/out is not a recurring weekly place schedule,입실시간: <TIME> 퇴실시간: <TIME>,<EMPTY>
+2612198,12,4774,지양산,True,상시 개방,연중무휴,SKIP_TIME_AMBIGUOUS,False,always-open/24h cannot be represented safely with current Time fields,상시 개방,연중무휴
+2612215,32,4775,헤이마 게스트하우스,True,"입실시간: 15:00
+퇴실시간: 11:00",,RAW_ONLY_LODGING,False,check-in/out is not a recurring weekly place schedule,입실시간: <TIME> 퇴실시간: <TIME>,<EMPTY>
+2616369,39,4776,[백년가게] 진미옥설농탕,True,"[평일]
+- 07:00~21:00
+- 준비시간 15:30~17:00
+- 마지막 주문 20:30
+[토요일] 07:00~20:00 (마지막 주문 20:30)
+[일요일] 07:00~20:00 (마지막 주문 19:30)",연중무휴,SKIP_TIME_AMBIGUOUS,False,"expected exactly 1 main range after break extraction, found 3",[평일] - <RANGE> - 준비시간 <RANGE> - 마지막 주문 <TIME> [토요일] <RANGE> (마지막 주문 <TIME>) [일요일] <RANGE> (마지막 주문 <TIME>),연중무휴
+2616589,14,4777,양천구 영어특성화도서관,True,"- 평일 09:00~22:00
+
+- 주말 09:00~18:00",매주 일요일 / 법정공휴일,SKIP_REST_AMBIGUOUS,False,dangerous rest marker: 공휴일,- 평일 <RANGE> - 주말 <RANGE>,매주 일요일 / 법정공휴일
+2618971,15,4778,구로청소년축제,True,11:00~18:00,,RAW_ONLY_EVENT,False,event playtime is not a recurring weekly place schedule,<RANGE>,<EMPTY>
+2619938,32,4779,brother house(artist house),True,"입실시간: 15:00
+퇴실시간: 11:00",,RAW_ONLY_LODGING,False,check-in/out is not a recurring weekly place schedule,입실시간: <TIME> 퇴실시간: <TIME>,<EMPTY>
+2619965,32,4780,Goldlady's House,True,"입실시간: 12:00
+퇴실시간: 12:00",,RAW_ONLY_LODGING,False,check-in/out is not a recurring weekly place schedule,입실시간: <TIME> 퇴실시간: <TIME>,<EMPTY>
+2620049,32,4781,스윗 서울,True,"입실시간: 15:00
+퇴실시간: 11:00",,RAW_ONLY_LODGING,False,check-in/out is not a recurring weekly place schedule,입실시간: <TIME> 퇴실시간: <TIME>,<EMPTY>
+2621558,15,4782,중랑용마폭포축제,True,"09.26
+17:00~21:00
+09.27
+11:00~21:00",,RAW_ONLY_EVENT,False,event playtime is not a recurring weekly place schedule,09.26 <RANGE> 09.27 <RANGE>,<EMPTY>
+2622167,15,4783,2025 경북사과홍보행사,True,10:00~17:00,,RAW_ONLY_EVENT,False,event playtime is not a recurring weekly place schedule,<RANGE>,<EMPTY>
+2622715,39,4784,감꽃당,True,10:30~22:00,연중무휴,PARSE_SIMPLE_WEEKLY,True,single time range + supported rest rule,<RANGE>,연중무휴
+2623110,39,4785,도원스타일,True,"- 11:00~22:00
+- 준비 시간 15:00~17:00
+- 마지막 주문 20:50",1월 1일,SKIP_REST_AMBIGUOUS,False,rest rule is not a supported simple weekly rule,- <RANGE> - 준비 시간 <RANGE> - 마지막 주문 <TIME>,1월 1일
+2623187,39,4786,썬더버드 청담점,True,11:00~21:00 (마지막 주문 20:30),연중무휴,PARSE_SIMPLE_WEEKLY,True,single time range + supported rest rule,<RANGE> (마지막 주문 <TIME>),연중무휴
+2623573,32,4787,한미장,True,"입실시간: 15:00
+퇴실시간: 11:00",,RAW_ONLY_LODGING,False,check-in/out is not a recurring weekly place schedule,입실시간: <TIME> 퇴실시간: <TIME>,<EMPTY>
+2624028,32,4788,Sweet Home Seoul,True,"입실시간: 15:00
+퇴실시간: 11:00",,RAW_ONLY_LODGING,False,check-in/out is not a recurring weekly place schedule,입실시간: <TIME> 퇴실시간: <TIME>,<EMPTY>
+2624690,39,4789,마쯔야,True,11:00~21:20 (마지막 주문 20:40),백화점 휴무일,SKIP_REST_AMBIGUOUS,False,rest rule is not a supported simple weekly rule,<RANGE> (마지막 주문 <TIME>),백화점 휴무일
+2629577,39,4790,장수촌 풍천장어,True,10:00~22:00,연중무휴,PARSE_SIMPLE_WEEKLY,True,single time range + supported rest rule,<RANGE>,연중무휴
+2630324,39,4791,[백년가게]대호정,True,10:00~22:00,연중무휴,PARSE_SIMPLE_WEEKLY,True,single time range + supported rest rule,<RANGE>,연중무휴
+2634434,32,4792,로얄스퀘어호텔,True,"입실시간: 14:00
+퇴실시간: 12:00",,RAW_ONLY_LODGING,False,check-in/out is not a recurring weekly place schedule,입실시간: <TIME> 퇴실시간: <TIME>,<EMPTY>
+2638474,14,4793,서울생활사박물관,True,"09:00~18:00 (입장마감 17:30) 
+
+※ 어린이 체험실은 사전예약제로 운영",,SKIP_REST_AMBIGUOUS,False,rest text empty,<RANGE> (입장마감 <TIME>) ※ 어린이 체험실은 사전예약제로 운영,<EMPTY>
+2642151,14,4794,갤러리JJ,True,11:00~19:00,"매주 일요일, 월요일",PARSE_SIMPLE_WEEKLY,True,single time range + supported rest rule,<RANGE>,"매주 일요일, 월요일"
+264311,12,4795,명동,True,상시 개방,연중무휴,SKIP_TIME_AMBIGUOUS,False,always-open/24h cannot be represented safely with current Time fields,상시 개방,연중무휴
+264353,12,4796,인사동,True,상시 개방,연중무휴,SKIP_TIME_AMBIGUOUS,False,always-open/24h cannot be represented safely with current Time fields,상시 개방,연중무휴
+264375,12,4797,연세로,True,상시 개방,연중무휴,SKIP_TIME_AMBIGUOUS,False,always-open/24h cannot be represented safely with current Time fields,상시 개방,연중무휴
+264570,12,4798,강남,True,상시 개방 (강남메디컬투어센터 평일 10:00~18:00),연중무휴,SKIP_TIME_AMBIGUOUS,False,always-open/24h cannot be represented safely with current Time fields,상시 개방 (강남메디컬투어센터 평일 <RANGE>),연중무휴
+2650018,39,4799,신대방 닭갈비구이,True,13:00~01:00,명절당일,SKIP_REST_AMBIGUOUS,False,rest rule is not a supported simple weekly rule,<RANGE>,명절당일
+2650230,12,4800,문래예술공장,True,※ 시설 별 상이하므로 전화문의 요망,※ 시설 별 상이하므로 전화문의 요망,SKIP_TIME_AMBIGUOUS,False,dangerous operating marker: 상이,※ 시설 별 상이하므로 전화문의 요망,※ 시설 별 상이하므로 전화문의 요망
+2650614,32,4801,강남아르누보씨티호텔,True,"입실시간: 15:00
+퇴실시간: 11:00",,RAW_ONLY_LODGING,False,check-in/out is not a recurring weekly place schedule,입실시간: <TIME> 퇴실시간: <TIME>,<EMPTY>
+2650639,32,4802,리버사이드게스트하우스,True,"입실시간: 14:00
+퇴실시간: 11:00",,RAW_ONLY_LODGING,False,check-in/out is not a recurring weekly place schedule,입실시간: <TIME> 퇴실시간: <TIME>,<EMPTY>
+2650771,12,4803,이태원 우사단길,True,점포별 상이,점포별 상이,SKIP_TIME_AMBIGUOUS,False,dangerous operating marker: 상이,점포별 상이,점포별 상이
+2651924,32,4804,와이즈하우스,True,"입실시간: 15:00
+퇴실시간: 12:00",,RAW_ONLY_LODGING,False,check-in/out is not a recurring weekly place schedule,입실시간: <TIME> 퇴실시간: <TIME>,<EMPTY>
+2651936,32,4805,Y's house,True,"입실시간: 15:00
+퇴실시간: 12:00",,RAW_ONLY_LODGING,False,check-in/out is not a recurring weekly place schedule,입실시간: <TIME> 퇴실시간: <TIME>,<EMPTY>
+2653000,39,4806,금성관나주곰탕,True,평일 00:00-24:00 / 토요일 00:00-02:00(라스트오더 24:00)/ 일요일 08:00-21:00(라스트오더 19:00),,SKIP_REST_AMBIGUOUS,False,rest text empty,평일 <TIME>-24:00 / 토요일 <RANGE>(라스트오더 24:00)/ 일요일 <RANGE>(라스트오더 <TIME>),<EMPTY>
+2654601,12,4807,화랑대 철도공원,True,상시 개방,연중무휴,SKIP_TIME_AMBIGUOUS,False,always-open/24h cannot be represented safely with current Time fields,상시 개방,연중무휴
+2655928,12,4808,기억의 터(일본군 위안부),True,상시 개방,연중무휴,SKIP_TIME_AMBIGUOUS,False,always-open/24h cannot be represented safely with current Time fields,상시 개방,연중무휴
+2657713,12,4809,채석장 전망대,True,"- 화요일~목요일 / 일요일 10:00~20:00
+
+- 금요일~토요일 10:00~22:00",매주 월요일,SKIP_TIME_AMBIGUOUS,False,"expected exactly 1 main range after break extraction, found 2",- 화요일~목요일 / 일요일 <RANGE> - 금요일~토요일 <RANGE>,매주 월요일
+2660696,32,4810,세연재,True,"입실시간: 15:00
+퇴실시간: 11:00",,RAW_ONLY_LODGING,False,check-in/out is not a recurring weekly place schedule,입실시간: <TIME> 퇴실시간: <TIME>,<EMPTY>
+2661483,12,4811,배봉산,True,상시 개방,연중무휴,SKIP_TIME_AMBIGUOUS,False,always-open/24h cannot be represented safely with current Time fields,상시 개방,연중무휴
+2661492,12,4812,북정마을,True,"09:00~18:00
+
+※ 주민배려 정숙관광 필요",연중무휴,PARSE_SIMPLE_WEEKLY,True,single time range + supported rest rule,<RANGE> ※ 주민배려 정숙관광 필요,연중무휴
+2661506,12,4813,서울함공원,True,"[하절기(3월~10월)]
+
+- 평일 10:00~19:00
+
+- 주말 10:00~20:00
+
+[동절기(11월~2월)]
+
+- 평일 10:00~18:00
+
+- 주말 10:00~18:00",매주 월요일 / 1월 1일 / 설·추석 당일,SKIP_TIME_AMBIGUOUS,False,dangerous operating marker: 하절기,[하절기(3월~10월)] - 평일 <RANGE> - 주말 <RANGE> [동절기(11월~2월)] - 평일 <RANGE> - 주말 <RANGE>,매주 월요일 / 1월 1일 / 설·추석 당일
+2663306,32,4814,casa cielo,True,"입실시간: 15:00
+퇴실시간: 11:00",,RAW_ONLY_LODGING,False,check-in/out is not a recurring weekly place schedule,입실시간: <TIME> 퇴실시간: <TIME>,<EMPTY>
+2663444,39,4815,거창 왕돈까스,True,11:00~19:30 (준비시간 14:00~17:00),매주 토요일~일요일,PARSE_SIMPLE_WEEKLY,True,single time range + supported rest rule,<RANGE> (준비시간 <RANGE>),매주 토요일~일요일
+2663450,39,4816,고려정,True,10:00~22:00 (마지막 주문 21:30),매주 토요일~일요일,PARSE_SIMPLE_WEEKLY,True,single time range + supported rest rule,<RANGE> (마지막 주문 <TIME>),매주 토요일~일요일
+2663464,39,4817,명보정,True,09:00~22:00,매주 토요일~일요일 / 설·추석 당일,PARSE_SIMPLE_WEEKLY,True,single time range + supported rest rule,<RANGE>,매주 토요일~일요일 / 설·추석 당일
+2663476,39,4818,성하,True,11:30~21:30,매주 토요일~일요일,PARSE_SIMPLE_WEEKLY,True,single time range + supported rest rule,<RANGE>,매주 토요일~일요일
+2663518,39,4819,쌍대포 맷돌순두부,True,09:00~22:00,매주 토요일~일요일,PARSE_SIMPLE_WEEKLY,True,single time range + supported rest rule,<RANGE>,매주 토요일~일요일
+2663525,39,4820,여의도 양꼬치,True,17:00~23:00,매주 토요일~일요일,PARSE_SIMPLE_WEEKLY,True,single time range + supported rest rule,<RANGE>,매주 토요일~일요일
+2663533,39,4821,진가,True,"- 11:00~23:00
+- 준비시간 14:00~16:30
+- 마지막 주문 22:00",매주 토요일~일요일,PARSE_SIMPLE_WEEKLY,True,single time range + supported rest rule,- <RANGE> - 준비시간 <RANGE> - 마지막 주문 <TIME>,매주 토요일~일요일
+2663552,39,4822,향토,True,"- 평일 11:10~22:00 (준비시간 14:30~17:30)
+- 토요일 11:30~21:00",매주 일요일,SKIP_TIME_AMBIGUOUS,False,"expected exactly 1 main range after break extraction, found 2",- 평일 <RANGE> (준비시간 <RANGE>) - 토요일 <RANGE>,매주 일요일
+2665070,39,4823,보보식당,True,"- 11:30~22:00
+- 준비시간 15:00~17:30
+- 마지막 주문 21:00",연중무휴,PARSE_SIMPLE_WEEKLY,True,single time range + supported rest rule,- <RANGE> - 준비시간 <RANGE> - 마지막 주문 <TIME>,연중무휴
+2666403,32,4824,24게스트하우스(서울 잠실점) (24게스트하우스 잠실점),True,"입실시간: 15:00
+퇴실시간: 11:00",,RAW_ONLY_LODGING,False,check-in/out is not a recurring weekly place schedule,입실시간: <TIME> 퇴실시간: <TIME>,<EMPTY>
+2666430,32,4825,K-그랜드 호스텔 강남 1(K-GRAND HOSTEL GANGNAM1),True,"입실시간: 15:00
+퇴실시간: 11:00",,RAW_ONLY_LODGING,False,check-in/out is not a recurring weekly place schedule,입실시간: <TIME> 퇴실시간: <TIME>,<EMPTY>
+2666751,12,4826,안녕인사동,True,10:00~22:00,연중무휴,PARSE_SIMPLE_WEEKLY,True,single time range + supported rest rule,<RANGE>,연중무휴
+2667567,39,4827,청하,True,11:30~22:00 (브레이크타임 15:00~17:00 / 라스트오더 21:00),매주 일요일,PARSE_SIMPLE_WEEKLY,True,single time range + supported rest rule,<RANGE> (브레이크타임 <RANGE> / 라스트오더 <TIME>),매주 일요일
+2667611,12,4828,이대거리,True,상시 개방,연중무휴,SKIP_TIME_AMBIGUOUS,False,always-open/24h cannot be represented safely with current Time fields,상시 개방,연중무휴
+2669165,32,4829,미로 게스트하우스,True,"입실시간: 15:00
+퇴실시간: 11:00",,RAW_ONLY_LODGING,False,check-in/out is not a recurring weekly place schedule,입실시간: <TIME> 퇴실시간: <TIME>,<EMPTY>
+2671202,39,4830,금룡,True,"- 10:00~21:00
+- 마지막 주문 20:30",설·추석 연휴,SKIP_REST_AMBIGUOUS,False,rest rule is not a supported simple weekly rule,- <RANGE> - 마지막 주문 <TIME>,설·추석 연휴
+2674964,28,4831,[충효길코스 1코스] 고구동산길,False,,,NO_DATA,False,detailIntro2 returned no item,<EMPTY>,<EMPTY>
+2675078,28,4832,초대길,False,,,NO_DATA,False,detailIntro2 returned no item,<EMPTY>,<EMPTY>
+2675091,12,4833,원당샘공원,True,상시 개방,연중무휴,SKIP_TIME_AMBIGUOUS,False,always-open/24h cannot be represented safely with current Time fields,상시 개방,연중무휴
+2675098,12,4834,푸른수목원,True,05:00~22:00,연중무휴,PARSE_SIMPLE_WEEKLY,True,single time range + supported rest rule,<RANGE>,연중무휴
+2676000,32,4835,응정헌,True,"입실시간: 15:00
+퇴실시간: 11:00",,RAW_ONLY_LODGING,False,check-in/out is not a recurring weekly place schedule,입실시간: <TIME> 퇴실시간: <TIME>,<EMPTY>
+2679044,32,4836,청향재,True,"입실시간: 15:00
+퇴실시간: 11:00",,RAW_ONLY_LODGING,False,check-in/out is not a recurring weekly place schedule,입실시간: <TIME> 퇴실시간: <TIME>,<EMPTY>
+2679810,39,4837,만다린,True,11:00~21:00,연중무휴,PARSE_SIMPLE_WEEKLY,True,single time range + supported rest rule,<RANGE>,연중무휴
+2685594,39,4838,삼청각,True,12:00~21:00,연중무휴,PARSE_SIMPLE_WEEKLY,True,single time range + supported rest rule,<RANGE>,연중무휴
+2689454,39,4839,터방내,True,11:00~24:00,매주 일요일,SKIP_TIME_AMBIGUOUS,False,"expected exactly 1 main range after break extraction, found 0",<TIME>~24:00,매주 일요일
+2692866,14,4840,청운문학도서관,True,"- 평일 09:00~21:00
+
+- 주말 09:00~19:00",매주 월요일 / 1월 1일 / 설·추석 연휴,PARSE_WEEKDAY_WEEKEND,True,explicit weekday/weekend schedule + supported rest rule,- 평일 <RANGE> - 주말 <RANGE>,매주 월요일 / 1월 1일 / 설·추석 연휴
+2693507,14,4841,플랫폼엘,True,11:00~20:00,매주 월요일 / 1월 1일 / 설·추석 연휴 / 성탄절,PARSE_SIMPLE_WEEKLY,True,single time range + supported rest rule,<RANGE>,매주 월요일 / 1월 1일 / 설·추석 연휴 / 성탄절
+2695730,32,4842,효자스테이,True,"입실시간: 15:00
+퇴실시간: 11:00",,RAW_ONLY_LODGING,False,check-in/out is not a recurring weekly place schedule,입실시간: <TIME> 퇴실시간: <TIME>,<EMPTY>
+2696312,32,4843,소담스테이,True,"입실시간: 16:00
+퇴실시간: 12:00",,RAW_ONLY_LODGING,False,check-in/out is not a recurring weekly place schedule,입실시간: <TIME> 퇴실시간: <TIME>,<EMPTY>
+2696383,32,4844,한옥 201(Hanok 201),True,"입실시간: 15:00
+퇴실시간: 11:00",,RAW_ONLY_LODGING,False,check-in/out is not a recurring weekly place schedule,입실시간: <TIME> 퇴실시간: <TIME>,<EMPTY>
+2699340,32,4845,한옥 게스트하우스 동촌재,True,"입실시간: 16:00
+퇴실시간: 11:00",,RAW_ONLY_LODGING,False,check-in/out is not a recurring weekly place schedule,입실시간: <TIME> 퇴실시간: <TIME>,<EMPTY>
+2699359,32,4846,홍대스타일 게스트하우스,True,"입실시간: 14:00
+퇴실시간: 11:00",,RAW_ONLY_LODGING,False,check-in/out is not a recurring weekly place schedule,입실시간: <TIME> 퇴실시간: <TIME>,<EMPTY>
+2699637,32,4847,2U호스텔,True,"입실시간: 15:00
+퇴실시간: 11:00",,RAW_ONLY_LODGING,False,check-in/out is not a recurring weekly place schedule,입실시간: <TIME> 퇴실시간: <TIME>,<EMPTY>
+2699653,32,4848,호스텔 하루,True,"입실시간: 15:00
+퇴실시간: 11:00",,RAW_ONLY_LODGING,False,check-in/out is not a recurring weekly place schedule,입실시간: <TIME> 퇴실시간: <TIME>,<EMPTY>
+2700281,32,4849,니트하우스,True,"입실시간: 15:00
+퇴실시간: 11:00",,RAW_ONLY_LODGING,False,check-in/out is not a recurring weekly place schedule,입실시간: <TIME> 퇴실시간: <TIME>,<EMPTY>
+2700928,32,4850,업플로 호스텔,True,"입실시간: 16:00
+퇴실시간: 12:00",,RAW_ONLY_LODGING,False,check-in/out is not a recurring weekly place schedule,입실시간: <TIME> 퇴실시간: <TIME>,<EMPTY>
+2700971,32,4851,락고재 서울 북촌 한옥호텔,True,"입실시간: 15:00
+퇴실시간: 11:00",,RAW_ONLY_LODGING,False,check-in/out is not a recurring weekly place schedule,입실시간: <TIME> 퇴실시간: <TIME>,<EMPTY>
+2704340,14,4852,디뮤지엄,True,"[화요일~목요일, 일요일]
+
+- 11:00~18:00 
+
+- 입장 마감 17:00
+
+[금요일~토요일]
+
+- 11:00~19:00 
+
+- 입장 마감 18:00",매주 월요일,SKIP_TIME_AMBIGUOUS,False,"expected exactly 1 main range after break extraction, found 2","[화요일~목요일, 일요일] - <RANGE> - 입장 마감 <TIME> [금요일~토요일] - <RANGE> - 입장 마감 <TIME>",매주 월요일
+2704696,28,4853,경춘선숲길,False,,,NO_DATA,False,detailIntro2 returned no item,<EMPTY>,<EMPTY>
+2706047,32,4854,한옥 게스트하우스 동촌재,True,"입실시간: 16:00
+퇴실시간: 11:00",,RAW_ONLY_LODGING,False,check-in/out is not a recurring weekly place schedule,입실시간: <TIME> 퇴실시간: <TIME>,<EMPTY>
+2706686,32,4855,명동게스트하우스 꼬모,True,"입실시간: 14:00
+퇴실시간: 11:00",,RAW_ONLY_LODGING,False,check-in/out is not a recurring weekly place schedule,입실시간: <TIME> 퇴실시간: <TIME>,<EMPTY>
+2706777,32,4856,정스패밀리,True,"입실시간: 15:00
+퇴실시간: 11:00",,RAW_ONLY_LODGING,False,check-in/out is not a recurring weekly place schedule,입실시간: <TIME> 퇴실시간: <TIME>,<EMPTY>
+2707438,32,4857,하은재,True,"입실시간: 16:00
+퇴실시간: 11:00",,RAW_ONLY_LODGING,False,check-in/out is not a recurring weekly place schedule,입실시간: <TIME> 퇴실시간: <TIME>,<EMPTY>
+2707439,32,4858,스테이 데이 오프,True,"입실시간: 18:00
+퇴실시간: 14:00",,RAW_ONLY_LODGING,False,check-in/out is not a recurring weekly place schedule,입실시간: <TIME> 퇴실시간: <TIME>,<EMPTY>
+2707440,32,4859,누와,True,"입실시간: 16:00
+퇴실시간: 11:00",,RAW_ONLY_LODGING,False,check-in/out is not a recurring weekly place schedule,입실시간: <TIME> 퇴실시간: <TIME>,<EMPTY>
+2707445,32,4860,일독일박,True,"입실시간: 18:00
+퇴실시간: 14:00",,RAW_ONLY_LODGING,False,check-in/out is not a recurring weekly place schedule,입실시간: <TIME> 퇴실시간: <TIME>,<EMPTY>
+2707460,14,4861,딜쿠샤,True,09:00~18:00 (입장마감 17:30),"매주 월요일 (단, 월요일이 공휴일인 경우 개관) / 1월 1일",SKIP_REST_AMBIGUOUS,False,dangerous rest marker: 공휴일,<RANGE> (입장마감 <TIME>),"매주 월요일 (단, 월요일이 공휴일인 경우 개관) / 1월 1일"
+2708334,32,4862,라마다 호텔앤스위트 서울남대문,True,"입실시간: 15:00
+퇴실시간: 11:00",,RAW_ONLY_LODGING,False,check-in/out is not a recurring weekly place schedule,입실시간: <TIME> 퇴실시간: <TIME>,<EMPTY>
+2708666,32,4863,신촌 시스터즈,True,"입실시간: 16:00
+퇴실시간: 11:00",,RAW_ONLY_LODGING,False,check-in/out is not a recurring weekly place schedule,입실시간: <TIME> 퇴실시간: <TIME>,<EMPTY>
+2708791,39,4864,"꽃,밥에피다",True,"- 11:30~21:00
+- 준비시간 15:00~17:30
+- 마지막 주문 20:10",설·추석 당일,SKIP_REST_AMBIGUOUS,False,rest rule is not a supported simple weekly rule,- <RANGE> - 준비시간 <RANGE> - 마지막 주문 <TIME>,설·추석 당일
+2711768,38,4865,현대카드 바이닐앤플라스틱,True,"[화요일~토요일]
+- 12:00 ~ 21:00
+[일요일]
+- 12:00~18:00",매주 월요일,SKIP_TIME_AMBIGUOUS,False,"expected exactly 1 main range after break extraction, found 2",[화요일~토요일] - <RANGE> [일요일] - <RANGE>,매주 월요일
+2714028,14,4866,쾨닉 서울,True,11:00~18:00,매주 일요일 / 월요일,PARSE_SIMPLE_WEEKLY,True,single time range + supported rest rule,<RANGE>,매주 일요일 / 월요일
+2714284,14,4867,용산도시기억전시관,True,10:00~18:30,매주 일요일~월요일 / 법정공휴일,SKIP_REST_AMBIGUOUS,False,dangerous rest marker: 공휴일,<RANGE>,매주 일요일~월요일 / 법정공휴일
+2717322,39,4868,꾸에바마테라,True,12:00~20:00 (마지막 주문 19:30),연중무휴,PARSE_SIMPLE_WEEKLY,True,single time range + supported rest rule,<RANGE> (마지막 주문 <TIME>),연중무휴
+2717547,39,4869,내자상회,True,10:00~22:00,연중무휴,PARSE_SIMPLE_WEEKLY,True,single time range + supported rest rule,<RANGE>,연중무휴
+2718257,12,4870,서울웨이브아트센터,True,매장 별 상이,,SKIP_TIME_AMBIGUOUS,False,dangerous operating marker: 상이,매장 별 상이,<EMPTY>
+2719780,39,4871,하니칼국수,True,"- 10:30~22:00
+- 준비시간 14:30~17:00
+- 마지막 주문 21:00
+※ 주말에는 준비시간 없이 영업함",연중무휴,PARSE_SIMPLE_WEEKLY,True,single time range + supported rest rule,- <RANGE> - 준비시간 <RANGE> - 마지막 주문 <TIME> ※ 주말에는 준비시간 없이 영업함,연중무휴
+2721231,12,4872,용두동 쭈꾸미골목,True,점포별 상이,점포별 상이,SKIP_TIME_AMBIGUOUS,False,dangerous operating marker: 상이,점포별 상이,점포별 상이
+2721755,32,4873,페어몬트 앰배서더 서울(Fairmont Ambassador Seoul),True,"입실시간: 15:00
+퇴실시간: 11:00",,RAW_ONLY_LODGING,False,check-in/out is not a recurring weekly place schedule,입실시간: <TIME> 퇴실시간: <TIME>,<EMPTY>
+2722936,12,4874,아모레 성수,True,10:30~20:30,매주 월요일 / 설·추석 당일,PARSE_SIMPLE_WEEKLY,True,single time range + supported rest rule,<RANGE>,매주 월요일 / 설·추석 당일
+2724392,12,4875,은평한옥마을,True,상시 개방,연중무휴,SKIP_TIME_AMBIGUOUS,False,always-open/24h cannot be represented safely with current Time fields,상시 개방,연중무휴
+2725087,32,4876,트레블로지 동대문 호텔,True,"입실시간: 14:00
+퇴실시간: 12:00",,RAW_ONLY_LODGING,False,check-in/out is not a recurring weekly place schedule,입실시간: <TIME> 퇴실시간: <TIME>,<EMPTY>
+2727279,28,4877,북한산 둘레캠프,False,,,NO_DATA,False,detailIntro2 returned no item,<EMPTY>,<EMPTY>
+2731162,39,4878,루비떡볶이,True,"- 11:40~21:00
+- 일요일 12:00~20:00",,SKIP_REST_AMBIGUOUS,False,rest text empty,- <RANGE> - 일요일 <RANGE>,<EMPTY>
+2733405,15,4879,서대문 국가유산 야행,True,17:00~22:00,,RAW_ONLY_EVENT,False,event playtime is not a recurring weekly place schedule,<RANGE>,<EMPTY>
+2733856,39,4880,백년옥,True,"- 본관 11:00~21:00
+- 신관 10:00~21:00",연중무휴,SKIP_TIME_AMBIGUOUS,False,"expected exactly 1 main range after break extraction, found 2",- 본관 <RANGE> - 신관 <RANGE>,연중무휴
+2733858,39,4881,램랜드,True,11:30~22:00 (15:00~16:30 브레이크타임),명절 휴무,SKIP_REST_AMBIGUOUS,False,rest rule is not a supported simple weekly rule,<RANGE> (<RANGE> 브레이크타임),명절 휴무
+2733860,39,4882,봉우리 역삼본점,True,11:30~21:20 (준비시간 15:00~17:30),연중무휴,PARSE_SIMPLE_WEEKLY,True,single time range + supported rest rule,<RANGE> (준비시간 <RANGE>),연중무휴
+2733861,39,4883,서강팔경,True,"- 12:00~24:00
+- 점심 준비시간 15:00~17:30 / 저녁 준비시간 19:30~20:00
+- 마지막 주문 23:30
+※ 22시부터 주류 고객만 이용 가능",연중무휴,SKIP_TIME_AMBIGUOUS,False,"expected exactly 1 main range after break extraction, found 2",- <TIME>~24:00 - 점심 준비시간 <RANGE> / 저녁 준비시간 <RANGE> - 마지막 주문 <TIME> ※ 22시부터 주류 고객만 이용 가능,연중무휴
+2733862,39,4884,빌즈 강남,True,10:30~22:00 (라스트오더 21:00),연중무휴,PARSE_SIMPLE_WEEKLY,True,single time range + supported rest rule,<RANGE> (라스트오더 <TIME>),연중무휴
+2733864,12,4885,역삼동성당,True,"[미사 및 성사 시간]
+
+- 월요일 06:00 / 10:00
+
+- 화요일 06:00 / 10:00 / 19:00
+
+- 수요일 06:00 / 10:00 / 19:00
+
+- 목요일 06:00 / 10:00 / 19:00
+
+- 금요일 06:00 / 10:00 / 19:00
+
+- 토요일 06:00 / 19:00
+
+- 일요일 06:30 / 09:00 / 10:00 / 11:00 / 16:00 / 18:00
+
+※ 자세한 사항은 홈페이지 참조",연중무휴,SKIP_TIME_AMBIGUOUS,False,"expected exactly 1 main range after break extraction, found 0",[미사 및 성사 시간] - 월요일 <TIME> / <TIME> - 화요일 <TIME> / <TIME> / <TIME> - 수요일 <TIME> / <TIME> / <TIME> - 목요일 <TIME> / <TIME> / <TIME> - 금요일 <TIME> / <TIME> / <TIME> - 토요일 <TIME> / <TIME> - 일요일 <TIME> / <TIME> / <TIME> / <TI...,연중무휴
+2733962,12,4886,수성동계곡,True,상시 개방,연중무휴,SKIP_TIME_AMBIGUOUS,False,always-open/24h cannot be represented safely with current Time fields,상시 개방,연중무휴
+2733963,12,4887,성북동성당,True,"상시 개방
+
+※ 미사시간은 홈페이지 확인 요망",연중무휴,SKIP_TIME_AMBIGUOUS,False,always-open/24h cannot be represented safely with current Time fields,상시 개방 ※ 미사시간은 홈페이지 확인 요망,연중무휴
+2733965,39,4888,반려문화,True,"주중 10:00~21:30 (휴게시간 16:00~17:00)
+주말 10:00~19:00",연중무휴,SKIP_TIME_AMBIGUOUS,False,"expected exactly 1 main range after break extraction, found 2",주중 <RANGE> (휴게시간 <RANGE>) 주말 <RANGE>,연중무휴
+2733966,12,4889,거리공원,True,상시 개방,연중무휴,SKIP_TIME_AMBIGUOUS,False,always-open/24h cannot be represented safely with current Time fields,상시 개방,연중무휴
+2733970,12,4890,대치유수지체육공원,True,07:00~21:00,연중무휴,PARSE_SIMPLE_WEEKLY,True,single time range + supported rest rule,<RANGE>,연중무휴
+2733971,12,4891,노을공원(서울),True,"05:30~20:00
+
+※ 자세한 사항은 전화문의 요망",연중무휴,SKIP_TIME_AMBIGUOUS,False,dangerous operating marker: 전화문의,<RANGE> ※ 자세한 사항은 전화문의 요망,연중무휴
+2733974,39,4892,더클래스 청담,True,"주중 10:00~19:00
+주말 10:00 ~ 22:00",연중무휴,SKIP_TIME_AMBIGUOUS,False,"expected exactly 1 main range after break extraction, found 2",주중 <RANGE> 주말 <RANGE>,연중무휴
+2733981,12,4893,구로리어린이공원,True,"- 동절기(11월~2월) 09:00~18:00
+
+- 하절기(3월~10월) 09:00~20:00",연중무휴,SKIP_TIME_AMBIGUOUS,False,dangerous operating marker: 하절기,- 동절기(11월~2월) <RANGE> - 하절기(3월~10월) <RANGE>,연중무휴
+2734171,28,4894,초안산캠핑장,True,- 입실 14:00- 퇴실 11:00- 피크닉장 퇴실 22:00,매주 화요일 / 설·추석 당일,SKIP_TIME_AMBIGUOUS,False,"expected exactly 1 main range after break extraction, found 0",- 입실 <TIME>- 퇴실 <TIME>- 피크닉장 퇴실 <TIME>,매주 화요일 / 설·추석 당일
+2734894,28,4895,노을캠핑장(서울),False,,,NO_DATA,False,detailIntro2 returned no item,<EMPTY>,<EMPTY>
+273758,38,4896,밀리오레 동대문점,True,10:30~02:00,월요일 / 명절은 별도 공지,SKIP_REST_AMBIGUOUS,False,rest rule is not a supported simple weekly rule,<RANGE>,월요일 / 명절은 별도 공지
+273772,38,4897,갤러리아백화점 명품관,True,"- 월요일~목요일 10:30~20:00
+- 금요일~일요일 10:30~20:30","월 1회
+※ 홈페이지 참조",SKIP_REST_AMBIGUOUS,False,rest rule is not a supported simple weekly rule,- 월요일~목요일 <RANGE> - 금요일~일요일 <RANGE>,월 1회 ※ 홈페이지 참조
+273806,38,4898,롯데백화점 본점 에비뉴엘,True,10:30~20:00,"방문 전, 홈페이지 확인 요망",SKIP_REST_AMBIGUOUS,False,rest rule is not a supported simple weekly rule,<RANGE>,"방문 전, 홈페이지 확인 요망"
+2738571,14,4899,서울공예박물관,True,10:00~18:00,매주 월요일 / 1월1일,PARSE_SIMPLE_WEEKLY,True,single time range + supported rest rule,<RANGE>,매주 월요일 / 1월1일
+2739443,14,4900,PKM갤러리,True,10:00~18:00 (입장 마감 17:30),매주 월요일,PARSE_SIMPLE_WEEKLY,True,single time range + supported rest rule,<RANGE> (입장 마감 <TIME>),매주 월요일
+2739448,14,4901,공근혜갤러리,True,10:30~17:30,매주 일요일~월요일,PARSE_SIMPLE_WEEKLY,True,single time range + supported rest rule,<RANGE>,매주 일요일~월요일
+2739467,14,4902,수애뇨339,True,"- 월요일~토요일 10:00~19:00
+
+- 일요일 및 공휴일 11:00~19:00",연중무휴,SKIP_TIME_AMBIGUOUS,False,dangerous operating marker: 공휴일,- 월요일~토요일 <RANGE> - 일요일 및 공휴일 <RANGE>,연중무휴
+2739475,14,4903,예술가의집,True,10:00~20:00,매주 일요일 / 법정공휴일,SKIP_REST_AMBIGUOUS,False,dangerous rest marker: 공휴일,<RANGE>,매주 일요일 / 법정공휴일
+2739477,14,4904,윤동주문학관,True,"10:00~18:00(입장마감 17:30)
+
+※ 매일 30분간(13:30~14:00) 청소 및 소독 시간",매주 월요일 / 1월 1일 / 설·추석 당일,SKIP_TIME_AMBIGUOUS,False,"expected exactly 1 main range after break extraction, found 2",<RANGE>(입장마감 <TIME>) ※ 매일 30분간(<RANGE>) 청소 및 소독 시간,매주 월요일 / 1월 1일 / 설·추석 당일
+2739478,14,4905,전태일기념관,True,"- 하절기 (3월~10월) 10:00~18:00 
+
+- 동절기 (11월~2월) 10:00~17:30",매주 월요일 / 1월 1일 / 설·추석 당일,SKIP_TIME_AMBIGUOUS,False,dangerous operating marker: 하절기,- 하절기 (3월~10월) <RANGE> - 동절기 (11월~2월) <RANGE>,매주 월요일 / 1월 1일 / 설·추석 당일
+2739479,14,4906,한국미술관,True,10:00~18:00,연중무휴,PARSE_SIMPLE_WEEKLY,True,single time range + supported rest rule,<RANGE>,연중무휴
+2739480,39,4907,원조남산왕돈까스,True,10:00~22:00,매주 화요일,PARSE_SIMPLE_WEEKLY,True,single time range + supported rest rule,<RANGE>,매주 화요일
+2740046,15,4908,한복문화주간,True,10:00~18:00,,RAW_ONLY_EVENT,False,event playtime is not a recurring weekly place schedule,<RANGE>,<EMPTY>
+2740116,39,4909,해방촌 혼고,True,"[월요일, 수요일~목요일]
+- 17:00~22:00
+- 마지막 주문 21:10
+[금요일~일요일]
+- 17:00~24:00
+- 마지막 주문 23:10",매주 화요일,PARSE_SIMPLE_WEEKLY,True,single time range + supported rest rule,"[월요일, 수요일~목요일] - <RANGE> - 마지막 주문 <TIME> [금요일~일요일] - <TIME>~24:00 - 마지막 주문 <TIME>",매주 화요일
+2741571,38,4910,고분다리전통시장,True,점포 별로 상이함,점포 별로 상이함,SKIP_TIME_AMBIGUOUS,False,dangerous operating marker: 상이,점포 별로 상이함,점포 별로 상이함
+2741583,39,4911,정담은보쌈,True,11:00~21:30,연중무휴,PARSE_SIMPLE_WEEKLY,True,single time range + supported rest rule,<RANGE>,연중무휴
+2741590,38,4912,우이시장,True,점포별 상이,점포별 상이,SKIP_TIME_AMBIGUOUS,False,dangerous operating marker: 상이,점포별 상이,점포별 상이
+2741591,38,4913,숭인시장,True,점포 별로 상이함,점포 별로 상이함,SKIP_TIME_AMBIGUOUS,False,dangerous operating marker: 상이,점포 별로 상이함,점포 별로 상이함
+2741592,38,4914,수유시장,True,점포 별로 상이함,점포 별로 상이함,SKIP_TIME_AMBIGUOUS,False,dangerous operating marker: 상이,점포 별로 상이함,점포 별로 상이함
+2741594,38,4915,수유중앙시장,True,점포 별로 상이함,점포 별로 상이함,SKIP_TIME_AMBIGUOUS,False,dangerous operating marker: 상이,점포 별로 상이함,점포 별로 상이함
+2741602,38,4916,암사종합시장,True,점포 별로 상이함,점포 별로 상이함,SKIP_TIME_AMBIGUOUS,False,dangerous operating marker: 상이,점포 별로 상이함,점포 별로 상이함
+2741605,38,4917,길동복조리시장,True,점포 별로 상이함,점포 별로 상이함,SKIP_TIME_AMBIGUOUS,False,dangerous operating marker: 상이,점포 별로 상이함,점포 별로 상이함
+2741610,12,4918,천호자전거거리,True,상시 개방,연중무휴,SKIP_TIME_AMBIGUOUS,False,always-open/24h cannot be represented safely with current Time fields,상시 개방,연중무휴
+2741624,38,4919,송화벽화시장,True,점포 별로 상이함,점포 별로 상이함,SKIP_TIME_AMBIGUOUS,False,dangerous operating marker: 상이,점포 별로 상이함,점포 별로 상이함
+2741626,38,4920,강서농산물도매시장,True,점포 별로 상이,점포 별로 상이,SKIP_TIME_AMBIGUOUS,False,dangerous operating marker: 상이,점포 별로 상이,점포 별로 상이
+2743740,12,4921,육영재단 어린이회관,True,09:00~18:00,"매주 토요일, 일요일",PARSE_SIMPLE_WEEKLY,True,single time range + supported rest rule,<RANGE>,"매주 토요일, 일요일"
+2743742,38,4922,공릉동도깨비시장,True,점포 별로 상이함,점포 별로 상이함,SKIP_TIME_AMBIGUOUS,False,dangerous operating marker: 상이,점포 별로 상이함,점포 별로 상이함
+2743748,38,4923,금남시장,True,점포 별로 상이함,점포 별로 상이함,SKIP_TIME_AMBIGUOUS,False,dangerous operating marker: 상이,점포 별로 상이함,점포 별로 상이함
+2743751,28,4924,뚝섬 윈드서핑장,False,,,NO_DATA,False,detailIntro2 returned no item,<EMPTY>,<EMPTY>
+2743854,38,4925,고척근린시장,True,"09:00~21:00
+※ 점포 별로 상이함","매월 셋째 주 화요일
+※ 점포 별로 상이함",SKIP_TIME_AMBIGUOUS,False,dangerous operating marker: 상이,<RANGE> ※ 점포 별로 상이함,매월 셋째 주 화요일 ※ 점포 별로 상이함
+2743857,38,4926,독산동 우시장,True,"- 유창상가 09:00~18:00
+- 명선상가 09:00~18:00
+- 명선상가 09:00~18:00
+- 현대·협동상가 09:00~18:00
+※ 점포 별로 상이할 수 있으므로 자세한 영업시간은 점포에 문의 요망",연중무휴,SKIP_TIME_AMBIGUOUS,False,dangerous operating marker: 상이,- 유창상가 <RANGE> - 명선상가 <RANGE> - 명선상가 <RANGE> - 현대·협동상가 <RANGE> ※ 점포 별로 상이할 수 있으므로 자세한 영업시간은 점포에 문의 요망,연중무휴
+2745526,39,4927,우참판,True,"평일 11:30~22:00 (브레이크타임 14:30~17:00)
+21:00 라스트오더
+주말 11:30~21:30 (15:00~17:00 브레이크타임)
+20:30 라스트오더",연중무휴,PARSE_WEEKDAY_WEEKEND,True,explicit weekday/weekend schedule + supported rest rule,평일 <RANGE> (브레이크타임 <RANGE>) <TIME> 라스트오더 주말 <RANGE> (<RANGE> 브레이크타임) <TIME> 라스트오더,연중무휴
+2745569,39,4928,서래본갈비,True,11:30~22:00,연중무휴,PARSE_SIMPLE_WEEKLY,True,single time range + supported rest rule,<RANGE>,연중무휴
+2745572,39,4929,서관면옥,True,"11:00~21:00 (브레이크타임 15:00~17:00)
+20:30 라스트오더",연중무휴,PARSE_SIMPLE_WEEKLY,True,single time range + supported rest rule,<RANGE> (브레이크타임 <RANGE>) <TIME> 라스트오더,연중무휴
+2745580,39,4930,배나무골오리집 양재본점,True,11:30~21:30 (브레이크타임 15:00~17:00),매주 일요일,PARSE_SIMPLE_WEEKLY,True,single time range + supported rest rule,<RANGE> (브레이크타임 <RANGE>),매주 일요일
+2745582,39,4931,진미식당,True,"12:00 ~ 20:00
+브레이크타임 15:30 ~ 17:00",매주 일요일,PARSE_SIMPLE_WEEKLY,True,single time range + supported rest rule,<RANGE> 브레이크타임 <RANGE>,매주 일요일
+2745583,12,4932,플로팅아일랜드,True,10:00~17:00,,SKIP_REST_AMBIGUOUS,False,rest text empty,<RANGE>,<EMPTY>
+2745594,12,4933,성수연방,True,10:00~22:00,,SKIP_REST_AMBIGUOUS,False,rest text empty,<RANGE>,<EMPTY>
+2745602,14,4934,에스팩토리,True,"10:00~22:00 
+
+※ 점포 별로 상이함","연중무휴
+※ 점포 별로 상이함",SKIP_TIME_AMBIGUOUS,False,dangerous operating marker: 상이,<RANGE> ※ 점포 별로 상이함,연중무휴 ※ 점포 별로 상이함
+2745725,14,4935,서울시립 난지미술창작스튜디오,True,10:00~18:00 (입장마감 17:30),매주 월요일 / 1월 1일,PARSE_SIMPLE_WEEKLY,True,single time range + supported rest rule,<RANGE> (입장마감 <TIME>),매주 월요일 / 1월 1일
+2745731,14,4936,노원천문우주과학관,True,"[전시관] 
+
+- 09:30~17:30 (입장마감 17:00)
+
+※ 전시물 점검 및 정비 시간 : 12:00~13:00
+
+[천문대 주간 관측] 
+
+- 평일 13:30 / 14:30
+
+- 주말 10:00 / 11:00 / 13:30 / 14:30
+
+[천문대 야간 관측]
+
+- 금~토요일 19:30~21:00 (하절기 20:00~21:30)",매주 월요일 / 1월 1일 / 설·추석 당일,SKIP_TIME_AMBIGUOUS,False,dangerous operating marker: 하절기,[전시관] - <RANGE> (입장마감 <TIME>) ※ 전시물 점검 및 정비 시간 : <RANGE> [천문대 주간 관측] - 평일 <TIME> / <TIME> - 주말 <TIME> / <TIME> / <TIME> / <TIME> [천문대 야간 관측] - 금~토요일 <RANGE> (하절기 <RANGE>),매주 월요일 / 1월 1일 / 설·추석 당일
+2751294,12,4937,법안정사,True,08:30~17:00,연중무휴,PARSE_SIMPLE_WEEKLY,True,single time range + supported rest rule,<RANGE>,연중무휴
+2751303,14,4938,서울특별시교육청 융합과학교육원 남부분원,True,09:00~17:00,매주 토요일~일요일 / 법정공휴일,SKIP_REST_AMBIGUOUS,False,dangerous rest marker: 공휴일,<RANGE>,매주 토요일~일요일 / 법정공휴일
+2751316,14,4939,한국영상자료원,True,"[한국영상자료원]
+
+10:00~19:00
+
+[한국영화박물관]
+
+10:30~19:00","매주 일요일, 월요일 / 1월 1일 / 설·추석 연휴 / 창립기념일 / 근로자의 날",SKIP_TIME_AMBIGUOUS,False,"expected exactly 1 main range after break extraction, found 2",[한국영상자료원] <RANGE> [한국영화박물관] <RANGE>,"매주 일요일, 월요일 / 1월 1일 / 설·추석 연휴 / 창립기념일 / 근로자의 날"
+2751331,14,4940,스위트파크 롯데 어린이 식품체험관,True,"10:00~16:00
+(주 4회 운영)",매주 금요일~일요일 / 공휴일,SKIP_REST_AMBIGUOUS,False,dangerous rest marker: 공휴일,<RANGE> (주 4회 운영),매주 금요일~일요일 / 공휴일
+2751339,14,4941,KBS온,True,09:30~17:30 (17:00까지 입장),"명절 (신정, 설, 추석) 연휴, 주말, 공휴일",SKIP_REST_AMBIGUOUS,False,dangerous rest marker: 공휴일,<RANGE> (<TIME>까지 입장),"명절 (신정, 설, 추석) 연휴, 주말, 공휴일"
+2751345,12,4942,양천해누리체육공원,True,"[1월 / 12월] 08:00~18:00
+
+[2월 / 10월~11월] 07:00~18:00
+
+[3월~4월] 07:00~19:00
+
+[5월] 06:00~19:00
+
+[6월~7월] 06:00~20:00
+
+[8월~9월] 06:00~19:00
+
+※ 일출·일몰 시간에 따라 월별 운영",1월 1일 / 설·추석 연휴 / 평일 법정공휴일 / 대체 공휴일 / 근로자의 날 / 대학수학능력시험일 / 기타 시설정비일,SKIP_REST_AMBIGUOUS,False,dangerous rest marker: 공휴일,[1월 / 12월] <RANGE> [2월 / 10월~11월] <RANGE> [3월~4월] <RANGE> [5월] <RANGE> [6월~7월] <RANGE> [8월~9월] <RANGE> ※ 일출·일몰 시간에 따라 월별 운영,1월 1일 / 설·추석 연휴 / 평일 법정공휴일 / 대체 공휴일 / 근로자의 날 / 대학수학능력시험일 / 기타 시설정비일
+2751406,38,4943,노룬산골목시장,True,점포별 상이,점포별 상이,SKIP_TIME_AMBIGUOUS,False,dangerous operating marker: 상이,점포별 상이,점포별 상이
+2751414,38,4944,중곡제일골목시장,True,"10:00~22:00
+※ 점포 별로 상이함",점포 별로 상이함,SKIP_TIME_AMBIGUOUS,False,dangerous operating marker: 상이,<RANGE> ※ 점포 별로 상이함,점포 별로 상이함
+2751420,38,4945,신창시장,True,점포 별로 상이함,점포 별로 상이함,SKIP_TIME_AMBIGUOUS,False,dangerous operating marker: 상이,점포 별로 상이함,점포 별로 상이함
+2751432,38,4946,아현시장,True,점포 별로 상이함,점포 별로 상이함,SKIP_TIME_AMBIGUOUS,False,dangerous operating marker: 상이,점포 별로 상이함,점포 별로 상이함
+2751863,38,4947,둔촌역전통시장,True,09:00~22:00 (점포별 상이),점포별 상이,SKIP_TIME_AMBIGUOUS,False,dangerous operating marker: 상이,<RANGE> (점포별 상이),점포별 상이
+2751881,39,4948,윤화돈까스,True,"[평일]
+- 11:00~21:00
+- 준비시간 15:00~17:00
+- 마지막 주문 20:55
+[주말]
+- 11:00~21:00
+- 마지막 주문 20:55",연중무휴,PARSE_WEEKDAY_WEEKEND,True,explicit weekday/weekend schedule + supported rest rule,[평일] - <RANGE> - 준비시간 <RANGE> - 마지막 주문 <TIME> [주말] - <RANGE> - 마지막 주문 <TIME>,연중무휴
+2751890,12,4949,은곡마을공원,True,상시 개방,연중무휴,SKIP_TIME_AMBIGUOUS,False,always-open/24h cannot be represented safely with current Time fields,상시 개방,연중무휴
+2752116,39,4950,벌교한상,True,10:50~21:30 (마지막 주문 21:00),설·추석 연휴,SKIP_REST_AMBIGUOUS,False,rest rule is not a supported simple weekly rule,<RANGE> (마지막 주문 <TIME>),설·추석 연휴
+2752169,39,4951,농민백암순대 본점,True,"[월요일~금요일]
+- 11:10~21:00
+- 마지막 주문 20:30
+[토요일]
+- 11:10~15:30
+- 마지막 주문 15:00
+※ 공휴일이 없는 주간 수요일 15:30 마감",매주 일요일 / 공휴일,SKIP_TIME_AMBIGUOUS,False,dangerous operating marker: 공휴일,[월요일~금요일] - <RANGE> - 마지막 주문 <TIME> [토요일] - <RANGE> - 마지막 주문 <TIME> ※ 공휴일이 없는 주간 수요일 <TIME> 마감,매주 일요일 / 공휴일
+2752177,39,4952,단미그린비,True,"[평일]
+- 11:30~21:00
+- 준비시간 15:00~17:30
+- 마지막 주문 20:00
+[주말]
+- 11:30~21:30
+- 준비시간 15:00~17:30
+- 마지막 주문 20:30",매주 월요일,PARSE_WEEKDAY_WEEKEND,True,explicit weekday/weekend schedule + supported rest rule,[평일] - <RANGE> - 준비시간 <RANGE> - 마지막 주문 <TIME> [주말] - <RANGE> - 준비시간 <RANGE> - 마지막 주문 <TIME>,매주 월요일
+2752373,39,4953,반룡산,True,"- 주중 11:00~21:30
+- 주말 11:00~21:00",연중무휴,SKIP_TIME_AMBIGUOUS,False,"expected exactly 1 main range after break extraction, found 2",- 주중 <RANGE> - 주말 <RANGE>,연중무휴
+2752385,39,4954,백마김씨네 도곡본점,True,11:30~21:50,연중무휴,PARSE_SIMPLE_WEEKLY,True,single time range + supported rest rule,<RANGE>,연중무휴
+2752525,12,4955,마루공원,True,상시 개방,연중무휴,SKIP_TIME_AMBIGUOUS,False,always-open/24h cannot be represented safely with current Time fields,상시 개방,연중무휴
+2752545,12,4956,역삼개나리공원,True,상시 개방,연중무휴,SKIP_TIME_AMBIGUOUS,False,always-open/24h cannot be represented safely with current Time fields,상시 개방,연중무휴
+2752546,39,4957,돝고기506,True,"- 11:30~22:00
+- 준비시간 15:00~17:00
+- 마지막 주문 21:20",연중무휴,PARSE_SIMPLE_WEEKLY,True,single time range + supported rest rule,- <RANGE> - 준비시간 <RANGE> - 마지막 주문 <TIME>,연중무휴
+2752554,39,4958,스케줄청담,True,"- 11:00~05:00
+- 준비시간 21:00~21:30
+- 마지막 주문 04:00",연중무휴,SKIP_TIME_AMBIGUOUS,False,overnight/equal open-close range not normalized,- <RANGE> - 준비시간 <RANGE> - 마지막 주문 <TIME>,연중무휴
+2752555,38,4959,신사상가,True,08:00 ~ 21:30,점포별 상이,SKIP_REST_AMBIGUOUS,False,dangerous rest marker: 상이,<RANGE>,점포별 상이
+2753089,14,4960,더서울라이티움,True,전시별 상이,연중무휴,SKIP_TIME_AMBIGUOUS,False,dangerous operating marker: 상이,전시별 상이,연중무휴
+2753103,12,4961,대림어린이공원,True,상시 개방,연중무휴,SKIP_TIME_AMBIGUOUS,False,always-open/24h cannot be represented safely with current Time fields,상시 개방,연중무휴
+2753117,38,4962,대신시장,True,점포 별로 상이함,점포 별로 상이함,SKIP_TIME_AMBIGUOUS,False,dangerous operating marker: 상이,점포 별로 상이함,점포 별로 상이함
+2753157,39,4963,으뜸횟집,True,11:30~23:00,매주 일요일,PARSE_SIMPLE_WEEKLY,True,single time range + supported rest rule,<RANGE>,매주 일요일
+2753381,28,4964,더클라임 클라이밍 양재점,False,,,NO_DATA,False,detailIntro2 returned no item,<EMPTY>,<EMPTY>
+2753817,14,4965,한생연 휴먼탐구과학관,True,"- 평일 09:30~18:00
+
+- 주말 09:00~18:00
+
+- 점심시간 12:30~13:30
+
+※ 사전 예약 필수",매주 월요일 / 설·추석 연휴,PARSE_WEEKDAY_WEEKEND,True,explicit weekday/weekend schedule + supported rest rule,- 평일 <RANGE> - 주말 <RANGE> - 점심시간 <RANGE> ※ 사전 예약 필수,매주 월요일 / 설·추석 연휴
+2753917,38,4966,화곡본동시장,True,점포별 상이,점포별 상이,SKIP_TIME_AMBIGUOUS,False,dangerous operating marker: 상이,점포별 상이,점포별 상이
+2755467,28,4967,마곡 실내배드민턴장,False,,,NO_DATA,False,detailIntro2 returned no item,<EMPTY>,<EMPTY>
+2755513,39,4968,다래함박스텍,True,10:00~21:00 (준비 시간 15:00~16:00),매주 월요일,PARSE_SIMPLE_WEEKLY,True,single time range + supported rest rule,<RANGE> (준비 시간 <RANGE>),매주 월요일
+2756142,12,4969,독산 근린공원,True,상시 개방,연중무휴,SKIP_TIME_AMBIGUOUS,False,always-open/24h cannot be represented safely with current Time fields,상시 개방,연중무휴
+2756153,12,4970,쌈지 어린이공원,True,상시 개방,연중무휴,SKIP_TIME_AMBIGUOUS,False,always-open/24h cannot be represented safely with current Time fields,상시 개방,연중무휴
+2756575,12,4971,긴고랑공원,True,상시 개방,연중무휴,SKIP_TIME_AMBIGUOUS,False,always-open/24h cannot be represented safely with current Time fields,상시 개방,연중무휴
+2756578,12,4972,뚝섬한강공원 벽천마당,True,상시 개방,연중무휴,SKIP_TIME_AMBIGUOUS,False,always-open/24h cannot be represented safely with current Time fields,상시 개방,연중무휴
+2756589,12,4973,우리유황온천,True,05:30~21:00,연중무휴,PARSE_SIMPLE_WEEKLY,True,single time range + supported rest rule,<RANGE>,연중무휴
+2757125,28,4974,인서울27 골프클럽,False,,,NO_DATA,False,detailIntro2 returned no item,<EMPTY>,<EMPTY>
+2757155,12,4975,법룡사,True,"04:00~18:00
+
+※ 매월 첫째 금요일 19:00~21:00 능엄주 기도",,SKIP_TIME_AMBIGUOUS,False,dangerous operating marker: 첫째,<RANGE> ※ 매월 첫째 금요일 <RANGE> 능엄주 기도,<EMPTY>
+2757640,38,4976,가락수산시장,True,점포별 상이,점포별 상이,SKIP_TIME_AMBIGUOUS,False,dangerous operating marker: 상이,점포별 상이,점포별 상이
+2757647,38,4977,가락몰,True,점포별 상이,연중무휴 (점포별 상이),SKIP_TIME_AMBIGUOUS,False,dangerous operating marker: 상이,점포별 상이,연중무휴 (점포별 상이)
+2757653,12,4978,마천공원,True,상시 개방,연중무휴,SKIP_TIME_AMBIGUOUS,False,always-open/24h cannot be represented safely with current Time fields,상시 개방,연중무휴
+2757730,39,4979,르한스,True,"[레스토랑]
+- 11:30~21:30
+- 준비시간 15:00~17:00
+- 점심 마지막 주문 14:00
+- 저녁 마지막 주문 20:00
+[카페]
+- 11:30~21:30
+- 마지막 주문 20:30",연중무휴,SKIP_TIME_AMBIGUOUS,False,"expected exactly 1 main range after break extraction, found 2",[레스토랑] - <RANGE> - 준비시간 <RANGE> - 점심 마지막 주문 <TIME> - 저녁 마지막 주문 <TIME> [카페] - <RANGE> - 마지막 주문 <TIME>,연중무휴
+2757738,39,4980,한국순대(서초구),True,상시 개방,연중무휴,SKIP_TIME_AMBIGUOUS,False,always-open/24h cannot be represented safely with current Time fields,상시 개방,연중무휴
+2757822,12,4981,응봉체육공원,True,06:00~22:00,1월 1일 / 설·추석 연휴,SKIP_REST_AMBIGUOUS,False,rest rule is not a supported simple weekly rule,<RANGE>,1월 1일 / 설·추석 연휴
+2757830,39,4982,오선채,True,"- 11:30~21:00
+- 준비시간 15:00~17:00
+- 마지막 주문 20:00",연중무휴,PARSE_SIMPLE_WEEKLY,True,single time range + supported rest rule,- <RANGE> - 준비시간 <RANGE> - 마지막 주문 <TIME>,연중무휴
+2757831,12,4983,우면산자연생태공원,True,상시 개방,연중무휴,SKIP_TIME_AMBIGUOUS,False,always-open/24h cannot be represented safely with current Time fields,상시 개방,연중무휴
+2758116,39,4984,메종 한남,True,"- 11:30~22:00
+- 준비시간 15:00~17:30
+- 마지막 주문 20:00",매주 월요일,PARSE_SIMPLE_WEEKLY,True,single time range + supported rest rule,- <RANGE> - 준비시간 <RANGE> - 마지막 주문 <TIME>,매주 월요일
+2758125,12,4985,왜고개,True,상시 개방,연중무휴,SKIP_TIME_AMBIGUOUS,False,always-open/24h cannot be represented safely with current Time fields,상시 개방,연중무휴
+2758128,39,4986,쭈꾸미킹2.0 상봉점,True,11:00~22:00 (마지막 주문 20:30),연중무휴,PARSE_SIMPLE_WEEKLY,True,single time range + supported rest rule,<RANGE> (마지막 주문 <TIME>),연중무휴
+2758130,39,4987,오만지아,True,"[평일]
+- 12:00~24:00
+- 준비시간 15:00~17:30
+- 점심 마지막 주문 14:00 / 저녁 마지막 주문 23:00
+[주말]
+- 12:00~24:00
+- 마지막 주문 23:00",연중무휴,SKIP_TIME_AMBIGUOUS,False,"expected exactly 1 main range after break extraction, found 0",[평일] - <TIME>~24:00 - 준비시간 <RANGE> - 점심 마지막 주문 <TIME> / 저녁 마지막 주문 <TIME> [주말] - <TIME>~24:00 - 마지막 주문 <TIME>,연중무휴
+2758137,39,4988,툇마루밥상,True,"- 11:30~21:30
+- 준비시간 15:00~17:00
+- 마지막 주문 20:30",연중무휴,PARSE_SIMPLE_WEEKLY,True,single time range + supported rest rule,- <RANGE> - 준비시간 <RANGE> - 마지막 주문 <TIME>,연중무휴
+2758150,12,4989,용산역광장,True,상시 개방,연중무휴,SKIP_TIME_AMBIGUOUS,False,always-open/24h cannot be represented safely with current Time fields,상시 개방,연중무휴
+2758158,39,4990,풍년뼈다귀해장국,True,00:00~24:00,"매월 첫째, 셋째 월요일",SKIP_REST_AMBIGUOUS,False,dangerous rest marker: 첫째,<TIME>~24:00,"매월 첫째, 셋째 월요일"
+2758161,12,4991,증산체육공원,True,상시 개방,연중무휴,SKIP_TIME_AMBIGUOUS,False,always-open/24h cannot be represented safely with current Time fields,상시 개방,연중무휴
+2758163,39,4992,청와옥 본점,True,"- 08:00~22:00
+- 마지막 주문 21:00",연중무휴,PARSE_SIMPLE_WEEKLY,True,single time range + supported rest rule,- <RANGE> - 마지막 주문 <TIME>,연중무휴
+2758166,39,4993,오향가가락본점,True,"- 11:30~22:00
+- 준비시간 14:30~17:00",매주 일요일,PARSE_SIMPLE_WEEKLY,True,single time range + supported rest rule,- <RANGE> - 준비시간 <RANGE>,매주 일요일
+2758176,38,4994,정릉아리랑시장,True,점포 별로 상이함,점포 별로 상이함,SKIP_TIME_AMBIGUOUS,False,dangerous operating marker: 상이,점포 별로 상이함,점포 별로 상이함
+2758179,28,4995,올림픽체조경기장(KSPO DOME),False,,,NO_DATA,False,detailIntro2 returned no item,<EMPTY>,<EMPTY>
+2758191,38,4996,상계중앙시장,True,점포별 상이,점포별 상이,SKIP_TIME_AMBIGUOUS,False,dangerous operating marker: 상이,점포별 상이,점포별 상이
+2758193,38,4997,개봉중앙시장,True,점포 별로 상이함,점포 별로 상이함,SKIP_TIME_AMBIGUOUS,False,dangerous operating marker: 상이,점포 별로 상이함,점포 별로 상이함
+2758809,12,4998,한양공원,True,상시 개방,연중무휴,SKIP_TIME_AMBIGUOUS,False,always-open/24h cannot be represented safely with current Time fields,상시 개방,연중무휴
+2758811,38,4999,풍납도깨비시장,True,점포별 상이,점포별 상이,SKIP_TIME_AMBIGUOUS,False,dangerous operating marker: 상이,점포별 상이,점포별 상이
+2759106,38,5000,사당시장,True,점포 별로 상이함,점포 별로 상이함,SKIP_TIME_AMBIGUOUS,False,dangerous operating marker: 상이,점포 별로 상이함,점포 별로 상이함
+2759129,38,5001,마천시장,True,점포별 상이,점포별 상이,SKIP_TIME_AMBIGUOUS,False,dangerous operating marker: 상이,점포별 상이,점포별 상이
+2759626,12,5002,코엑스동측광장,True,상시 개방,연중무휴,SKIP_TIME_AMBIGUOUS,False,always-open/24h cannot be represented safely with current Time fields,상시 개방,연중무휴
+2759649,12,5003,무수골계곡,True,"상시 개방
+
+※ 단, 계곡 출입은 한시적으로 허용하고 있으므로 자세한 사항은 홈페이지 확인 또는 전화 문의",연중무휴,SKIP_TIME_AMBIGUOUS,False,dangerous operating marker: 전화 문의,"상시 개방 ※ 단, 계곡 출입은 한시적으로 허용하고 있으므로 자세한 사항은 홈페이지 확인 또는 전화 문의",연중무휴
+2759652,38,5004,청량리청과물시장,True,점포 별로 상이함,점포 별로 상이함,SKIP_TIME_AMBIGUOUS,False,dangerous operating marker: 상이,점포 별로 상이함,점포 별로 상이함
+2759655,38,5005,방신전통시장,True,점포별 상이,점포별 상이,SKIP_TIME_AMBIGUOUS,False,dangerous operating marker: 상이,점포별 상이,점포별 상이
+2759976,38,5006,충신시장,True,점포 별로 상이함,점포 별로 상이함,SKIP_TIME_AMBIGUOUS,False,dangerous operating marker: 상이,점포 별로 상이함,점포 별로 상이함
+2759985,38,5007,면목시장,True,점포 별로 상이함,점포 별로 상이함,SKIP_TIME_AMBIGUOUS,False,dangerous operating marker: 상이,점포 별로 상이함,점포 별로 상이함
+2760228,38,5008,신곡종합시장,True,점포별 상이,점포별 상이,SKIP_TIME_AMBIGUOUS,False,dangerous operating marker: 상이,점포별 상이,점포별 상이
+2760240,38,5009,후암시장,True,09:00~22:00 (점포별 상이함),연중무휴 (점포별 상이함),SKIP_TIME_AMBIGUOUS,False,dangerous operating marker: 상이,<RANGE> (점포별 상이함),연중무휴 (점포별 상이함)
+2760249,12,5010,성촌공원,True,상시 개방,연중무휴,SKIP_TIME_AMBIGUOUS,False,always-open/24h cannot be represented safely with current Time fields,상시 개방,연중무휴
+2760268,12,5011,여의도한강공원 멀티프라자,True,상시 개방,연중무휴,SKIP_TIME_AMBIGUOUS,False,always-open/24h cannot be represented safely with current Time fields,상시 개방,연중무휴
+2760301,14,5012,한생연 생명과학박물관,True,"10:00 / 13:30 / 16:00
+
+※ 사전 예약제로 운영",매주 월요일 / 1월 1일 / 설·추석 연휴,SKIP_TIME_AMBIGUOUS,False,"expected exactly 1 main range after break extraction, found 0",<TIME> / <TIME> / <TIME> ※ 사전 예약제로 운영,매주 월요일 / 1월 1일 / 설·추석 연휴
+2761460,38,5013,청평화패션몰,True,23:00~12:00,주말,SKIP_REST_AMBIGUOUS,False,rest rule is not a supported simple weekly rule,<RANGE>,주말
+2761466,38,5014,남평화상가,True,"- 의류 20:00~06:00
+- 가방 24:00~12:00",금요일 / 토요일,SKIP_REST_AMBIGUOUS,False,rest rule is not a supported simple weekly rule,- 의류 <RANGE> - 가방 24:00~<TIME>,금요일 / 토요일
+2761474,38,5015,만리시장,True,※ 점포 별로 상이함,※ 점포 별로 상이함,SKIP_TIME_AMBIGUOUS,False,dangerous operating marker: 상이,※ 점포 별로 상이함,※ 점포 별로 상이함
+2761478,38,5016,태릉시장,True,점포별 상이,점포별 상이,SKIP_TIME_AMBIGUOUS,False,dangerous operating marker: 상이,점포별 상이,점포별 상이
+2761544,12,5017,해방촌마을,True,상시 개방,,SKIP_REST_AMBIGUOUS,False,rest text empty,상시 개방,<EMPTY>
+2761653,39,5018,잠두봉더나인,True,12:00~21:30,연중무휴,PARSE_SIMPLE_WEEKLY,True,single time range + supported rest rule,<RANGE>,연중무휴
+2761661,12,5019,구강사,True,09:00~18:00,연중무휴,PARSE_SIMPLE_WEEKLY,True,single time range + supported rest rule,<RANGE>,연중무휴
+2761662,12,5020,명락사,True,상시 개방,연중무휴,SKIP_TIME_AMBIGUOUS,False,always-open/24h cannot be represented safely with current Time fields,상시 개방,연중무휴
+2761745,12,5021,송파구자원순환공원,True,"- 공원 상시 개방
+
+- 홍보관 10:00~17:00",연중무휴,SKIP_TIME_AMBIGUOUS,False,always-open/24h cannot be represented safely with current Time fields,- 공원 상시 개방 - 홍보관 <RANGE>,연중무휴
+2761797,12,5022,올림픽공원피크닉장,True,상시 개방,연중무휴,SKIP_TIME_AMBIGUOUS,False,always-open/24h cannot be represented safely with current Time fields,상시 개방,연중무휴
+2762844,38,5023,신평화패션타운,True,점포별 상이,점포별 상이,SKIP_TIME_AMBIGUOUS,False,dangerous operating marker: 상이,점포별 상이,점포별 상이
+2762868,38,5024,동화상가,True,09:00~19:00,매주 일요일,PARSE_SIMPLE_WEEKLY,True,single time range + supported rest rule,<RANGE>,매주 일요일
+2762871,14,5025,이화여고100주년기념관,True,※ 공연 및 행사 별 상이하므로 홈페이지 참고,※ 공연 및 행사 별 상이하므로 홈페이지 참고,SKIP_TIME_AMBIGUOUS,False,dangerous operating marker: 상이,※ 공연 및 행사 별 상이하므로 홈페이지 참고,※ 공연 및 행사 별 상이하므로 홈페이지 참고
+2762874,12,5026,묵정어린이공원,True,상시 개방,연중무휴,SKIP_TIME_AMBIGUOUS,False,always-open/24h cannot be represented safely with current Time fields,상시 개방,연중무휴
+2763515,39,5027,와이키키마켓,True,"- 11:30~23:00
+- 마지막 주문 22:00",연중무휴,PARSE_SIMPLE_WEEKLY,True,single time range + supported rest rule,- <RANGE> - 마지막 주문 <TIME>,연중무휴
+2763685,12,5028,노들나루공원,True,상시 개방,연중무휴,SKIP_TIME_AMBIGUOUS,False,always-open/24h cannot be represented safely with current Time fields,상시 개방,연중무휴
+2763749,39,5029,밴건디스테이크하우스,True,"- 11:30~22:00
+- 준비시간 15:00~17:30
+- 마지막 주문 20:30",설·추석 연휴,SKIP_REST_AMBIGUOUS,False,rest rule is not a supported simple weekly rule,- <RANGE> - 준비시간 <RANGE> - 마지막 주문 <TIME>,설·추석 연휴
+2763751,39,5030,동작노을카페,True,"[월요일~목요일]
+- 10:00~23:00
+- 마지막 주문 22:55
+[금요일~일요일]
+- 10:00~01:00
+- 마지막 주문 00:55",연중무휴,SKIP_TIME_AMBIGUOUS,False,"expected exactly 1 main range after break extraction, found 2",[월요일~목요일] - <RANGE> - 마지막 주문 <TIME> [금요일~일요일] - <RANGE> - 마지막 주문 <TIME>,연중무휴
+2763818,12,5031,헬로애니멀,True,10:30~19:00 (입장 마감 18:00),연중무휴,PARSE_SIMPLE_WEEKLY,True,single time range + supported rest rule,<RANGE> (입장 마감 <TIME>),연중무휴
+2763871,12,5032,방배배수지체육공원,True,"- 공원 상시 개방
+
+- 축구장, 풋살장 07:00~22:00",연중무휴,SKIP_TIME_AMBIGUOUS,False,always-open/24h cannot be represented safely with current Time fields,"- 공원 상시 개방 - 축구장, 풋살장 <RANGE>",연중무휴
+2763905,38,5033,영일시장,True,02:00~18:00 (점포별 상이),점포별 상이,SKIP_TIME_AMBIGUOUS,False,dangerous operating marker: 상이,<RANGE> (점포별 상이),점포별 상이
+2764171,39,5034,등나무집,True,11:00~22:00,연중무휴,PARSE_SIMPLE_WEEKLY,True,single time range + supported rest rule,<RANGE>,연중무휴
+2764329,12,5035,서울 신당동 박정희 가옥,True,10:00~18:00,매주 월요일 / 1월1일 / 설·추석 기념 행사시(사전공지 예정),PARSE_SIMPLE_WEEKLY,True,single time range + supported rest rule,<RANGE>,매주 월요일 / 1월1일 / 설·추석 기념 행사시(사전공지 예정)
+2764354,12,5036,다락원체육공원,True,"[축구장] 06:00~22:00
+
+[배드민턴장]
+
+- 1부 06:00~09:00
+
+- 2부 10:00~13:00
+
+- 3부 14:00~17:00
+
+- 4부 18:00~22:00
+
+[테니스장]
+
+- 실내 06:00~12:00 / 13:00~22:00
+
+※ 주말 및 공휴일은 21:00까지 운영
+
+- 실외 06:00~22:00",※ 시설별 상이하므로 홈페이지 참고,SKIP_TIME_AMBIGUOUS,False,dangerous operating marker: 공휴일,[축구장] <RANGE> [배드민턴장] - 1부 <RANGE> - 2부 <RANGE> - 3부 <RANGE> - 4부 <RANGE> [테니스장] - 실내 <RANGE> / <RANGE> ※ 주말 및 공휴일은 <TIME>까지 운영 - 실외 <RANGE>,※ 시설별 상이하므로 홈페이지 참고
+2764364,38,5037,영등포전통시장,True,"[야시장]
+- 하절기(3~10월) 18:00~22:00
+- 동절기(11~2월) 17:00~22:00
+※ 단, 시장 점포 별로 상이함","[야시장]
+매월 셋째주 일요일
+※ 단, 시장 점포 별로 상이함",SKIP_TIME_AMBIGUOUS,False,dangerous operating marker: 상이,"[야시장] - 하절기(3~10월) <RANGE> - 동절기(11~2월) <RANGE> ※ 단, 시장 점포 별로 상이함","[야시장] 매월 셋째주 일요일 ※ 단, 시장 점포 별로 상이함"
+2764375,38,5038,영등포청과시장,True,점포 별로 상이함,점포 별로 상이함,SKIP_TIME_AMBIGUOUS,False,dangerous operating marker: 상이,점포 별로 상이함,점포 별로 상이함
+2765202,14,5039,서소문성지역사박물관,True,09:30~17:30 (입장마감 17:00),매주 월요일 / 1월 1일 / 설·추석 당일,PARSE_SIMPLE_WEEKLY,True,single time range + supported rest rule,<RANGE> (입장마감 <TIME>),매주 월요일 / 1월 1일 / 설·추석 당일
+2765213,38,5040,동묘벼룩시장,True,점포 별로 상이함,점포 별로 상이함,SKIP_TIME_AMBIGUOUS,False,dangerous operating marker: 상이,점포 별로 상이함,점포 별로 상이함
+2765510,12,5041,청계광장,True,상시 개방,연중무휴,SKIP_TIME_AMBIGUOUS,False,always-open/24h cannot be represented safely with current Time fields,상시 개방,연중무휴
+2767753,12,5042,후암거실,True,09:00~24:00,연중무휴,SKIP_TIME_AMBIGUOUS,False,"expected exactly 1 main range after break extraction, found 0",<TIME>~24:00,연중무휴
+2768087,28,5043,롤파크,False,,,NO_DATA,False,detailIntro2 returned no item,<EMPTY>,<EMPTY>
+2769990,15,5044,2025 대한민국 우리술 대축제,True,13:00~20:00,,RAW_ONLY_EVENT,False,event playtime is not a recurring weekly place schedule,<RANGE>,<EMPTY>
+2773265,14,5045,K현대미술관,True,10:00~19:00 (18시 입장 마감),연중무휴,PARSE_SIMPLE_WEEKLY,True,single time range + supported rest rule,<RANGE> (18시 입장 마감),연중무휴
+2773271,12,5046,양재근린공원,True,상시 개방,연중무휴,SKIP_TIME_AMBIGUOUS,False,always-open/24h cannot be represented safely with current Time fields,상시 개방,연중무휴
+2773281,38,5047,10꼬르소꼬모 청담점,True,12:00~22:00 (준비시간 16:30~18:00),매월 5번째 월요일,SKIP_REST_AMBIGUOUS,False,rest rule is not a supported simple weekly rule,<RANGE> (준비시간 <RANGE>),매월 5번째 월요일
+2773287,12,5048,삼각어린이공원,True,상시 개방,연중무휴,SKIP_TIME_AMBIGUOUS,False,always-open/24h cannot be represented safely with current Time fields,상시 개방,연중무휴
+2773297,28,5049,워커힐숲길,False,,,NO_DATA,False,detailIntro2 returned no item,<EMPTY>,<EMPTY>
+2773303,14,5050,아모레퍼시픽미술관,True,"10:00~18:00 (입장마감 17:30)
+
+※ 단, 필요에 따라 부정기적 연장개관 있음",매주 월요일 / 1월 1일 / 설·추석 연휴,PARSE_SIMPLE_WEEKLY,True,single time range + supported rest rule,"<RANGE> (입장마감 <TIME>) ※ 단, 필요에 따라 부정기적 연장개관 있음",매주 월요일 / 1월 1일 / 설·추석 연휴
+2773309,12,5051,아차산배수지체육공원,True,상시 개방,연중무휴,SKIP_TIME_AMBIGUOUS,False,always-open/24h cannot be represented safely with current Time fields,상시 개방,연중무휴
+2773346,12,5052,빨래골,True,상시 개방,연중무휴,SKIP_TIME_AMBIGUOUS,False,always-open/24h cannot be represented safely with current Time fields,상시 개방,연중무휴
+2773409,12,5053,서리풀공원,True,상시 개방,연중무휴,SKIP_TIME_AMBIGUOUS,False,always-open/24h cannot be represented safely with current Time fields,상시 개방,연중무휴
+2773417,28,5054,다이브라이프,False,,,NO_DATA,False,detailIntro2 returned no item,<EMPTY>,<EMPTY>
+2773558,12,5055,서울성북 미디어문화마루,True,"05:30~22:00
+
+※ 시설별 상이하므로 전화 문의",,SKIP_TIME_AMBIGUOUS,False,dangerous operating marker: 상이,<RANGE> ※ 시설별 상이하므로 전화 문의,<EMPTY>
+2774274,12,5056,노원 불빛정원,True,일몰 전 30분~22:00,"매주 월요일 / 우천, 태풍, 혹한 등 기상 악화 시",SKIP_REST_AMBIGUOUS,False,dangerous rest marker: 기상,일몰 전 30분~<TIME>,"매주 월요일 / 우천, 태풍, 혹한 등 기상 악화 시"
+2774280,39,5057,봉피양 방이점,True,"- 11:30~22:00
+- 마지막 주문 21:00",연중무휴,PARSE_SIMPLE_WEEKLY,True,single time range + supported rest rule,- <RANGE> - 마지막 주문 <TIME>,연중무휴
+2774283,12,5058,선바위(선암),True,상시 개방,연중무휴,SKIP_TIME_AMBIGUOUS,False,always-open/24h cannot be represented safely with current Time fields,상시 개방,연중무휴
+2774291,12,5059,안양천제방벚꽃길,True,상시 개방,연중무휴,SKIP_TIME_AMBIGUOUS,False,always-open/24h cannot be represented safely with current Time fields,상시 개방,연중무휴
+2774305,12,5060,여의도공원 문화의마당,True,상시 개방,연중무휴,SKIP_TIME_AMBIGUOUS,False,always-open/24h cannot be represented safely with current Time fields,상시 개방,연중무휴
+2774440,38,5061,신성종합시장,True,점포별 상이,점포별 상이,SKIP_TIME_AMBIGUOUS,False,dangerous operating marker: 상이,점포별 상이,점포별 상이
+2774454,38,5062,서울청과,True,점포별 상이,점포별 상이,SKIP_TIME_AMBIGUOUS,False,dangerous operating marker: 상이,점포별 상이,점포별 상이
+2774468,12,5063,삼룡사,True,상시 개방,연중무휴,SKIP_TIME_AMBIGUOUS,False,always-open/24h cannot be represented safely with current Time fields,상시 개방,연중무휴
+2774568,38,5064,중앙청과,True,02:00~23:00,홈페이지 확인,SKIP_REST_AMBIGUOUS,False,rest rule is not a supported simple weekly rule,<RANGE>,홈페이지 확인
+2777893,38,5065,오류시장,True,점포 별로 상이함,점포 별로 상이함,SKIP_TIME_AMBIGUOUS,False,dangerous operating marker: 상이,점포 별로 상이함,점포 별로 상이함
+2777943,12,5066,윤극영가옥,True,"- 화요일~토요일 10:00~18:00
+
+- 일요일 10:00~17:00",매주 월요일 / 설·추석 당일,SKIP_TIME_AMBIGUOUS,False,"expected exactly 1 main range after break extraction, found 2",- 화요일~토요일 <RANGE> - 일요일 <RANGE>,매주 월요일 / 설·추석 당일
+2778088,15,5067,관악별빛산책,True,18:00~22:00,,RAW_ONLY_EVENT,False,event playtime is not a recurring weekly place schedule,<RANGE>,<EMPTY>
+2778135,12,5068,오류동역 광장,True,상시 개방,연중무휴,SKIP_TIME_AMBIGUOUS,False,always-open/24h cannot be represented safely with current Time fields,상시 개방,연중무휴
+2778425,39,5069,군산오징어 본점,True,11:30~22:30,연중무휴,PARSE_SIMPLE_WEEKLY,True,single time range + supported rest rule,<RANGE>,연중무휴
+2779128,39,5070,공기(Gongi),True,"- 12:00~21:30
+- 준비시간 15:00~17:30
+- 마지막 주문 20:30",연중무휴,PARSE_SIMPLE_WEEKLY,True,single time range + supported rest rule,- <RANGE> - 준비시간 <RANGE> - 마지막 주문 <TIME>,연중무휴
+2779451,38,5071,한국청과,True,"[과일류]
+- 1차(동절기) 02:30
+- 1차(하절기) 02:00
+- 2차 08:30
+[채소류]
+- 18:00~23:00",홈페이지 확인,SKIP_TIME_AMBIGUOUS,False,dangerous operating marker: 하절기,[과일류] - 1차(동절기) <TIME> - 1차(하절기) <TIME> - 2차 <TIME> [채소류] - <RANGE>,홈페이지 확인
+2779508,12,5072,우면산 소망탑,True,상시 개방,연중무휴,SKIP_TIME_AMBIGUOUS,False,always-open/24h cannot be represented safely with current Time fields,상시 개방,연중무휴
+2779550,12,5073,관음사국기봉,True,상시 개방,연중무휴,SKIP_TIME_AMBIGUOUS,False,always-open/24h cannot be represented safely with current Time fields,상시 개방,연중무휴
+2779558,12,5074,북한산 족두리봉,True,상시 개방,연중무휴,SKIP_TIME_AMBIGUOUS,False,always-open/24h cannot be represented safely with current Time fields,상시 개방,연중무휴
+2781480,39,5075,컴투레스트,True,"월요일 12:00~18:00
+화요일~금요일 11:00~22:00
+토요일~일요일 12:00~22:00",연중무휴,SKIP_TIME_AMBIGUOUS,False,"expected exactly 1 main range after break extraction, found 3",월요일 <RANGE> 화요일~금요일 <RANGE> 토요일~일요일 <RANGE>,연중무휴
+2781508,39,5076,무수아취,True,홈페이지 확인,홈페이지 확인,SKIP_REST_AMBIGUOUS,False,rest rule is not a supported simple weekly rule,홈페이지 확인,홈페이지 확인
+2782132,12,5077,클럽케이서울,True,"[피트니스센터] 
+
+- 평일 05:00~23:00
+
+- 주말 및 공휴일 06:00~22:00
+
+[사우나 및 찜질방] 상시 개방
+
+[뉴트리션센터] 상시 개방",,SKIP_TIME_AMBIGUOUS,False,dangerous operating marker: 공휴일,[피트니스센터] - 평일 <RANGE> - 주말 및 공휴일 <RANGE> [사우나 및 찜질방] 상시 개방 [뉴트리션센터] 상시 개방,<EMPTY>
+2782140,39,5078,진미평양냉면,True,"- 11:00~21:30
+- 마지막 주문 21:10",연중무휴,PARSE_SIMPLE_WEEKLY,True,single time range + supported rest rule,- <RANGE> - 마지막 주문 <TIME>,연중무휴
+2782166,28,5079,목동종합운동장,False,,,NO_DATA,False,detailIntro2 returned no item,<EMPTY>,<EMPTY>
+2782194,38,5080,도곡시장,True,점포 별로 상이함,점포 별로 상이함,SKIP_TIME_AMBIGUOUS,False,dangerous operating marker: 상이,점포 별로 상이함,점포 별로 상이함
+2782825,39,5081,골목집,True,11:00~22:30,매주 월요일,PARSE_SIMPLE_WEEKLY,True,single time range + supported rest rule,<RANGE>,매주 월요일
+2782900,39,5082,띠아낭,True,"11:00 ~ 21:00 (15:00~17:00 브레이크타임)
+20:15 라스트오더",매주 일요일,SKIP_TIME_AMBIGUOUS,False,"expected exactly 1 main range after break extraction, found 2",<RANGE> (<RANGE> 브레이크타임) <TIME> 라스트오더,매주 일요일
+2782928,39,5083,소문난식당,True,11:00~16:00,매주 일요일,PARSE_SIMPLE_WEEKLY,True,single time range + supported rest rule,<RANGE>,매주 일요일
+2783104,39,5084,매일낙지,True,11:30~21:00 (준비시간 15:00~17:00),매주 일요일,PARSE_SIMPLE_WEEKLY,True,single time range + supported rest rule,<RANGE> (준비시간 <RANGE>),매주 일요일
+2783318,28,5085,와이키키레저,True,11:30~23:00,연중무휴,PARSE_SIMPLE_WEEKLY,True,single time range + supported rest rule,<RANGE>,연중무휴
+2783331,28,5086,한강레져스포츠,False,,,NO_DATA,False,detailIntro2 returned no item,<EMPTY>,<EMPTY>
+2783334,39,5087,인왕산 더숲 초소책방,True,08:00~22:00 (라스트오더 21:30),연중무휴,PARSE_SIMPLE_WEEKLY,True,single time range + supported rest rule,<RANGE> (라스트오더 <TIME>),연중무휴
+2783339,14,5088,별책부록,True,"- 평일 14:00~19:00
+
+- 주말 14:00~18:00",매주 월요일~ 화요일,PARSE_WEEKDAY_WEEKEND,True,explicit weekday/weekend schedule + supported rest rule,- 평일 <RANGE> - 주말 <RANGE>,매주 월요일~ 화요일
+2783352,39,5089,스태픽스,True,10:00~21:00,매월 마지막 주 월요일,SKIP_REST_AMBIGUOUS,False,rest rule is not a supported simple weekly rule,<RANGE>,매월 마지막 주 월요일
+2783356,39,5090,작은공간,True,"[평일]
+- 11:00~20:50 (마지막 주문 20:20)
+[주말]
+- 11:00~20:30 (라스트오더 20:00)",연중무휴,PARSE_WEEKDAY_WEEKEND,True,explicit weekday/weekend schedule + supported rest rule,[평일] - <RANGE> (마지막 주문 <TIME>) [주말] - <RANGE> (라스트오더 <TIME>),연중무휴
+2783363,12,5091,북한산 백운대(우이동),True,"- 하절기 04:00~17:00
+- 동절기 04:00~16:00",,SKIP_TIME_AMBIGUOUS,False,dangerous operating marker: 하절기,- 하절기 <RANGE> - 동절기 <RANGE>,<EMPTY>
+2783402,39,5092,하츠베이커리,True,11:30~20:30,연중 무휴,PARSE_SIMPLE_WEEKLY,True,single time range + supported rest rule,<RANGE>,연중 무휴
+2783484,12,5093,신기한놀이터 떼굴떼굴,True,"[하절기(4월~10월]
+
+09:00~18:00
+
+[동절기(11월~3월)]
+
+09:00~16:40
+
+※ 자세한 사항은 전화문의 요망",연중무휴,SKIP_TIME_AMBIGUOUS,False,dangerous operating marker: 하절기,[하절기(4월~10월] <RANGE> [동절기(11월~3월)] <RANGE> ※ 자세한 사항은 전화문의 요망,연중무휴
+2783557,12,5094,남산순환나들길,True,상시 개방,연중무휴,SKIP_TIME_AMBIGUOUS,False,always-open/24h cannot be represented safely with current Time fields,상시 개방,연중무휴
+2783558,12,5095,필운동 홍건익 가옥,True,"- 화요일~목요일, 주말 10:00~18:00
+
+- 금요일 12:00~20:00",매주 월요일 / 공휴일,SKIP_REST_AMBIGUOUS,False,dangerous rest marker: 공휴일,"- 화요일~목요일, 주말 <RANGE> - 금요일 <RANGE>",매주 월요일 / 공휴일
+2783567,14,5096,흰물결갤러리,True,11:00~19:00,매주 일요일 / 법정공휴일,SKIP_REST_AMBIGUOUS,False,dangerous rest marker: 공휴일,<RANGE>,매주 일요일 / 법정공휴일
+2783578,39,5097,맛차차,True,11:00~19:00,"매주 월요일, 화요일",PARSE_SIMPLE_WEEKLY,True,single time range + supported rest rule,<RANGE>,"매주 월요일, 화요일"
+2784016,39,5098,얼스어스,True,12:00~21:00,매주 화요일,PARSE_SIMPLE_WEEKLY,True,single time range + supported rest rule,<RANGE>,매주 화요일
+2784040,12,5099,연남동끝자락길,True,점포별 상이,점포별 상이,SKIP_TIME_AMBIGUOUS,False,dangerous operating marker: 상이,점포별 상이,점포별 상이
+2784052,38,5100,양재꽃시장,True,홈페이지 확인,홈페이지 확인,SKIP_REST_AMBIGUOUS,False,rest rule is not a supported simple weekly rule,홈페이지 확인,홈페이지 확인
+2784060,12,5101,난지천공원,True,"상시 개방
+
+※ 자세한 사항은 전화문의 요망",연중무휴,SKIP_TIME_AMBIGUOUS,False,dangerous operating marker: 전화문의,상시 개방 ※ 자세한 사항은 전화문의 요망,연중무휴
+2784696,39,5102,동작구름카페,True,12:00~21:00,연중무휴,PARSE_SIMPLE_WEEKLY,True,single time range + supported rest rule,<RANGE>,연중무휴
+2784912,38,5103,프레젠트모먼트,True,13:00~21:00,매주 월요일,PARSE_SIMPLE_WEEKLY,True,single time range + supported rest rule,<RANGE>,매주 월요일
+2785797,15,5104,"겨울, 청계천의 빛",True,18:00~22:00,,RAW_ONLY_EVENT,False,event playtime is not a recurring weekly place schedule,<RANGE>,<EMPTY>
+2785872,39,5105,호랑이,True,11:00~21:00 (라스트오더 20:30),"매주 일요일, 월요일",PARSE_SIMPLE_WEEKLY,True,single time range + supported rest rule,<RANGE> (라스트오더 <TIME>),"매주 일요일, 월요일"
+2786045,39,5106,깔리,True,11:30 ~ 21:10 (브레이크타임 15:40 ~ 17:00),매주 월요일,PARSE_SIMPLE_WEEKLY,True,single time range + supported rest rule,<RANGE> (브레이크타임 <RANGE>),매주 월요일
+2786072,39,5107,더 스팟 패뷸러스,True,"- 월요일~화요일 / 목요일~일요일 10:00~22:50
+- 수요일 10:00~22:35",연중무휴,SKIP_TIME_AMBIGUOUS,False,"expected exactly 1 main range after break extraction, found 2",- 월요일~화요일 / 목요일~일요일 <RANGE> - 수요일 <RANGE>,연중무휴
+2787181,12,5108,윤동주시인의언덕,True,상시 개방,연중무휴,SKIP_TIME_AMBIGUOUS,False,always-open/24h cannot be represented safely with current Time fields,상시 개방,연중무휴
+2787228,39,5109,일미장어,True,"[평일]
+- 11:30~21:00
+- 준비시간 13:30~17:30
+- 마지막 주문 12:45, 20:15
+[토요일]
+- 12:00~20:00
+- 준비시간 14:00~17:00
+- 마지막 주문 13:15, 19:15",매주 일요일,SKIP_TIME_AMBIGUOUS,False,"expected exactly 1 main range after break extraction, found 4","[평일] - <RANGE> - 준비시간 <RANGE> - 마지막 주문 <TIME>, <TIME> [토요일] - <RANGE> - 준비시간 <RANGE> - 마지막 주문 <TIME>, <TIME>",매주 일요일
+2787231,39,5110,명품기사식당뚝다리김치찌개,True,"- 평일 06:30~22:00
+- 주말 06:30~21:00",연중무휴,PARSE_WEEKDAY_WEEKEND,True,explicit weekday/weekend schedule + supported rest rule,- 평일 <RANGE> - 주말 <RANGE>,연중무휴
+2788760,39,5111,낙동강,True,11:30~22:30,매주 일요일,PARSE_SIMPLE_WEEKLY,True,single time range + supported rest rule,<RANGE>,매주 일요일
+2788817,39,5112,창신동매운족발 본점,True,10:30~22:00,매주 월요일,PARSE_SIMPLE_WEEKLY,True,single time range + supported rest rule,<RANGE>,매주 월요일
+2788820,39,5113,동해도 광화문,True,"- 11:00~22:00
+- 준비시간 14:30~17:00",연중무휴,PARSE_SIMPLE_WEEKLY,True,single time range + supported rest rule,- <RANGE> - 준비시간 <RANGE>,연중무휴
+2788822,39,5114,인천집,True,"주중 11:30~22:00 (브레이크타임 15:00~17:00)
+토요일 13:00~22:00",매주 일요일,SKIP_TIME_AMBIGUOUS,False,"expected exactly 1 main range after break extraction, found 2",주중 <RANGE> (브레이크타임 <RANGE>) 토요일 <RANGE>,매주 일요일
+2789102,38,5115,독립문영천시장,True,07:00~21:00 ※ 점포별 상이,연중무휴 ※ 점포별 상이,SKIP_TIME_AMBIGUOUS,False,dangerous operating marker: 상이,<RANGE> ※ 점포별 상이,연중무휴 ※ 점포별 상이
+2789159,39,5116,정대포,True,12:00~01:00 (라스트오더 00:10),연중무휴,SKIP_TIME_AMBIGUOUS,False,overnight/equal open-close range not normalized,<RANGE> (라스트오더 <TIME>),연중무휴
+2789169,39,5117,된장예술과술,True,11:00 ~ 22:00 (브레이크타임 15:00~16:30),"매주 토요일, 일요일",PARSE_SIMPLE_WEEKLY,True,single time range + supported rest rule,<RANGE> (브레이크타임 <RANGE>),"매주 토요일, 일요일"
+2789182,39,5118,동경우동,True,"- 평일 07:00~22:00
+- 주말 10:00~22:00",연중무휴,PARSE_WEEKDAY_WEEKEND,True,explicit weekday/weekend schedule + supported rest rule,- 평일 <RANGE> - 주말 <RANGE>,연중무휴
+2789192,39,5119,금문,True,"- 11:30~21:00
+- 준비시간(평일) 15:00~17:00
+- 마지막 주문 20:30",매주 수요일,SKIP_TIME_AMBIGUOUS,False,"expected exactly 1 main range after break extraction, found 2",- <RANGE> - 준비시간(평일) <RANGE> - 마지막 주문 <TIME>,매주 수요일
+2789203,39,5120,경동함흥냉면,True,영업시간 유동적으로 운영하므로 전화 문의 후 방문,"연중무휴
+※ 전화 문의 후 방문",SKIP_TIME_AMBIGUOUS,False,dangerous operating marker: 전화 문의,영업시간 유동적으로 운영하므로 전화 문의 후 방문,연중무휴 ※ 전화 문의 후 방문
+2789212,39,5121,철계단집,True,"- 16:30~22:30
+- 마지막 주문 22:00",연중무휴,PARSE_SIMPLE_WEEKLY,True,single time range + supported rest rule,- <RANGE> - 마지막 주문 <TIME>,연중무휴
+2789346,39,5122,빠우,True,"- 11:00~19:00
+- 토요일 11:00~18:00",매주 일요일 / 설·추석 연휴,SKIP_TIME_AMBIGUOUS,False,"expected exactly 1 main range after break extraction, found 2",- <RANGE> - 토요일 <RANGE>,매주 일요일 / 설·추석 연휴
+2789499,39,5123,베이스캠프,True,"- 일요일~목요일 11:00~01:00
+- 금요일~토요일 11:00~02:00",연중무휴,SKIP_TIME_AMBIGUOUS,False,"expected exactly 1 main range after break extraction, found 2",- 일요일~목요일 <RANGE> - 금요일~토요일 <RANGE>,연중무휴
+2789667,39,5124,구스아일랜드 브루하우스,True,"[월요일~토요일]
+- 11:30~24:00
+- 마지막 주문 23:00
+[일요일]
+- 11:30~23:00
+- 마지막 주문 22:00",설·추석 연휴,SKIP_REST_AMBIGUOUS,False,rest rule is not a supported simple weekly rule,[월요일~토요일] - <TIME>~24:00 - 마지막 주문 <TIME> [일요일] - <RANGE> - 마지막 주문 <TIME>,설·추석 연휴
+2792588,28,5125,서울 서초 글램핑 청계산장,False,,,NO_DATA,False,detailIntro2 returned no item,<EMPTY>,<EMPTY>
+2794736,39,5126,바캉스커피,True,"- 평일 12:00~21:30
+- 토요일 12:00~19:00",매주 일요일 / 설·추석 당일,SKIP_TIME_AMBIGUOUS,False,"expected exactly 1 main range after break extraction, found 2",- 평일 <RANGE> - 토요일 <RANGE>,매주 일요일 / 설·추석 당일
+2794740,39,5127,청량리함흥냉면,True,10:00~19:00,연중무휴,PARSE_SIMPLE_WEEKLY,True,single time range + supported rest rule,<RANGE>,연중무휴
+2794769,39,5128,광장싸롱 1961,True,"- 월요일 11:00~21:00
+- 화요일~일요일 10:00~21:00
+- 마지막 주문 20:30",연중무휴,SKIP_TIME_AMBIGUOUS,False,"expected exactly 1 main range after break extraction, found 2",- 월요일 <RANGE> - 화요일~일요일 <RANGE> - 마지막 주문 <TIME>,연중무휴
+2802077,15,5129,2025 과학영재교육 페스티벌,True,10:00~18:00,,RAW_ONLY_EVENT,False,event playtime is not a recurring weekly place schedule,<RANGE>,<EMPTY>
+2804387,32,5130,린다픽,True,"입실시간: 15:00
+퇴실시간: 11:00",,RAW_ONLY_LODGING,False,check-in/out is not a recurring weekly place schedule,입실시간: <TIME> 퇴실시간: <TIME>,<EMPTY>
+2804401,32,5131,서울한옥스테이(jnpstay),True,"입실시간: 16:00
+퇴실시간: 11:00",,RAW_ONLY_LODGING,False,check-in/out is not a recurring weekly place schedule,입실시간: <TIME> 퇴실시간: <TIME>,<EMPTY>
+2804500,39,5132,원형들,True,13:00~19:00,매주 월요일~수요일,PARSE_SIMPLE_WEEKLY,True,single time range + supported rest rule,<RANGE>,매주 월요일~수요일
+2807321,39,5133,박재성의 메밀숯불닭갈비,True,16:00~00:00 (마지막 주문 23:00),연중무휴,SKIP_TIME_AMBIGUOUS,False,overnight/equal open-close range not normalized,<RANGE> (마지막 주문 <TIME>),연중무휴
+2807930,39,5134,와가리피순대,True,09:30~22:30,매주 일요일,PARSE_SIMPLE_WEEKLY,True,single time range + supported rest rule,<RANGE>,매주 일요일
+2808041,39,5135,후암편백,True,"- 11:30~23:30
+- 준비시간 15:00~17:00",매주 토요일,PARSE_SIMPLE_WEEKLY,True,single time range + supported rest rule,- <RANGE> - 준비시간 <RANGE>,매주 토요일
+2809287,39,5136,메종브리크,True,"- 11:30~22:00
+- 준비시간 15:30~17:00
+- 마지막 주문 21:00",연중무휴,PARSE_SIMPLE_WEEKLY,True,single time range + supported rest rule,- <RANGE> - 준비시간 <RANGE> - 마지막 주문 <TIME>,연중무휴
+2809790,39,5137,송월냉면,True,09:10~21:00 (마지막 주문 20:30),설·추석 당일,SKIP_REST_AMBIGUOUS,False,rest rule is not a supported simple weekly rule,<RANGE> (마지막 주문 <TIME>),설·추석 당일
+2809941,39,5138,알페도,True,00:00~24:00,연중무휴,SKIP_TIME_AMBIGUOUS,False,"expected exactly 1 main range after break extraction, found 0",<TIME>~24:00,연중무휴
+2810010,39,5139,마얘(MAILLET),True,11:00~21:30,연중무휴,PARSE_SIMPLE_WEEKLY,True,single time range + supported rest rule,<RANGE>,연중무휴
+2810230,39,5140,트레스드,True,"- 12:00~22:00
+- 마지막 주문 21:10",설·추석 연휴,SKIP_REST_AMBIGUOUS,False,rest rule is not a supported simple weekly rule,- <RANGE> - 마지막 주문 <TIME>,설·추석 연휴
+2814165,32,5141,오클라우드호텔,True,"입실시간: 14:00
+퇴실시간: 12:00",,RAW_ONLY_LODGING,False,check-in/out is not a recurring weekly place schedule,입실시간: <TIME> 퇴실시간: <TIME>,<EMPTY>
+2814649,39,5142,온정텐동,True,"- 11:00~23:00
+- 마지막 주문 21:30
+※ 재료 소진 시 조기 마감",연중무휴,PARSE_SIMPLE_WEEKLY,True,single time range + supported rest rule,- <RANGE> - 마지막 주문 <TIME> ※ 재료 소진 시 조기 마감,연중무휴
+2814836,39,5143,다과상사,True,"- 평일 07:00~20:00
+- 주말 08:00~20:00",연중무휴,PARSE_WEEKDAY_WEEKEND,True,explicit weekday/weekend schedule + supported rest rule,- 평일 <RANGE> - 주말 <RANGE>,연중무휴
+2815129,39,5144,뉴웨이브서울,True,"- 12:00~22:00
+- 준비 시간 15:00~16:30
+- 마지막 주문 14:30/21:00",매주 월요일,PARSE_SIMPLE_WEEKLY,True,single time range + supported rest rule,- <RANGE> - 준비 시간 <RANGE> - 마지막 주문 <TIME>/<TIME>,매주 월요일
+2815401,39,5145,봄솔레씨네,True,"- 11:00~20:30
+- 준비시간 15:00~17:00
+- 마지막 주문 19:40","매주 일요일 (1~2월, 7~8월에는 토요일도 휴무)",PARSE_SIMPLE_WEEKLY,True,single time range + supported rest rule,- <RANGE> - 준비시간 <RANGE> - 마지막 주문 <TIME>,"매주 일요일 (1~2월, 7~8월에는 토요일도 휴무)"
+2817140,32,5146,위고인호스텔,True,"입실시간: 16:00
+퇴실시간: 12:00",,RAW_ONLY_LODGING,False,check-in/out is not a recurring weekly place schedule,입실시간: <TIME> 퇴실시간: <TIME>,<EMPTY>
+2818756,39,5147,사담,True,"[일요일~목요일]
+- 10:00~22:00
+[금요일~토요일]
+- 10:00~23:00",연중무휴,SKIP_TIME_AMBIGUOUS,False,"expected exactly 1 main range after break extraction, found 2",[일요일~목요일] - <RANGE> [금요일~토요일] - <RANGE>,연중무휴
+2819007,32,5148,포포인츠 바이 쉐라톤 조선 서울 명동,True,"입실시간: 15:00
+퇴실시간: 12:00",,RAW_ONLY_LODGING,False,check-in/out is not a recurring weekly place schedule,입실시간: <TIME> 퇴실시간: <TIME>,<EMPTY>
+2819962,39,5149,인더베이글,True,08:00~21:00,매주 일요일,PARSE_SIMPLE_WEEKLY,True,single time range + supported rest rule,<RANGE>,매주 일요일
+282011,38,5150,답십리 고미술상가,True,,"매주 일요일
+※ 매장 별로 상이할 수 있음",NO_TIME_TEXT,False,operating text empty,<EMPTY>,매주 일요일 ※ 매장 별로 상이할 수 있음
+2821755,39,5151,썸띵어바웃커피,True,11:00~22:30,연중무휴,PARSE_SIMPLE_WEEKLY,True,single time range + supported rest rule,<RANGE>,연중무휴
+2823094,39,5152,청아라 생선구이,True,"- 11:00~21:00
+- 준비시간 15:00~17:00
+- 마지막 주문 20:20",매주 일요일,PARSE_SIMPLE_WEEKLY,True,single time range + supported rest rule,- <RANGE> - 준비시간 <RANGE> - 마지막 주문 <TIME>,매주 일요일
+2823949,39,5153,고두리 용산점,True,"- 11:30~22:30
+- 준비시간 15:00~17:00
+- 마지막 주문 21:30",연중무휴,PARSE_SIMPLE_WEEKLY,True,single time range + supported rest rule,- <RANGE> - 준비시간 <RANGE> - 마지막 주문 <TIME>,연중무휴
+2824948,39,5154,다동 황소막창,True,"- 평일 16:00~23:00 (마지막 주문 22:30)
+- 토요일 16:00~22:00 (마지막 주문 21:30)",매주 일요일,SKIP_TIME_AMBIGUOUS,False,"expected exactly 1 main range after break extraction, found 2",- 평일 <RANGE> (마지막 주문 <TIME>) - 토요일 <RANGE> (마지막 주문 <TIME>),매주 일요일
