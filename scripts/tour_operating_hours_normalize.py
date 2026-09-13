@@ -33,7 +33,7 @@ DANGEROUS_MARKERS = (
     '비정기','부정기','임시','점포별','점포 별','매장별','매장 별','업체별','업체 별',
     '공연별','공연 별','행사별','행사 별','날씨','기상','현장상황','현장 상황',
     '변동','전화문의','전화 문의','익일','다음날','매년','초복','중복','말복','복날',
-    '방문 제한시간','방문 제한 시간','전시 기간','전시 준비'
+    '방문 제한시간','방문 제한 시간','전시 기간','전시 준비', '달마다', '매달', '월마다'
 )
 
 SPECIFIC_DATE_RE = re.compile(r'(?<!\d)(?:1[0-2]|0?[1-9])\s*월\s*(?:3[01]|[12]?\d)\s*일(?!\d)')
@@ -55,6 +55,30 @@ DAY_RANGE_RE = re.compile(
     r'(월요일|화요일|수요일|목요일|금요일|토요일|일요일|월|화|수|목|금|토|일)'
     r'\s*(?:~|～|−|–|—|-)\s*'
     r'(월요일|화요일|수요일|목요일|금요일|토요일|일요일|월|화|수|목|금|토|일)'
+)
+
+DAY_TOKEN_PATTERN = (
+    r'(?:월요일|화요일|수요일|목요일|금요일|토요일|일요일|'
+    r'월|화|수|목|금|토|일)'
+)
+
+BOUND_DAY_TOKEN_PATTERN = (
+    rf'(?<![가-힣]){DAY_TOKEN_PATTERN}(?![가-힣])'
+)
+
+DAY_SCOPE_RE = re.compile(
+    rf'(?:'
+    rf'평일|주중|주말'
+    rf'|'
+    rf'{BOUND_DAY_TOKEN_PATTERN}'
+    rf'\s*(?:~|～|−|–|—|-)\s*'
+    rf'{BOUND_DAY_TOKEN_PATTERN}'
+    rf'|'
+    rf'{BOUND_DAY_TOKEN_PATTERN}'
+    rf'(?:\s*[,·/]\s*{BOUND_DAY_TOKEN_PATTERN})+'
+    rf'|'
+    rf'{BOUND_DAY_TOKEN_PATTERN}'
+    rf')'
 )
 
 @dataclass(frozen=True)
@@ -291,18 +315,25 @@ def build_uniform_rows(main:Optional[TimeRange], closed:Set[int], brk:Optional[T
     return rows
 
 
-def build_scoped_rows(schedules:Dict[int,Tuple[TimeRange,Optional[TimeRange]]], closed:Set[int]) -> List[WeeklyRow]:
-    """Sparse policy: only create rows for explicitly known open/closed days."""
-    overlap=set(schedules) & set(closed)
-    if overlap:
-        raise ValueError(f'open/closed day overlap: {sorted(overlap)}')
+def build_scoped_rows(
+    schedules: Dict[int, Tuple[TimeRange, Optional[TimeRange]]],
+    closed: Set[int]
+) -> List[WeeklyRow]:
+    """
+    Sparse policy:
+    - create rows only for explicitly known open/closed days
+    - an explicit weekly closure overrides an operating-hours schedule
+      for the same weekday
+    """
     rows=[]
+
     for day in sorted(set(schedules) | set(closed)):
         if day in closed:
             rows.append(closed_row(day))
         else:
             main,brk=schedules[day]
             rows.append(hours_row(day,main,brk))
+
     return rows
 
 
@@ -334,11 +365,146 @@ def parse_weekday_weekend(text:str, closed:Set[int]) -> Optional[ParseResult]:
         main,brk,error=parse_segment_time(segment)
         if error: return ParseResult('SKIP_DAY_SCOPE_AMBIGUOUS',False,f'{kind.lower()} segment: {error}')
         parsed[kind]=(main,brk)
-    if closed:
-        return ParseResult('SKIP_CONTRADICTORY',False,'weekday/weekend schedule conflicts with explicit weekly closed day(s)')
-    schedules={d:parsed['WEEKDAY'] for d in range(1,6)} | {6:parsed['WEEKEND'],7:parsed['WEEKEND']}
-    return ParseResult('PARSE_WEEKDAY_WEEKEND',True,'explicit weekday/weekend schedules',build_scoped_rows(schedules,set()))
+    schedules={d:parsed['WEEKDAY'] for d in range(1,6)} | {
+        6:parsed['WEEKEND'],
+        7:parsed['WEEKEND']
+    }
+    return ParseResult(
+        'PARSE_WEEKDAY_WEEKEND',
+        True,
+        'explicit weekday/weekend schedules; explicit weekly closures override matching weekdays',
+        build_scoped_rows(schedules,closed)
+    )
 
+def repair_duplicate_time_separator(text: str) -> str:
+    """
+    Repair only an obvious duplicated separator between two HH:MM values.
+
+    Example:
+      11:00- - 19:00 -> 11:00-19:00
+
+    Do not perform broader fuzzy correction.
+    """
+    return re.sub(
+        r'(?<=\d{2}:\d{2})'
+        r'\s*(?:~|～|−|–|—|-)\s*(?:~|～|−|–|—|-)\s*'
+        r'(?=\d{1,2}:\d{2})',
+        '-',
+        text
+    )
+
+
+def extract_multi_day_segments(text: str):
+    """
+    Split an operating-hours string into multiple explicit weekday scopes.
+
+    Examples:
+      평일 11:00~19:00, 토요일 11:00~14:00
+      월~금 09:00~18:00, 토요일 10:00~15:00
+
+    Returns:
+      [(days, selector, segment), ...]
+
+    Returns [] when fewer than two explicit scopes are present.
+    """
+    c = compact_text(text)
+    matches = list(DAY_SCOPE_RE.finditer(c))
+
+    if len(matches) < 2:
+        return []
+
+    # A time range before the first weekday selector means that the weekday
+    # wording may merely be an annotation/exception rather than the main
+    # schedule structure.
+    first_time = TIME_RANGE_RE.search(c)
+    if first_time and first_time.start() < matches[0].start():
+        return []
+
+    result = []
+
+    for i, m in enumerate(matches):
+        start = m.start()
+        end = matches[i + 1].start() if i + 1 < len(matches) else len(c)
+
+        selector = m.group(0)
+        days = parse_day_selector(selector)
+
+        if not days:
+            return []
+
+        segment = c[start:end].strip(' ,;/')
+
+        result.append((days, selector, segment))
+
+    return result
+
+
+def parse_multi_scoped_schedule(
+    text: str,
+    rest_kind: str,
+    closed: Set[int]
+) -> Optional[ParseResult]:
+    """
+    Parse multiple explicit weekday scopes in one operating-hours string.
+
+    Sparse policy:
+    - each scope must have exactly one safely parsable main time range
+    - explicitly closed weekdays are stored as CLOSED
+    - unspecified weekdays remain absent
+    - overlapping scopes are rejected
+    """
+    segments = extract_multi_day_segments(text)
+
+    if not segments:
+        return None
+
+    schedules = {}
+    covered_days = set()
+
+    for days, selector, raw_segment in segments:
+        if covered_days & days:
+            return ParseResult(
+                'SKIP_DAY_SCOPE_AMBIGUOUS',
+                False,
+                f'overlapping weekday scopes around: {selector}'
+            )
+
+        # Limited repair for an obvious duplicated separator such as
+        # "11:00- - 19:00".
+        segment = repair_duplicate_time_separator(raw_segment)
+
+        main, brk, error = parse_segment_time(segment)
+
+        if error:
+            return ParseResult(
+                'SKIP_DAY_SCOPE_AMBIGUOUS',
+                False,
+                f'{selector} segment: {error}'
+            )
+
+        for day in days:
+            schedules[day] = (main, brk)
+
+        covered_days |= days
+
+    if rest_kind == 'ALWAYS_OPEN' and covered_days != set(range(1, 8)):
+        return ParseResult(
+            'SKIP_CONTRADICTORY',
+            False,
+            'multi-scoped operating text does not cover all weekdays but rest says 연중무휴'
+        )
+
+    rows = build_scoped_rows(
+        schedules,
+        closed if rest_kind == 'CLOSED_DAYS' else set()
+    )
+
+    return ParseResult(
+        'PARSE_MULTI_DAY_SCOPE',
+        True,
+        'multiple explicit weekday scopes parsed independently',
+        rows
+    )
 
 def extract_single_day_scope(text:str) -> Tuple[Optional[Set[int]],bool]:
     """
@@ -397,8 +563,6 @@ def parse_single_scoped_schedule(text:str, rest_kind:str, closed:Set[int]) -> Op
     if brk and not valid_non_overnight(brk): return ParseResult('SKIP_DAY_SCOPE_AMBIGUOUS',False,'scoped break uses overnight/24:00 boundary')
     if rest_kind=='ALWAYS_OPEN' and open_days != set(range(1,8)):
         return ParseResult('SKIP_CONTRADICTORY',False,'day-scoped operating text contradicts 연중무휴')
-    if open_days & closed:
-        return ParseResult('SKIP_CONTRADICTORY',False,'same weekday is both open and explicitly closed')
     schedules={d:(main,brk) for d in open_days}
     return ParseResult(
         'PARSE_SINGLE_DAY_SCOPE',True,
@@ -457,10 +621,17 @@ def parse_weekly_schedule(content_type_id:str, operating_text:Optional[str], res
 
     if (('평일' in text or '주중' in text) and '주말' in text):
         # Both scopes cover all 7 days, so EMPTY rest is safe.
-        if rest_kind=='CLOSED_DAYS' and closed:
-            return ParseResult('SKIP_CONTRADICTORY',False,'weekday/weekend schedule conflicts with explicit weekly closed day(s)')
-        result=parse_weekday_weekend(text,set())
-        if result is not None: return result
+        result=parse_weekday_weekend(text,closed)
+        if result is not None:
+            return result
+
+    multi_result = parse_multi_scoped_schedule(
+        text,
+        rest_kind,
+        closed
+    )
+    if multi_result is not None:
+        return multi_result
 
     has_day_scope=has_leading_day_scope(text)
     if has_day_scope:
