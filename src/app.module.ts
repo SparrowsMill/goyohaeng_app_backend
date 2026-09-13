@@ -26,6 +26,10 @@ import { RecordsModule } from './records/records.module';
 
 import { BusinessModule } from './business/business.module';
 
+import {
+  AnalyticsModule,
+} from './analytics/analytics.module';
+
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -54,6 +58,8 @@ import { BusinessModule } from './business/business.module';
     RecordsModule,
 
     BusinessModule,
+    
+    AnalyticsModule,
   ],
 
   controllers: [AppController],
