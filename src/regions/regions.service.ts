@@ -7,6 +7,7 @@ export interface RegionResponse {
   parentId: number | null;
   regionType: string;
   name: string;
+  sgisCode: string | null;
 }
 
 @Injectable()
@@ -16,28 +17,55 @@ export class RegionsService {
   ) {}
 
   async findAll(): Promise<RegionResponse[]> {
-    const regions = await this.prisma.region.findMany({
+  const regions =
+    await this.prisma.region.findMany({
       select: {
         id: true,
         parentId: true,
         regionType: true,
         name: true,
+
+        externalCodes: {
+          where: {
+            codeType: 'SGIS_ADM_CD',
+
+            source: {
+              code: 'SGIS',
+            },
+          },
+
+          select: {
+            externalCode: true,
+          },
+
+          take: 1,
+        },
       },
+
       orderBy: {
         id: 'asc',
       },
     });
 
-    return regions.map((region) => ({
-      id: Number(region.id),
-      parentId:
-        region.parentId === null
-          ? null
-          : Number(region.parentId),
-      regionType: region.regionType,
-      name: region.name,
-    }));
-  }
+  return regions.map((region) => ({
+    id: Number(region.id),
+
+    parentId:
+      region.parentId === null
+        ? null
+        : Number(region.parentId),
+
+    regionType:
+      region.regionType,
+
+    name:
+      region.name,
+
+    sgisCode:
+      region.externalCodes[0]
+        ?.externalCode ?? null,
+  }));
+}
 
   async getGapScores() {
   // 1. 실제 GAP Score가 존재하는 가장 최신 계산 회차 조회
@@ -180,20 +208,36 @@ export class RegionsService {
 
   // 5. 지역 정보 조회
   const regions =
-    await this.prisma.region.findMany({
-      where: {
-        id: {
-          in: regionIds,
-        },
+  await this.prisma.region.findMany({
+    where: {
+      id: {
+        in: regionIds,
       },
+    },
 
-      select: {
-        id: true,
-        parentId: true,
-        regionType: true,
-        name: true,
+    select: {
+      id: true,
+      parentId: true,
+      regionType: true,
+      name: true,
+
+      externalCodes: {
+        where: {
+          codeType: 'SGIS_ADM_CD',
+
+          source: {
+            code: 'SGIS',
+          },
+        },
+
+        select: {
+          externalCode: true,
+        },
+
+        take: 1,
       },
-    });
+    },
+  });
 
   // 6. 지역 GAP Score 평균 생성
   const items =
@@ -228,6 +272,11 @@ export class RegionsService {
 
           regionName:
             region.name,
+
+          sgisCode:
+            region.externalCodes[0]
+            ?.externalCode ?? null,
+
 
           gapScore:
             Number(
