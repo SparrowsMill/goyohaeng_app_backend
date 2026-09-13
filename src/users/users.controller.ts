@@ -92,6 +92,42 @@ export class UsersController {
     };
   }
 
+  @ApiOperation({
+  summary: '참새 프로필 조회',
+})
+@ApiBearerAuth()
+@ApiOkResponse({
+  description:
+    '참새 레벨 및 경험치 조회 성공',
+})
+@ApiUnauthorizedResponse({
+  description:
+    '로그인이 필요함',
+})
+@UseGuards(JwtAuthGuard)
+@Get('me/sparrow')
+async getMySparrowProfile(
+  @Req()
+  req: Request & {
+    user: AuthenticatedUser;
+  },
+) {
+  const profile =
+    await this.usersService
+      .getSparrowProfile(
+        req.user.userId,
+      );
+
+  if (!profile) {
+    throw new NotFoundException(
+      '사용자를 찾을 수 없습니다.',
+    );
+  }
+
+  return profile;
+}
+
+
   // 메인 페이지 통계 조회
   @ApiOperation({
     summary: '메인 화면 통계 조회',

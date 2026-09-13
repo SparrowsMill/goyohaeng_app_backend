@@ -967,6 +967,33 @@ async rewardTrendFirstView(
         },
       });
 
+      /*
+ * 트렌드 최초 조회 보상
+ * 사용자별·장소별 최초 1회만 XP +5
+ *
+ * TREND_FIRST_VIEW 지급 이력이 이미 있으면
+ * 위에서 return되므로 중복 지급되지 않는다.
+ */
+await tx.$executeRaw`
+  UPDATE "users"
+  SET
+    "level" =
+      COALESCE("level", 1)
+      + (
+          (
+            COALESCE("xp", 0)
+            + 5
+          ) / 100
+        ),
+    "xp" =
+      (
+        COALESCE("xp", 0)
+        + 5
+      ) % 100,
+    "updated_at" = NOW()
+  WHERE "id" = ${BigInt(userId)}
+`;
+
       return {
         firstView: true,
         rewarded: true,

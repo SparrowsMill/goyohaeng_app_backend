@@ -6,6 +6,10 @@ import * as bcrypt from 'bcrypt';
 
 import { PrismaService } from '../prisma/prisma.service';
 
+import {
+  XP_PER_LEVEL,
+} from './user-xp.util';
+
 export interface User {
   id: number;
   username: string;
@@ -36,6 +40,13 @@ export interface DashboardResponse {
     regionName: string;
     visitCount: number;
   }[];
+}
+
+export interface SparrowProfileResponse {
+  level: number;
+  xp: number;
+  xpForNextLevel: number;
+  daysTogether: number;
 }
 
 interface CreateUserData {
@@ -215,6 +226,49 @@ export class UsersService {
 
     return this.toUser(user);
   }
+
+
+  async getSparrowProfile(
+  userId: number,
+): Promise<
+  SparrowProfileResponse | undefined
+> {
+  const user =
+    await this.prisma.user.findFirst({
+      where: {
+        id: BigInt(userId),
+        status: 'ACTIVE',
+      },
+
+      select: {
+        level: true,
+        xp: true,
+        createdAt: true,
+      },
+    });
+
+  if (!user) {
+    return undefined;
+  }
+
+  const daysTogether =
+    this.calculateDaysTogether(
+      user.createdAt,
+    );
+
+  return {
+    level:
+      user.level,
+
+    xp:
+      user.xp,
+
+    xpForNextLevel:
+      XP_PER_LEVEL,
+
+    daysTogether,
+  };
+}
 
   /*
    * 메인 페이지 통계 조회
@@ -988,6 +1042,96 @@ async getMyFoods(
     };
   }
 
+  private calculateDaysTogether(
+  createdAt: Date,
+): number {
+  const toSeoulDate =
+    (date: Date): string => {
+      const parts =
+        new Intl.DateTimeFormat(
+          'en-CA',
+          {
+            timeZone:
+              'Asia/Seoul',
+
+            year:
+              'numeric',
+
+            month:
+              '2-digit',
+
+            day:
+              '2-digit',
+          },
+        ).formatToParts(
+          date,
+        );
+
+      const year =
+        parts.find(
+          (part) =>
+            part.type === 'year',
+        )?.value;
+
+      const month =
+        parts.find(
+          (part) =>
+            part.type === 'month',
+        )?.value;
+
+      const day =
+        parts.find(
+          (part) =>
+            part.type === 'day',
+        )?.value;
+
+      return `${year}-${month}-${day}`;
+    };
+
+  const createdDate =
+    toSeoulDate(
+      createdAt,
+    );
+
+  const today =
+    toSeoulDate(
+      new Date(),
+    );
+
+  const createdTimestamp =
+    new Date(
+      `${createdDate}T00:00:00.000Z`,
+    ).getTime();
+
+  const todayTimestamp =
+    new Date(
+      `${today}T00:00:00.000Z`,
+    ).getTime();
+
+  const difference =
+    Math.floor(
+      (
+        todayTimestamp -
+        createdTimestamp
+      ) /
+        (
+          1000 *
+          60 *
+          60 *
+          24
+        ),
+    );
+
+  /*
+   * "함께한 지 N일째" 기준.
+   * 가입 당일은 1일째.
+   */
+  return Math.max(
+    difference + 1,
+    1,
+  );
+}
+
   private stringToDate(
     date: string,
   ): Date {
@@ -1071,4 +1215,6 @@ async getMyFoods(
         user.deletedAt,
     };
   }
+
+  
 }
