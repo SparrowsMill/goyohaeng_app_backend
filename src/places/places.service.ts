@@ -1319,6 +1319,12 @@ if (categoryId !== undefined) {
 
               roadAddress: true,
 
+              verificationSetting: {
+  select: {
+    enabled: true,
+  },
+},
+
               images: {
                 where: {
                   isActive: true,
@@ -1392,6 +1398,11 @@ if (categoryId !== undefined) {
 
           roadAddress:
             score.place.roadAddress,
+
+          verificationAvailable:
+            score.place
+              .verificationSetting
+              ?.enabled ?? false,
 
           imageUrl:
             score.place.images[0]
@@ -1857,6 +1868,12 @@ async getGapMap(
             longitude: true,
 
             roadAddress: true,
+
+            verificationSetting: {
+  select: {
+    enabled: true,
+  },
+},
           },
         },
       },
@@ -1898,6 +1915,11 @@ async getGapMap(
 
       roadAddress:
         score.place.roadAddress,
+
+        verificationAvailable:
+  score.place
+    .verificationSetting
+    ?.enabled ?? false,
 
       gapScore:
         Number(score.gapScore),
