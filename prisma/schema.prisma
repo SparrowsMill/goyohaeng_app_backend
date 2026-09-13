@@ -766,6 +766,7 @@ model IngredientDropPolicy {
 
 model Ingredient {
   id              BigInt   @id @default(autoincrement())
+  code            String  @unique @db.VarChar(20)
   name            String   @db.VarChar(200)
   description     String?
   ingredientType  String   @map("ingredient_type") @db.VarChar(20)
@@ -819,6 +820,7 @@ model UserIngredient {
 
 model Food {
   id              BigInt   @id @default(autoincrement())
+  code            String   @unique @db.VarChar(20)
   name            String   @db.VarChar(200)
   description     String?
   regionId        BigInt?  @map("region_id")
