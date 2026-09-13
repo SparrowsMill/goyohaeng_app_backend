@@ -79,10 +79,6 @@ ADD CONSTRAINT "chk_user_status"
 CHECK ("status" IN ('ACTIVE', 'PENDING', 'SUSPENDED', 'DISABLED', 'DELETED'));
 
 ALTER TABLE "users"
-ADD CONSTRAINT "chk_ranking_filter"
-CHECK ("ranking_category_filter" IN ('ALL', 'FOOD', 'CAFE', 'ACTIVITY'));
-
-ALTER TABLE "users"
 ADD CONSTRAINT "chk_ranking_sort"
 CHECK ("ranking_sort_order" IN ('ASC', 'DESC'));
 

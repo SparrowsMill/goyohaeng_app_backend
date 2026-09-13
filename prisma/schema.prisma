@@ -527,7 +527,6 @@ model User {
   promotionNotificationEnabled Boolean   @default(false) @map("promotion_notification_enabled")
   nearbyNotificationEnabled    Boolean   @default(false) @map("nearby_notification_enabled")
   recordNotificationEnabled    Boolean   @default(false) @map("record_notification_enabled")
-  rankingCategoryFilter        String    @default("ALL") @map("ranking_category_filter") @db.VarChar(20)
   rankingSortOrder             String    @default("DESC") @map("ranking_sort_order") @db.VarChar(10)
   createdAt                    DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
   updatedAt                    DateTime? @map("updated_at") @db.Timestamptz(6)
