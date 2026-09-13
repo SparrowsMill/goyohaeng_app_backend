@@ -84,4 +84,21 @@ getVerificationFunnel(
         .placeId,
     );
 }
+
+  @Get('page-funnel')
+  @ApiOperation({
+    summary:
+      '가맹점 페이지 전환 퍼널 분석 조회',
+  })
+  getPageFunnel(
+    @Req()
+    request:
+      BusinessRequest,
+  ) {
+    return this.service
+      .getPageFunnel(
+        request.business
+          .placeId,
+      );
+  }
 }
