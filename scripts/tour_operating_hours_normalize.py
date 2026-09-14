@@ -81,6 +81,15 @@ DAY_SCOPE_RE = re.compile(
     rf')'
 )
 
+DAY_EXCEPTION_RE = re.compile(
+    r'(월요일|화요일|수요일|목요일|금요일|토요일|일요일|'
+    r'월|화|수|목|금|토|일)'
+    r'(?:은|는|에는|의\s*경우)'
+    r'.{0,40}?'
+    r'(?:준비\s*시간|브레이크\s*타임|휴게\s*시간)'
+    r'\s*없이'
+)
+
 @dataclass(frozen=True)
 class TimeRange:
     start: str
@@ -452,11 +461,46 @@ def parse_multi_scoped_schedule(
     - explicitly closed weekdays are stored as CLOSED
     - unspecified weekdays remain absent
     - overlapping scopes are rejected
+    - a break appearing only in the final scope is treated as ambiguous,
+      because it may actually be a trailing global break applying to all scopes
     """
     segments = extract_multi_day_segments(text)
 
     if not segments:
         return None
+    if DAY_EXCEPTION_RE.search(compact_text(text)):
+        return ParseResult(
+            'SKIP_DAY_SCOPE_AMBIGUOUS',
+            False,
+            'weekday-specific break exception detected'
+        )
+
+    # Example:
+    #   월~금 11:30~21:30 / 토,일 12:00~21:30 /
+    #   브레이크타임 15:00~17:30
+    #
+    # extract_multi_day_segments() attaches everything after the final
+    # weekday selector to the final segment. Therefore a trailing break
+    # can be incorrectly interpreted as belonging only to the final scope.
+    #
+    # If there are multiple scopes, no earlier scope has a break, and only
+    # the final scope contains a break, we cannot safely determine whether
+    # that break is final-scope-only or global. Preserve raw text and skip.
+    break_counts = [
+        len(find_break_ranges(raw_segment))
+        for _, _, raw_segment in segments
+    ]
+
+    if (
+        len(segments) >= 2
+        and break_counts[-1] > 0
+        and all(count == 0 for count in break_counts[:-1])
+    ):
+        return ParseResult(
+            'SKIP_DAY_SCOPE_AMBIGUOUS',
+            False,
+            'break appears only after final weekday scope; may be a trailing global break'
+        )
 
     schedules = {}
     covered_days = set()
