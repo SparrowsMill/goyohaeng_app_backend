@@ -46,6 +46,17 @@ export class BusinessOperatingHoursService {
     return `${hour}:${minute}`;
   }
 
+  private timeToMinutes(
+    value: string,
+  ): number {
+    const [hour, minute] =
+      value
+        .split(':')
+        .map(Number);
+
+    return hour * 60 + minute;
+  }
+
   async getOperatingHours(
     placeId: number,
   ) {
@@ -122,16 +133,18 @@ export class BusinessOperatingHoursService {
     }
 
     /*
-     * 현재 앱의 영업시간 계산 로직은
-     * 같은 날짜 안의 영업시간을 기준으로 하므로
-     * 자정을 넘는 운영시간은 우선 허용하지 않는다.
+     * 시작과 종료가 같으면
+     * 현재 API에서는 24시간 영업과 구분할 수 없으므로 허용하지 않는다.
+     *
+     * 자정을 넘는 영업시간
+     * 예: 22:00 ~ 02:00 은 허용한다.
      */
     if (
-      hour.openTime >=
+      hour.openTime ===
       hour.closeTime
     ) {
       throw new BadRequestException(
-        `${hour.dayOfWeek}요일의 종료 시간은 시작 시간보다 늦어야 합니다.`,
+        `${hour.dayOfWeek}요일의 영업 시작 시간과 종료 시간은 같을 수 없습니다.`,
       );
     }
 
@@ -158,23 +171,65 @@ export class BusinessOperatingHoursService {
       hour.breakStartTime &&
       hour.breakEndTime
     ) {
-      if (
-        hour.breakStartTime >=
-        hour.breakEndTime
-      ) {
-        throw new BadRequestException(
-          `${hour.dayOfWeek}요일의 휴게 종료 시간은 시작 시간보다 늦어야 합니다.`,
+      const open =
+        this.timeToMinutes(
+          hour.openTime,
         );
+
+      let close =
+        this.timeToMinutes(
+          hour.closeTime,
+        );
+
+      let breakStart =
+        this.timeToMinutes(
+          hour.breakStartTime,
+        );
+
+      let breakEnd =
+        this.timeToMinutes(
+          hour.breakEndTime,
+        );
+
+      const crossesMidnight =
+        close < open;
+
+      /*
+       * 자정을 넘는 영업시간이면
+       * 종료 시각을 다음 날 기준으로 환산한다.
+       */
+      if (crossesMidnight) {
+        close += 24 * 60;
+
+        if (breakStart < open) {
+          breakStart +=
+            24 * 60;
+        }
+
+        if (breakEnd < open) {
+          breakEnd +=
+            24 * 60;
+        }
       }
 
       /*
-       * 휴게시간은 영업시간 안에 있어야 한다.
+       * 휴게시간도 자정을 넘는 경우 처리한다.
        */
       if (
-        hour.breakStartTime <
-          hour.openTime ||
-        hour.breakEndTime >
-          hour.closeTime
+        breakEnd <=
+        breakStart
+      ) {
+        breakEnd +=
+          24 * 60;
+      }
+
+      /*
+       * 휴게시간은 반드시
+       * 영업시간 범위 안에 있어야 한다.
+       */
+      if (
+        breakStart < open ||
+        breakEnd > close
       ) {
         throw new BadRequestException(
           `${hour.dayOfWeek}요일의 휴게시간은 영업시간 안에 있어야 합니다.`,
@@ -285,6 +340,12 @@ export class BusinessOperatingHoursService {
               isClosed:
                 hour.isClosed,
 
+              /*
+               * 현재 PUT API는 is24Hours를 받지 않으므로
+               * 일반 영업시간 저장 시 false로 명시한다.
+               */
+              is24Hours: false,
+
               openTime,
               closeTime,
 
@@ -301,6 +362,12 @@ export class BusinessOperatingHoursService {
             update: {
               isClosed:
                 hour.isClosed,
+
+              /*
+               * 과거 24시간 영업 값이 남아
+               * 일반 영업시간과 충돌하지 않도록 초기화한다.
+               */
+              is24Hours: false,
 
               openTime,
               closeTime,

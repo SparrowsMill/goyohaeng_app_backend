@@ -30,6 +30,10 @@ import {
   AnalyticsModule,
 } from './analytics/analytics.module';
 
+import {
+  UploadsModule,
+} from './uploads/uploads.module';
+
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -58,11 +62,18 @@ import {
     RecordsModule,
 
     BusinessModule,
-    
+
     AnalyticsModule,
+
+    UploadsModule,
   ],
 
-  controllers: [AppController],
-  providers: [AppService],
+  controllers: [
+    AppController,
+  ],
+
+  providers: [
+    AppService,
+  ],
 })
 export class AppModule {}

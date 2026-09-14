@@ -34,6 +34,7 @@ export interface DashboardResponse {
   ingredientCount: number;
   verifiedVisitCount: number;
   madeFoodCount: number;
+  visitedPlaceCount: number;
 
   topRegions: {
     regionId: number;
@@ -400,19 +401,29 @@ export class UsersService {
         },
 
         select: {
-          place: {
-            select: {
-              districtRegion: {
-                select: {
-                  id: true,
-                  name: true,
-                },
-              },
-            },
-          },
+  place: {
+    select: {
+      id: true,
+
+      districtRegion: {
+        select: {
+          id: true,
+          name: true,
         },
+      },
+    },
+  },
+},
       }),
     ]);
+
+    const visitedPlaceCount =
+  new Set(
+    verifiedVisits.map(
+      (visit) =>
+        visit.place.id.toString(),
+    ),
+  ).size;
 
     /*
      * 지역별 방문 횟수 집계
@@ -497,7 +508,10 @@ export class UsersService {
 
       madeFoodCount,
 
+      visitedPlaceCount,
+
       topRegions,
+      
     };
   }
 
