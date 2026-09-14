@@ -1446,6 +1446,8 @@ async getGapScore(
       select: {
         id: true,
         name: true,
+        categoryId: true,
+        districtRegionId: true,
       },
     });
 
@@ -1503,7 +1505,53 @@ async getGapScore(
 
       available: false,
       gapScore: null,
+
+      regionCategoryAverageGapScore:
+        null,
     };
+  }
+
+  /*
+   * 3. 최신 GAP Score와 같은 계산 회차에서
+   * 같은 시군구 + 같은 카테고리 장소들의 평균 GAP Score 계산
+   *
+   * 장소에 지역 또는 카테고리가 없는 경우에는
+   * 비교 기준을 만들 수 없으므로 null 반환
+   */
+  let regionCategoryAverageGapScore:
+    number | null = null;
+
+  if (
+    place.districtRegionId !== null &&
+    place.categoryId !== null
+  ) {
+    const average =
+      await this.prisma.gapScoreHistory.aggregate({
+        where: {
+          runId: gap.runId,
+
+          place: {
+            status: 'ACTIVE',
+
+            districtRegionId:
+              place.districtRegionId,
+
+            categoryId:
+              place.categoryId,
+          },
+        },
+
+        _avg: {
+          gapScore: true,
+        },
+      });
+
+    regionCategoryAverageGapScore =
+      average._avg.gapScore === null
+        ? null
+        : Number(
+            average._avg.gapScore,
+          );
   }
 
   return {
@@ -1514,6 +1562,8 @@ async getGapScore(
 
     gapScore:
       Number(gap.gapScore),
+
+    regionCategoryAverageGapScore,
 
     onlineScore:
       gap.onlineScore === null
@@ -1541,7 +1591,8 @@ async getGapScore(
             ),
 
       navigation:
-        gap.navigationPercentile === null
+        gap.navigationPercentile ===
+        null
           ? null
           : Number(
               gap.navigationPercentile,
@@ -1555,14 +1606,16 @@ async getGapScore(
             ),
 
       expenditure:
-        gap.expenditurePercentile === null
+        gap.expenditurePercentile ===
+        null
           ? null
           : Number(
               gap.expenditurePercentile,
             ),
 
       nonlocalVisitor:
-        gap.nonlocalVisitorPercentile === null
+        gap.nonlocalVisitorPercentile ===
+        null
           ? null
           : Number(
               gap.nonlocalVisitorPercentile,
@@ -1587,6 +1640,105 @@ async getGapScore(
     gapMetricMappingId:
       Number(
         gap.gapMetricMappingId,
+      ),
+  };
+}
+
+async getGapHistory(
+  placeId: number,
+  period: '7d' | '1m' | '3m',
+) {
+  const place =
+    await this.prisma.place.findFirst({
+      where: {
+        id: BigInt(placeId),
+        status: 'ACTIVE',
+      },
+
+      select: {
+        id: true,
+      },
+    });
+
+  if (!place) {
+    return undefined;
+  }
+
+  const now =
+    new Date();
+
+  const startDate =
+    new Date(now);
+
+  switch (period) {
+    case '7d':
+      startDate.setUTCDate(
+        startDate.getUTCDate() - 7,
+      );
+      break;
+
+    case '1m':
+      startDate.setUTCMonth(
+        startDate.getUTCMonth() - 1,
+      );
+      break;
+
+    case '3m':
+      startDate.setUTCMonth(
+        startDate.getUTCMonth() - 3,
+      );
+      break;
+  }
+
+  /*
+   * 해당 기간 내 존재하는 GAP 계산 회차만 반환.
+   * 계산되지 않은 날짜에 대해서는
+   * 임의의 값을 생성하거나 보간하지 않음.
+   */
+  const history =
+    await this.prisma.gapScoreHistory.findMany({
+      where: {
+        placeId:
+          BigInt(placeId),
+
+        calculatedAt: {
+          gte: startDate,
+          lte: now,
+        },
+      },
+
+      orderBy: [
+        {
+          calculatedAt: 'asc',
+        },
+        {
+          id: 'asc',
+        },
+      ],
+
+      select: {
+        calculatedAt: true,
+        gapScore: true,
+      },
+    });
+
+  return {
+    placeId:
+      Number(place.id),
+
+    period,
+
+    items:
+      history.map(
+        (item) => ({
+          calculatedAt:
+            item.calculatedAt,
+
+          gapScore:
+            Number(
+              item.gapScore,
+            ),
+        }),
       ),
   };
 }
