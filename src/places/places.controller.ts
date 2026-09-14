@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   Controller,
   DefaultValuePipe,
   Delete,
@@ -577,6 +578,88 @@ async getGapMap(
 
     return result;
   }
+
+  // =========================================================
+// 장소 GAP Score 히스토리 조회
+// =========================================================
+
+@ApiOperation({
+  summary:
+    '장소 GAP Score 히스토리 조회',
+})
+@ApiOkResponse({
+  description:
+    '기간 내 존재하는 GAP Score 계산 이력 조회 성공',
+  schema: {
+    example: {
+      placeId: 4155,
+      period: '7d',
+      items: [
+        {
+          calculatedAt:
+            '2026-09-08T00:00:00.000Z',
+          gapScore: 58,
+        },
+        {
+          calculatedAt:
+            '2026-09-09T00:00:00.000Z',
+          gapScore: 61,
+        },
+      ],
+    },
+  },
+})
+@ApiNotFoundResponse({
+  description:
+    '장소를 찾을 수 없음',
+})
+@ApiQuery({
+  name: 'period',
+  required: true,
+  enum: [
+    '7d',
+    '1m',
+    '3m',
+  ],
+  example: '7d',
+  description:
+    '조회 기간. 7d=최근 7일, 1m=최근 1개월, 3m=최근 3개월',
+})
+@Get(':id/gap/history')
+async getGapHistory(
+  @Param(
+    'id',
+    ParseIntPipe,
+  )
+  id: number,
+
+  @Query('period')
+  period: string,
+) {
+  if (
+    period !== '7d' &&
+    period !== '1m' &&
+    period !== '3m'
+  ) {
+    throw new BadRequestException(
+      'period는 7d, 1m, 3m 중 하나여야 합니다.',
+    );
+  }
+
+  const result =
+    await this.placesService.getGapHistory(
+      id,
+      period,
+    );
+
+  if (!result) {
+    throw new NotFoundException(
+      '장소를 찾을 수 없습니다.',
+    );
+  }
+
+  return result;
+}
 
   // =========================================================
   // 장소 GAP Score 조회
