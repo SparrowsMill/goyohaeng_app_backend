@@ -71,12 +71,25 @@ export class BusinessSpecialHoursService {
     return `${hour}:${minute}`;
   }
 
-  private formatDate(
-    value: Date,
-  ): string {
-    return value
-      .toISOString()
-      .slice(0, 10);
+  /*
+   * HH:mm 문자열을 분 단위로 변환
+   *
+   * 예:
+   * 22:30 -> 1350
+   * 02:00 -> 120
+   */
+  private timeToMinutes(
+    value: string,
+  ): number {
+    const [hour, minute] =
+      value
+        .split(':')
+        .map(Number);
+
+    return (
+      hour * 60 +
+      minute
+    );
   }
 
   async getSpecialHours(
@@ -141,6 +154,14 @@ export class BusinessSpecialHoursService {
     };
   }
 
+  private formatDate(
+    value: Date,
+  ): string {
+    return value
+      .toISOString()
+      .slice(0, 10);
+  }
+
   async updateSpecialHour(
     placeId: number,
     userId: number,
@@ -148,7 +169,9 @@ export class BusinessSpecialHoursService {
       UpdateBusinessSpecialHourDto,
   ) {
     /*
+     * =========================================================
      * 완전 휴무
+     * =========================================================
      */
     if (
       dto.scheduleType ===
@@ -226,7 +249,14 @@ export class BusinessSpecialHoursService {
     }
 
     /*
+     * =========================================================
      * 특별 운영
+     * =========================================================
+     */
+
+    /*
+     * 특별 운영일은
+     * 시작/종료 시간이 모두 필요함
      */
     if (
       !dto.openTime ||
@@ -237,12 +267,19 @@ export class BusinessSpecialHoursService {
       );
     }
 
+    /*
+     * 시작 == 종료는 허용하지 않는다.
+     *
+     * 단,
+     * 22:00 ~ 02:00처럼
+     * 자정을 넘는 운영시간은 허용한다.
+     */
     if (
-      dto.openTime >=
+      dto.openTime ===
       dto.closeTime
     ) {
       throw new BadRequestException(
-        '종료 시간은 시작 시간보다 늦어야 합니다.',
+        '특별 운영 시작 시간과 종료 시간은 같을 수 없습니다.',
       );
     }
 
@@ -252,6 +289,10 @@ export class BusinessSpecialHoursService {
     const hasBreakEnd =
       !!dto.breakEndTime;
 
+    /*
+     * 휴게시간은
+     * 시작/종료가 반드시 함께 있어야 함
+     */
     if (
       hasBreakStart !==
       hasBreakEnd
@@ -261,24 +302,105 @@ export class BusinessSpecialHoursService {
       );
     }
 
+    /*
+     * =========================================================
+     * 휴게시간 검증
+     * =========================================================
+     *
+     * 일반 운영:
+     * 09:00 ~ 18:00
+     * break 15:00 ~ 16:00
+     *
+     * 자정 넘는 운영:
+     * 22:00 ~ 02:00
+     * break 23:30 ~ 00:30
+     */
     if (
       dto.breakStartTime &&
       dto.breakEndTime
     ) {
-      if (
-        dto.breakStartTime >=
-        dto.breakEndTime
-      ) {
-        throw new BadRequestException(
-          '휴게 종료 시간은 시작 시간보다 늦어야 합니다.',
+      const open =
+        this.timeToMinutes(
+          dto.openTime,
         );
+
+      let close =
+        this.timeToMinutes(
+          dto.closeTime,
+        );
+
+      let breakStart =
+        this.timeToMinutes(
+          dto.breakStartTime,
+        );
+
+      let breakEnd =
+        this.timeToMinutes(
+          dto.breakEndTime,
+        );
+
+      /*
+       * close < open이면
+       * 다음 날까지 영업하는 것으로 판단
+       *
+       * 예:
+       * 22:00 ~ 02:00
+       *
+       * 1320 ~ 120
+       * ↓
+       * 1320 ~ 1560
+       */
+      const crossesMidnight =
+        close < open;
+
+      if (crossesMidnight) {
+        close +=
+          24 * 60;
+
+        /*
+         * 자정 이후의 휴게시간은
+         * 다음 날 시간으로 변환
+         *
+         * 00:30 -> 1470
+         */
+        if (
+          breakStart <
+          open
+        ) {
+          breakStart +=
+            24 * 60;
+        }
+
+        if (
+          breakEnd <
+          open
+        ) {
+          breakEnd +=
+            24 * 60;
+        }
       }
 
+      /*
+       * 휴게시간 자체가 자정을 넘는 경우
+       *
+       * 예:
+       * 23:30 ~ 00:30
+       */
       if (
-        dto.breakStartTime <
-          dto.openTime ||
-        dto.breakEndTime >
-          dto.closeTime
+        breakEnd <=
+        breakStart
+      ) {
+        breakEnd +=
+          24 * 60;
+      }
+
+      /*
+       * 휴게시간은 반드시
+       * 특별 운영시간 안에 있어야 함
+       */
+      if (
+        breakStart < open ||
+        breakEnd > close
       ) {
         throw new BadRequestException(
           '휴게시간은 운영시간 안에 있어야 합니다.',
