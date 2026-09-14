@@ -25,6 +25,7 @@ import { IngredientsModule } from './ingredients/ingredients.module';
 import { RecordsModule } from './records/records.module';
 
 import { BusinessModule } from './business/business.module';
+import { ExternalApiAutomationModule } from './external-api/automation/external-api-automation.module';
 
 @Module({
   imports: [
@@ -54,6 +55,7 @@ import { BusinessModule } from './business/business.module';
     RecordsModule,
 
     BusinessModule,
+    ExternalApiAutomationModule,
   ],
 
   controllers: [AppController],

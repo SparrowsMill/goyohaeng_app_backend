@@ -200,7 +200,7 @@ export class TourismResourceDemandService {
    * 매뉴얼에서 실제 성공이 확인된 형태:
    * 구로구(11530) + 서비스지표 1112
    */
-  private async monthHasData(
+  async monthHasData(
     baseYm: string,
   ): Promise<boolean> {
     const data = await this.request(
@@ -447,34 +447,59 @@ export class TourismResourceDemandService {
    * 최신 제공월을 자동으로 찾은 뒤
    * 서울 25개 구 × 모든 지표 RAW 저장.
    */
-  async syncLatestSeoulDemand() {
-    const source = await this.getSource();
+  /**
+   * API 호출 + 메모리 준비만 수행.
+   * RAW / region_metrics는 변경하지 않는다.
+   */
+  async prepareSeoulDemand(
+    baseYm: string,
+  ) {
+    if (!/^\d{6}$/.test(baseYm)) {
+      throw new Error(
+        'baseYm must be YYYYMM',
+      );
+    }
 
-    const baseYm =
-      await this.findLatestAvailableMonth();
+    const available =
+      await this.monthHasData(baseYm);
 
-    /*
-     * 해당 월을 다시 실행하면 중복되지 않도록
-     * 그 월 데이터만 먼저 삭제.
-     */
-    const deleted =
-      await this.prisma.rawTourismResourceDemandApi.deleteMany({
+    if (!available) {
+      throw new Error(
+        `Tourism Resource Demand data is not available for ${baseYm}`,
+      );
+    }
+
+    const source =
+      await this.getSource();
+
+    const regionCodes =
+      await this.prisma.regionExternalCode.findMany({
         where: {
           sourceId: source.id,
-          baseMonth: baseYm,
+          codeType: 'SIGUNGU_CODE',
+        },
+        select: {
+          regionId: true,
+          externalCode: true,
         },
       });
 
-    console.log(
-      `[TourismResourceDemand] deleted previous ${baseYm}: ` +
-        deleted.count,
-    );
+    const regionByCode =
+      new Map<string, bigint>();
+
+    for (const row of regionCodes) {
+      regionByCode.set(
+        row.externalCode,
+        row.regionId,
+      );
+    }
+
+    const rawRows: any[] = [];
+    const metricRows: any[] = [];
 
     let apiCallCount = 0;
-
     let serviceSaved = 0;
     let culturalSaved = 0;
-
     let serviceNoData = 0;
     let culturalNoData = 0;
 
@@ -482,6 +507,17 @@ export class TourismResourceDemandService {
      * 1. 관광 서비스 수요
      */
     for (const district of this.seoulDistricts) {
+      const regionId =
+        regionByCode.get(
+          district.code,
+        );
+
+      if (!regionId) {
+        throw new Error(
+          `Region mapping not found: ${district.code}`,
+        );
+      }
+
       for (const indicator of this.serviceIndicators) {
         const result =
           await this.fetchServiceDemand(
@@ -497,40 +533,133 @@ export class TourismResourceDemandService {
           continue;
         }
 
-        await this.prisma.rawTourismResourceDemandApi.createMany({
-          data: result.items.map((item) => ({
-            sourceId: source.id,
+        for (const item of result.items) {
+          const itemBaseYm =
+            String(
+              item.baseYm ??
+                baseYm,
+            );
 
-            endpoint: 'areaTarSvcDemList',
+          const signguCode =
+            String(
+              item.signguCd ??
+                district.code,
+            );
+
+          if (itemBaseYm !== baseYm) {
+            throw new Error(
+              `RESOURCE_DEMAND returned unexpected baseYm: ` +
+                `${itemBaseYm} (requested ${baseYm})`,
+            );
+          }
+
+          if (signguCode !== district.code) {
+            throw new Error(
+              `RESOURCE_DEMAND returned unexpected district: ` +
+                `${signguCode} (requested ${district.code})`,
+            );
+          }
+
+          if (
+            String(
+              item.tarSvcDemIxCd ?? '',
+            ) !== indicator.code
+          ) {
+            throw new Error(
+              `RESOURCE_DEMAND returned unexpected service indicator: ` +
+                `${item.tarSvcDemIxCd}`,
+            );
+          }
+
+          if (
+            item.tarSvcDemIxVal == null
+          ) {
+            throw new Error(
+              `RESOURCE_DEMAND missing value: ` +
+                `${district.code}/${indicator.code}`,
+            );
+          }
+
+          const fetchedAt =
+            new Date();
+
+          rawRows.push({
+            sourceId:
+              source.id,
+
+            endpoint:
+              'areaTarSvcDemList',
 
             areaCode:
-              String(item.areaCd ?? '11'),
-
-            signguCode:
               String(
-                item.signguCd ??
-                  district.code,
+                item.areaCd ??
+                  '11',
               ),
+
+            signguCode,
 
             baseMonth:
-              String(
-                item.baseYm ??
-                  baseYm,
-              ),
+              itemBaseYm,
 
             requestPayload:
               result.requestPayload,
 
-            responsePayload: item,
-          })),
-        });
+            responsePayload:
+              item,
 
-        serviceSaved += result.items.length;
+            fetchedAt,
+          });
+
+          metricRows.push({
+            regionId,
+            sourceId:
+              source.id,
+
+            metricFamily:
+              'SERVICE_DEMAND',
+
+            metricCode:
+              indicator.code,
+
+            metricName:
+              item.tarSvcDemIxNm == null
+                ? indicator.name
+                : String(
+                    item.tarSvcDemIxNm,
+                  ),
+
+            dayOfWeekCode:
+              null,
+
+            dayOfWeekName:
+              null,
+
+            visitorTypeCode:
+              null,
+
+            visitorTypeName:
+              null,
+
+            periodDate:
+              null,
+
+            periodMonth:
+              baseYm,
+
+            metricValue:
+              String(
+                item.tarSvcDemIxVal,
+              ),
+
+            fetchedAt,
+          });
+
+          serviceSaved++;
+        }
       }
 
       console.log(
-        `[TourismResourceDemand] service completed: ` +
-          `${district.name}`,
+        `[TourismResourceDemand] prepared service: ${district.name}`,
       );
     }
 
@@ -538,6 +667,17 @@ export class TourismResourceDemandService {
      * 2. 문화 자원 수요
      */
     for (const district of this.seoulDistricts) {
+      const regionId =
+        regionByCode.get(
+          district.code,
+        );
+
+      if (!regionId) {
+        throw new Error(
+          `Region mapping not found: ${district.code}`,
+        );
+      }
+
       for (const indicator of this.culturalIndicators) {
         const result =
           await this.fetchCulturalDemand(
@@ -553,76 +693,260 @@ export class TourismResourceDemandService {
           continue;
         }
 
-        await this.prisma.rawTourismResourceDemandApi.createMany({
-          data: result.items.map((item) => ({
-            sourceId: source.id,
+        for (const item of result.items) {
+          const itemBaseYm =
+            String(
+              item.baseYm ??
+                baseYm,
+            );
 
-            endpoint: 'areaCulResDemList',
+          const signguCode =
+            String(
+              item.signguCd ??
+                district.code,
+            );
+
+          if (itemBaseYm !== baseYm) {
+            throw new Error(
+              `RESOURCE_DEMAND returned unexpected baseYm: ` +
+                `${itemBaseYm} (requested ${baseYm})`,
+            );
+          }
+
+          if (signguCode !== district.code) {
+            throw new Error(
+              `RESOURCE_DEMAND returned unexpected district: ` +
+                `${signguCode} (requested ${district.code})`,
+            );
+          }
+
+          if (
+            String(
+              item.culResDemIxCd ?? '',
+            ) !== indicator.code
+          ) {
+            throw new Error(
+              `RESOURCE_DEMAND returned unexpected cultural indicator: ` +
+                `${item.culResDemIxCd}`,
+            );
+          }
+
+          if (
+            item.culResDemIxVal == null
+          ) {
+            throw new Error(
+              `RESOURCE_DEMAND missing value: ` +
+                `${district.code}/${indicator.code}`,
+            );
+          }
+
+          const fetchedAt =
+            new Date();
+
+          rawRows.push({
+            sourceId:
+              source.id,
+
+            endpoint:
+              'areaCulResDemList',
 
             areaCode:
-              String(item.areaCd ?? '11'),
-
-            signguCode:
               String(
-                item.signguCd ??
-                  district.code,
+                item.areaCd ??
+                  '11',
               ),
+
+            signguCode,
 
             baseMonth:
-              String(
-                item.baseYm ??
-                  baseYm,
-              ),
+              itemBaseYm,
 
             requestPayload:
               result.requestPayload,
 
-            responsePayload: item,
-          })),
-        });
+            responsePayload:
+              item,
 
-        culturalSaved += result.items.length;
+            fetchedAt,
+          });
+
+          metricRows.push({
+            regionId,
+            sourceId:
+              source.id,
+
+            metricFamily:
+              'CULTURAL_DEMAND',
+
+            metricCode:
+              indicator.code,
+
+            metricName:
+              item.culResDemIxNm == null
+                ? indicator.name
+                : String(
+                    item.culResDemIxNm,
+                  ),
+
+            dayOfWeekCode:
+              null,
+
+            dayOfWeekName:
+              null,
+
+            visitorTypeCode:
+              null,
+
+            visitorTypeName:
+              null,
+
+            periodDate:
+              null,
+
+            periodMonth:
+              baseYm,
+
+            metricValue:
+              String(
+                item.culResDemIxVal,
+              ),
+
+            fetchedAt,
+          });
+
+          culturalSaved++;
+        }
       }
 
       console.log(
-        `[TourismResourceDemand] cultural completed: ` +
-          `${district.name}`,
+        `[TourismResourceDemand] prepared cultural: ${district.name}`,
       );
     }
-    const normalizedCount =
-      await this.normalizeRegionMetrics(
+
+    return {
+      sourceId:
         source.id,
+
+      baseYm,
+
+      rawRows,
+      metricRows,
+
+      result: {
+        baseYm,
+
+        districtCount:
+          this.seoulDistricts.length,
+
+        serviceIndicatorCount:
+          this.serviceIndicators.length,
+
+        culturalIndicatorCount:
+          this.culturalIndicators.length,
+
+        apiCallCount,
+
+        serviceDemand: {
+          savedCount:
+            serviceSaved,
+
+          noDataCombinations:
+            serviceNoData,
+        },
+
+        culturalDemand: {
+          savedCount:
+            culturalSaved,
+
+          noDataCombinations:
+            culturalNoData,
+        },
+
+        totalSaved:
+          rawRows.length,
+
+        normalizedCount:
+          metricRows.length,
+      },
+    };
+  }
+
+  async applyPreparedSeoulDemand(
+    prepared: Awaited<
+      ReturnType<
+        TourismResourceDemandService['prepareSeoulDemand']
+      >
+    >,
+    tx: any,
+  ) {
+    await tx.rawTourismResourceDemandApi.deleteMany({
+      where: {
+        sourceId:
+          prepared.sourceId,
+
+        baseMonth:
+          prepared.baseYm,
+      },
+    });
+
+    if (
+      prepared.rawRows.length > 0
+    ) {
+      await tx.rawTourismResourceDemandApi.createMany({
+        data:
+          prepared.rawRows,
+      });
+    }
+
+    await tx.regionMetric.deleteMany({
+      where: {
+        sourceId:
+          prepared.sourceId,
+
+        periodMonth:
+          prepared.baseYm,
+      },
+    });
+
+    if (
+      prepared.metricRows.length > 0
+    ) {
+      await tx.regionMetric.createMany({
+        data:
+          prepared.metricRows,
+      });
+    }
+  }
+
+  /**
+   * 기존 controller 호환용 단독 atomic 실행.
+   */
+  async syncSeoulDemand(
+    baseYm: string,
+  ) {
+    const prepared =
+      await this.prepareSeoulDemand(
         baseYm,
       );
 
-    return {
+    await this.prisma.$transaction(
+      async (tx) => {
+        await this.applyPreparedSeoulDemand(
+          prepared,
+          tx,
+        );
+      },
+    );
+
+    return prepared.result;
+  }
+
+  async syncLatestSeoulDemand() {
+    const baseYm =
+      await this.findLatestAvailableMonth();
+
+    return this.syncSeoulDemand(
       baseYm,
-
-      districtCount:
-        this.seoulDistricts.length,
-
-      serviceIndicatorCount:
-        this.serviceIndicators.length,
-
-      culturalIndicatorCount:
-        this.culturalIndicators.length,
-
-      apiCallCount,
-
-      serviceDemand: {
-        savedCount: serviceSaved,
-        noDataCombinations: serviceNoData,
-      },
-
-      culturalDemand: {
-        savedCount: culturalSaved,
-        noDataCombinations: culturalNoData,
-      },
-
-      totalSaved:
-        serviceSaved +
-        culturalSaved,
-      normalizedCount,
-    };
+    );
   }
 }

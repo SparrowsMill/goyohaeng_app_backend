@@ -1,0 +1,556 @@
+import { Injectable } from '@nestjs/common';
+
+import { PrismaService } from '../../prisma/prisma.service';
+
+import { RegionVisitorService } from '../region-visitor/region-visitor.service';
+import { TourismResourceDemandService } from '../tourism-resource-demand/tourism-resource-demand.service';
+import { TourismDemandStrengthService } from '../tourism-demand-strength/tourism-demand-strength.service';
+
+import { GapDataPeriodService } from './gap-data-period.service';
+
+@Injectable()
+export class ExternalApiAutomationService {
+  constructor(
+    private readonly prisma: PrismaService,
+
+    private readonly regionVisitorService: RegionVisitorService,
+    private readonly resourceDemandService: TourismResourceDemandService,
+    private readonly demandStrengthService: TourismDemandStrengthService,
+
+    private readonly gapDataPeriodService: GapDataPeriodService,
+  ) {}
+
+  private getMonthDateRange(
+    baseYm: string,
+  ) {
+    const year =
+      Number(baseYm.slice(0, 4));
+
+    const month =
+      Number(baseYm.slice(4, 6));
+
+    const dayCount =
+      new Date(
+        Date.UTC(year, month, 0),
+      ).getUTCDate();
+
+    const startDate =
+      new Date(
+        Date.UTC(
+          year,
+          month - 1,
+          1,
+        ),
+      );
+
+    const endDate =
+      new Date(
+        Date.UTC(
+          year,
+          month - 1,
+          dayCount,
+        ),
+      );
+
+    return {
+      dayCount,
+      startDate,
+      endDate,
+    };
+  }
+
+  private async getSource(
+    code: string,
+  ) {
+    const source =
+      await this.prisma.externalSource.findUnique({
+        where: {
+          code,
+        },
+      });
+
+    if (!source) {
+      throw new Error(
+        `external source not found: ${code}`,
+      );
+    }
+
+    return source;
+  }
+
+  private async startRun(
+    sourceId: bigint,
+    endpoint: string,
+  ) {
+    return this.prisma.externalSyncRun.create({
+      data: {
+        sourceId,
+        endpoint,
+        syncType: 'GAP_REGIONAL_MONTHLY',
+        status: 'RUNNING',
+      },
+    });
+  }
+
+  private async completeRun(
+    runId: bigint,
+    resultCount: number,
+  ) {
+    await this.prisma.externalSyncRun.update({
+      where: {
+        id: runId,
+      },
+      data: {
+        status: 'SUCCESS',
+        finishedAt: new Date(),
+        resultCount,
+        errorMessage: null,
+      },
+    });
+  }
+
+  private async failRun(
+    runId: bigint,
+    error: unknown,
+  ) {
+    const message =
+      error instanceof Error
+        ? error.message
+        : String(error);
+
+    await this.prisma.externalSyncRun.update({
+      where: {
+        id: runId,
+      },
+      data: {
+        status: 'FAILED',
+        finishedAt: new Date(),
+        errorMessage:
+          message.slice(0, 5000),
+      },
+    });
+  }
+
+
+
+  /**
+   * GAP에 필요한 지역 기반 외부데이터 전체 동기화.
+   *
+   * 반드시 세 source를 같은 YYYYMM으로 맞춘다.
+   */
+  /**
+   * GAP에 필요한 지역 기반 외부데이터 전체 동기화.
+   *
+   * 반드시 세 source를 같은 YYYYMM으로 맞춘다.
+   *
+   * 세 source의 sync + 최종 validation이 모두 성공해야만
+   * external_sync_runs를 SUCCESS 처리한다.
+   */
+  async runGapRegionalSync() {
+    /*
+     * 1. 아직 DB 변경 없이 공통 기준월 결정.
+     */
+    const period =
+      await this.gapDataPeriodService.findLatestCommonMonth();
+
+    const baseYm =
+      period.commonMonth;
+
+    console.log(
+      `[ExternalApiAutomation] GAP common month = ${baseYm}`,
+    );
+
+    const visitorSource =
+      await this.getSource(
+        'REGION_VISITOR_API',
+      );
+
+    const resourceSource =
+      await this.getSource(
+        'TOURISM_RESOURCE_DEMAND_API',
+      );
+
+    const strengthSource =
+      await this.getSource(
+        'TOURISM_DEMAND_STRENGTH_API',
+      );
+
+    /*
+     * 실행 이력은 transaction 밖.
+     * 실패해도 FAILED 기록은 남아야 한다.
+     */
+    const visitorRun =
+      await this.startRun(
+        visitorSource.id,
+        `month:${baseYm}`,
+      );
+
+    const resourceRun =
+      await this.startRun(
+        resourceSource.id,
+        `month:${baseYm}`,
+      );
+
+    const strengthRun =
+      await this.startRun(
+        strengthSource.id,
+        `month:${baseYm}`,
+      );
+
+    try {
+      /*
+       * 2. API 수집 + 메모리 변환.
+       *
+       * 여기까지는 RAW / region_metrics 변경 없음.
+       */
+      const {
+        startYmd,
+        endYmd,
+      } =
+        this.getMonthYmdRange(
+          baseYm,
+        );
+
+      const visitorPrepared =
+        await this.regionVisitorService.prepareSeoulVisitorData(
+          startYmd,
+          endYmd,
+        );
+
+      const resourcePrepared =
+        await this.resourceDemandService.prepareSeoulDemand(
+          baseYm,
+        );
+
+      const strengthPrepared =
+        await this.demandStrengthService.prepareSeoulStrength(
+          baseYm,
+        );
+
+      /*
+       * 3. DB를 건드리기 전에 메모리 상태 검증.
+       */
+      const dayCount =
+        this.getMonthDateRange(
+          baseYm,
+        ).dayCount;
+
+      const expectedVisitor =
+        26 * dayCount * 3;
+
+      const expectedResource =
+        25 * 19;
+
+      const expectedStrength =
+        25 * 10;
+
+      if (
+        visitorPrepared.metricRows.length !==
+        expectedVisitor
+      ) {
+        throw new Error(
+          `Prepared REGION_VISITOR validation failed: ` +
+            `${visitorPrepared.metricRows.length}/${expectedVisitor}`,
+        );
+      }
+
+      if (
+        resourcePrepared.metricRows.length !==
+        expectedResource
+      ) {
+        throw new Error(
+          `Prepared RESOURCE_DEMAND validation failed: ` +
+            `${resourcePrepared.metricRows.length}/${expectedResource}`,
+        );
+      }
+
+      if (
+        strengthPrepared.metricRows.length !==
+        expectedStrength
+      ) {
+        throw new Error(
+          `Prepared DEMAND_STRENGTH validation failed: ` +
+            `${strengthPrepared.metricRows.length}/${expectedStrength}`,
+        );
+      }
+
+      /*
+       * 4. 세 source의 실제 DB 변경을 단 하나의 transaction으로 수행.
+       *
+       * 하나라도 INSERT / DELETE / validation 실패 시
+       * 세 source 전체 ROLLBACK.
+       */
+      const validation =
+        await this.prisma.$transaction(
+          async (tx) => {
+            await this.regionVisitorService.applyPreparedSeoulVisitorData(
+              visitorPrepared,
+              tx,
+            );
+
+            await this.resourceDemandService.applyPreparedSeoulDemand(
+              resourcePrepared,
+              tx,
+            );
+
+            await this.demandStrengthService.applyPreparedSeoulStrength(
+              strengthPrepared,
+              tx,
+            );
+
+            return this.validateRegionMetricsWithTx(
+              baseYm,
+              tx,
+            );
+          },
+          {
+            maxWait: 10_000,
+            timeout: 30_000,
+          },
+        );
+
+      /*
+       * transaction COMMIT 이후에만 SUCCESS.
+       */
+      await Promise.all([
+        this.completeRun(
+          visitorRun.id,
+          visitorPrepared.metricRows.length,
+        ),
+
+        this.completeRun(
+          resourceRun.id,
+          resourcePrepared.metricRows.length,
+        ),
+
+        this.completeRun(
+          strengthRun.id,
+          strengthPrepared.metricRows.length,
+        ),
+      ]);
+
+      return {
+        ...period,
+
+        results: {
+          visitor:
+            visitorPrepared.result,
+
+          resourceDemand:
+            resourcePrepared.result,
+
+          demandStrength:
+            strengthPrepared.result,
+        },
+
+        validation,
+      };
+    } catch (error) {
+      /*
+       * API 수집 실패든,
+       * 사전검증 실패든,
+       * transaction rollback이든
+       * run 기록은 FAILED.
+       */
+      await Promise.allSettled([
+        this.failRun(
+          visitorRun.id,
+          error,
+        ),
+
+        this.failRun(
+          resourceRun.id,
+          error,
+        ),
+
+        this.failRun(
+          strengthRun.id,
+          error,
+        ),
+      ]);
+
+      throw error;
+    }
+  }
+
+    private getMonthYmdRange(
+    baseYm: string,
+  ) {
+    if (!/^\d{6}$/.test(baseYm)) {
+      throw new Error(
+        `Invalid baseYm: ${baseYm}`,
+      );
+    }
+
+    const year =
+      Number(
+        baseYm.slice(0, 4),
+      );
+
+    const month =
+      Number(
+        baseYm.slice(4, 6),
+      );
+
+    const lastDay =
+      new Date(
+        Date.UTC(
+          year,
+          month,
+          0,
+        ),
+      ).getUTCDate();
+
+    return {
+      startYmd:
+        `${baseYm}01`,
+
+      endYmd:
+        `${baseYm}${String(
+          lastDay,
+        ).padStart(2, '0')}`,
+    };
+  }
+
+  private async validateRegionMetricsWithTx(
+    baseYm: string,
+    tx: any,
+  ) {
+    const {
+      dayCount,
+      startDate,
+      endDate,
+    } =
+      this.getMonthDateRange(
+        baseYm,
+      );
+
+    const visitorSource =
+      await this.getSource(
+        'REGION_VISITOR_API',
+      );
+
+    const resourceSource =
+      await this.getSource(
+        'TOURISM_RESOURCE_DEMAND_API',
+      );
+
+    const strengthSource =
+      await this.getSource(
+        'TOURISM_DEMAND_STRENGTH_API',
+      );
+
+    /*
+     * Visitor는 광역 1 + 자치구 25까지
+     * normalized table 전체가 정확해야 한다.
+     */
+    const visitorRows =
+      await tx.regionMetric.count({
+        where: {
+          sourceId:
+            visitorSource.id,
+
+          metricFamily:
+            'VISITOR',
+
+          metricCode:
+            'TOU_NUM',
+
+          periodDate: {
+            gte:
+              startDate,
+
+            lte:
+              endDate,
+          },
+        },
+      });
+
+    const resourceRows =
+      await tx.regionMetric.count({
+        where: {
+          sourceId:
+            resourceSource.id,
+
+          periodMonth:
+            baseYm,
+        },
+      });
+
+    const strengthRows =
+      await tx.regionMetric.count({
+        where: {
+          sourceId:
+            strengthSource.id,
+
+          periodMonth:
+            baseYm,
+        },
+      });
+
+    const expectedVisitor =
+      26 * dayCount * 3;
+
+    const expectedResource =
+      25 * 19;
+
+    const expectedStrength =
+      25 * 10;
+
+    if (
+      visitorRows !==
+      expectedVisitor
+    ) {
+      throw new Error(
+        `Committed REGION_VISITOR validation failed: ` +
+          `${visitorRows}/${expectedVisitor}`,
+      );
+    }
+
+    if (
+      resourceRows !==
+      expectedResource
+    ) {
+      throw new Error(
+        `Committed RESOURCE_DEMAND validation failed: ` +
+          `${resourceRows}/${expectedResource}`,
+      );
+    }
+
+    if (
+      strengthRows !==
+      expectedStrength
+    ) {
+      throw new Error(
+        `Committed DEMAND_STRENGTH validation failed: ` +
+          `${strengthRows}/${expectedStrength}`,
+      );
+    }
+
+    return {
+      visitor: {
+        actual:
+          visitorRows,
+
+        expected:
+          expectedVisitor,
+      },
+
+      resourceDemand: {
+        actual:
+          resourceRows,
+
+        expected:
+          expectedResource,
+      },
+
+      demandStrength: {
+        actual:
+          strengthRows,
+
+        expected:
+          expectedStrength,
+      },
+    };
+  }
+}

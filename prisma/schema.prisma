@@ -12,13 +12,14 @@ datasource db {
 // ============================================================
 
 model ExternalSource {
-  id           BigInt   @id @default(autoincrement())
-  code         String   @unique @db.VarChar(80)
-  name         String   @db.VarChar(200)
-  baseUrl      String?  @map("base_url")
-  refreshCycle String?  @map("refresh_cycle") @db.VarChar(100)
-  createdAt    DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
-
+  id                 BigInt   @id @default(autoincrement())
+  code               String   @unique @db.VarChar(80)
+  name               String   @db.VarChar(200)
+  baseUrl            String?  @map("base_url")
+  sourceRefreshCycle String?  @map("source_refresh_cycle") @db.VarChar(100)
+  syncCycle          String?  @map("sync_cycle") @db.VarChar(100)
+  createdAt          DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  
   rawTourApis                  RawTourApi[]
   rawSmallBusinessApis         RawSmallBusinessApi[]
   rawRegionVisitorApis         RawRegionVisitorApi[]
@@ -431,6 +432,8 @@ model RegionMetric {
   source ExternalSource @relation(fields: [sourceId], references: [id])
 
   @@index([regionId, metricFamily, metricCode, periodDate, periodMonth])
+  @@unique([sourceId, regionId, metricFamily, metricCode, periodDate, visitorTypeCode], map: "region_metrics_daily_key")
+@@unique([sourceId, regionId, metricFamily, metricCode, periodMonth], map: "region_metrics_monthly_key")
   @@map("region_metrics")
 }
 
