@@ -1,4 +1,5 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
+import { Cron } from '@nestjs/schedule';
 
 import { PrismaService } from '../../prisma/prisma.service';
 
@@ -8,8 +9,17 @@ import { TourismDemandStrengthService } from '../tourism-demand-strength/tourism
 
 import { GapDataPeriodService } from './gap-data-period.service';
 
+
 @Injectable()
 export class ExternalApiAutomationService {
+    private readonly logger =
+    new Logger(
+      ExternalApiAutomationService.name,
+    );
+
+  private gapRegionalSyncRunning =
+    false;
+
   constructor(
     private readonly prisma: PrismaService,
 
@@ -19,6 +29,76 @@ export class ExternalApiAutomationService {
 
     private readonly gapDataPeriodService: GapDataPeriodService,
   ) {}
+
+  private async isGapRegionalMonthAlreadySynced(
+    baseYm: string,
+  ): Promise<boolean> {
+    const visitorSource =
+      await this.getSource(
+        'REGION_VISITOR_API',
+      );
+
+    const resourceSource =
+      await this.getSource(
+        'TOURISM_RESOURCE_DEMAND_API',
+      );
+
+    const strengthSource =
+      await this.getSource(
+        'TOURISM_DEMAND_STRENGTH_API',
+      );
+
+    const endpoint =
+      `month:${baseYm}`;
+
+    const [
+      visitorSuccess,
+      resourceSuccess,
+      strengthSuccess,
+    ] = await Promise.all([
+      this.prisma.externalSyncRun.count({
+        where: {
+          sourceId:
+            visitorSource.id,
+          endpoint,
+          syncType:
+            'PERIODIC',
+          status:
+            'SUCCESS',
+        },
+      }),
+
+      this.prisma.externalSyncRun.count({
+        where: {
+          sourceId:
+            resourceSource.id,
+          endpoint,
+          syncType:
+            'PERIODIC',
+          status:
+            'SUCCESS',
+        },
+      }),
+
+      this.prisma.externalSyncRun.count({
+        where: {
+          sourceId:
+            strengthSource.id,
+          endpoint,
+          syncType:
+            'PERIODIC',
+          status:
+            'SUCCESS',
+        },
+      }),
+    ]);
+
+    return (
+      visitorSuccess > 0 &&
+      resourceSuccess > 0 &&
+      strengthSuccess > 0
+    );
+  }
 
   private getMonthDateRange(
     baseYm: string,
@@ -86,7 +166,7 @@ export class ExternalApiAutomationService {
       data: {
         sourceId,
         endpoint,
-        syncType: 'GAP_REGIONAL_MONTHLY',
+        syncType: 'PERIODIC',
         status: 'RUNNING',
       },
     });
@@ -146,11 +226,16 @@ export class ExternalApiAutomationService {
    * 세 source의 sync + 최종 validation이 모두 성공해야만
    * external_sync_runs를 SUCCESS 처리한다.
    */
-  async runGapRegionalSync() {
-    /*
-     * 1. 아직 DB 변경 없이 공통 기준월 결정.
-     */
+  async runGapRegionalSync(
+    preResolvedPeriod?: {
+      commonMonth: string;
+      latestVisitorMonth: string;
+      latestResourceMonth: string;
+      latestStrengthMonth: string;
+    },
+  ) {
     const period =
+      preResolvedPeriod ??
       await this.gapDataPeriodService.findLatestCommonMonth();
 
     const baseYm =
@@ -552,5 +637,88 @@ export class ExternalApiAutomationService {
           expectedStrength,
       },
     };
+  }
+
+    /**
+   * 매월 18~22일 03:00 KST에 실행.
+   *
+   * 공공데이터 월간 갱신이 늦는 경우를 고려해
+   * 5일 동안 재확인한다.
+   *
+   * 이미 해당 공통월을 성공적으로 sync했다면
+   * 실제 데이터 수집은 하지 않는다.
+   */
+  @Cron(
+    '0 0 3 18-22 * *',
+    {
+      timeZone:
+        'Asia/Seoul',
+    },
+  )
+  async scheduledGapRegionalSync() {
+    if (
+      this.gapRegionalSyncRunning
+    ) {
+      this.logger.warn(
+        'GAP regional sync is already running. Skipping overlapping execution.',
+      );
+
+      return;
+    }
+
+    this.gapRegionalSyncRunning =
+      true;
+
+    try {
+      this.logger.log(
+        'Checking GAP regional data availability...',
+      );
+
+      const period =
+        await this.gapDataPeriodService.findLatestCommonMonth();
+
+      const baseYm =
+        period.commonMonth;
+
+      const alreadySynced =
+        await this.isGapRegionalMonthAlreadySynced(
+          baseYm,
+        );
+
+      if (alreadySynced) {
+        this.logger.log(
+          `GAP regional month ${baseYm} already synced successfully. Skipping.`,
+        );
+
+        return;
+      }
+
+      this.logger.log(
+        `Starting GAP regional sync for ${baseYm}`,
+      );
+
+      const result =
+        await this.runGapRegionalSync(
+          period,
+        );
+
+      this.logger.log(
+        `GAP regional sync completed successfully: ${result.commonMonth}`,
+      );
+    } catch (error) {
+      const message =
+        error instanceof Error
+          ? error.stack ??
+            error.message
+          : String(error);
+
+      this.logger.error(
+        'Scheduled GAP regional sync failed',
+        message,
+      );
+    } finally {
+      this.gapRegionalSyncRunning =
+        false;
+    }
   }
 }

@@ -26,12 +26,14 @@ import { RecordsModule } from './records/records.module';
 
 import { BusinessModule } from './business/business.module';
 import { ExternalApiAutomationModule } from './external-api/automation/external-api-automation.module';
+import { ScheduleModule } from '@nestjs/schedule';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
     }),
+    ScheduleModule.forRoot(),
 
     PrismaModule,
 
