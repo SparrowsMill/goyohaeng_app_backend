@@ -11,6 +11,7 @@ import { GapDataPeriodService } from './gap-data-period.service';
 import { NaverService } from '../naver/naver.service';
 import { GapScoreCalculationService } from './gap-score-calculation.service';
 import { TourService } from '../tour/tour.service';
+import { NaverBlogService } from '../naver-blog/naver-blog.service';
 
 @Injectable()
 export class ExternalApiAutomationService {
@@ -25,6 +26,9 @@ export class ExternalApiAutomationService {
   private tourIncrementalSyncRunning =
     false;
 
+  private naverBlogSyncRunning =
+    false;
+
   constructor(
     private readonly prisma: PrismaService,
 
@@ -37,6 +41,7 @@ export class ExternalApiAutomationService {
     private readonly gapScoreCalculationService: GapScoreCalculationService,
 
     private readonly tourService: TourService,
+    private readonly naverBlogService: NaverBlogService,
   ) {}
 
   async runGapScoreCalculation(
@@ -1217,6 +1222,299 @@ export class ExternalApiAutomationService {
     } catch (error) {
       this.logger.error(
         'Scheduled TourAPI incremental sync failed',
+        error instanceof Error
+          ? error.stack
+          : String(error),
+      );
+    }
+  }
+  private async isNaverBlogSyncDue() {
+    const source =
+      await this.getSource(
+        'NAVER_BLOG_SEARCH',
+      );
+
+    const latestSuccess =
+      await this.prisma.externalSyncRun.findFirst({
+        where: {
+          sourceId:
+            source.id,
+
+          endpoint:
+            'search/v1/blog:active-places',
+
+          syncType:
+            'INCREMENTAL',
+
+          status:
+            'SUCCESS',
+        },
+
+        orderBy: {
+          finishedAt:
+            'desc',
+        },
+
+        select: {
+          finishedAt:
+            true,
+        },
+      });
+
+    if (
+      !latestSuccess?.finishedAt
+    ) {
+      return true;
+    }
+
+    const fourteenDaysMs =
+      14 *
+      24 *
+      60 *
+      60 *
+      1000;
+
+    return (
+      Date.now() -
+        latestSuccess.finishedAt
+          .getTime()
+      >= fourteenDaysMs
+    );
+  }
+
+  async runNaverBlogSync(
+    force = false,
+    limit?: number,
+  ) {
+    if (
+      this.naverBlogSyncRunning
+    ) {
+      this.logger.warn(
+        'Naver Blog sync is already running. Skipping overlapping execution.',
+      );
+
+      return {
+        skipped: true,
+        reason:
+          'ALREADY_RUNNING',
+      };
+    }
+
+    if (!force) {
+      const due =
+        await this
+          .isNaverBlogSyncDue();
+
+      if (!due) {
+        this.logger.log(
+          'Naver Blog sync is not due yet. Skipping.',
+        );
+
+        return {
+          skipped: true,
+          reason:
+            'NOT_DUE',
+        };
+      }
+    }
+
+    this.naverBlogSyncRunning =
+      true;
+
+    let runId:
+      bigint | null =
+      null;
+
+    try {
+      const source =
+        await this.getSource(
+          'NAVER_BLOG_SEARCH',
+        );
+
+      const run =
+        await this.prisma.externalSyncRun.create({
+          data: {
+            sourceId:
+              source.id,
+
+            endpoint:
+              'search/v1/blog:active-places',
+
+            syncType:
+              'INCREMENTAL',
+
+            status:
+              'RUNNING',
+          },
+        });
+
+      runId =
+        run.id;
+
+      this.logger.log(
+        `Starting Naver Blog sync. ` +
+          `run=${run.id.toString()}` +
+          (limit
+            ? `, limit=${limit}`
+            : ''),
+      );
+
+      const result =
+        await this.naverBlogService
+          .syncActivePlaces(
+            limit,
+          );
+
+      /*
+       * 장소별 partial progress는 보존하지만,
+       * 한 곳이라도 API/DB 실패가 있으면
+       * run 전체를 SUCCESS로 거짓 기록하지 않는다.
+       */
+      const success =
+        result.failedCount ===
+        0;
+
+      await this.prisma.externalSyncRun.update({
+        where: {
+          id:
+            run.id,
+        },
+
+        data: {
+          status:
+            success
+              ? 'SUCCESS'
+              : 'FAILED',
+
+          finishedAt:
+            new Date(),
+
+          resultCount:
+            result.insertedCount,
+
+          errorMessage:
+            success
+              ? null
+              : (
+                  `${result.failedCount} place(s) failed. ` +
+                  result.failures
+                    .slice(0, 10)
+                    .map(
+                      (failure) =>
+                        `${failure.placeId}: ${failure.error}`,
+                    )
+                    .join(' | ')
+                ).slice(
+                  0,
+                  5000,
+                ),
+        },
+      });
+
+      if (!success) {
+        this.logger.warn(
+          `Naver Blog sync completed with failures. ` +
+            `run=${run.id.toString()}, ` +
+            `success=${result.successCount}, ` +
+            `failed=${result.failedCount}`,
+        );
+      } else {
+        this.logger.log(
+          `Naver Blog sync complete. ` +
+            `run=${run.id.toString()}, ` +
+            `places=${result.targetCount}, ` +
+            `inserted=${result.insertedCount}, ` +
+            `existing=${result.skippedExistingCount}, ` +
+            `deletedOld=${result.deletedOldCount}, ` +            
+            `fallback=${result.fallbackCount}, ` +
+            `stillEmpty=${result.stillEmptyCount}`,
+        );
+      }
+
+      return {
+        skipped:
+          false,
+
+        runId:
+          run.id,
+
+        status:
+          success
+            ? 'SUCCESS'
+            : 'FAILED',
+
+        result,
+      };
+    } catch (error) {
+      if (
+        runId !== null
+      ) {
+        const message =
+          error instanceof Error
+            ? error.message
+            : String(error);
+
+        await this.prisma.externalSyncRun.update({
+          where: {
+            id:
+              runId,
+          },
+
+          data: {
+            status:
+              'FAILED',
+
+            finishedAt:
+              new Date(),
+
+            errorMessage:
+              message.slice(
+                0,
+                5000,
+              ),
+          },
+        });
+      }
+
+      throw error;
+    } finally {
+      this.naverBlogSyncRunning =
+        false;
+    }
+  }
+
+  /**
+   * 매일 06:00 KST에 due 여부 확인.
+   * 마지막 SUCCESS 이후 14일이 지나야
+   * 실제 2077-place API 수집을 수행한다.
+   *
+   * 실패한 run은 SUCCESS가 아니므로
+   * 다음 날 다시 retry 가능하다.
+   */
+  @Cron(
+    '0 0 6 * * *',
+    {
+      timeZone:
+        'Asia/Seoul',
+    },
+  )
+  async scheduledNaverBlogSync() {
+    try {
+      const result =
+        await this.runNaverBlogSync(
+          false,
+        );
+
+      if (
+        result.skipped
+      ) {
+        this.logger.log(
+          `Scheduled Naver Blog sync skipped: ${result.reason}`,
+        );
+      }
+    } catch (error) {
+      this.logger.error(
+        'Scheduled Naver Blog sync failed',
         error instanceof Error
           ? error.stack
           : String(error),

@@ -9,6 +9,7 @@ import { GapDataPeriodService } from './gap-data-period.service';
 import { GapScoreCalculationService } from './gap-score-calculation.service';
 import { ExternalApiAutomationService } from './external-api-automation.service';
 import { TourModule } from '../tour/tour.module';
+import { NaverBlogModule } from '../naver-blog/naver-blog.module';
 
 @Module({
   imports: [
@@ -17,6 +18,7 @@ import { TourModule } from '../tour/tour.module';
     TourismDemandStrengthModule,
     NaverModule,
     TourModule,
+    NaverBlogModule,
   ],
 
   providers: [
