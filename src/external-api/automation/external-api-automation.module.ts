@@ -6,12 +6,14 @@ import { TourismDemandStrengthModule } from '../tourism-demand-strength/tourism-
 
 import { GapDataPeriodService } from './gap-data-period.service';
 import { ExternalApiAutomationService } from './external-api-automation.service';
+import { NaverModule } from '../naver/naver.module';
 
 @Module({
   imports: [
     RegionVisitorModule,
     TourismResourceDemandModule,
     TourismDemandStrengthModule,
+    NaverModule,
   ],
 
   providers: [

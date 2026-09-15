@@ -8,7 +8,7 @@ import { TourismResourceDemandService } from '../tourism-resource-demand/tourism
 import { TourismDemandStrengthService } from '../tourism-demand-strength/tourism-demand-strength.service';
 
 import { GapDataPeriodService } from './gap-data-period.service';
-
+import { NaverService } from '../naver/naver.service';
 
 @Injectable()
 export class ExternalApiAutomationService {
@@ -28,6 +28,8 @@ export class ExternalApiAutomationService {
     private readonly demandStrengthService: TourismDemandStrengthService,
 
     private readonly gapDataPeriodService: GapDataPeriodService,
+    private readonly naverService: NaverService,
+
   ) {}
 
   private async isGapRegionalMonthAlreadySynced(
@@ -98,6 +100,34 @@ export class ExternalApiAutomationService {
       resourceSuccess > 0 &&
       strengthSuccess > 0
     );
+  }
+
+  private async isGapNaverMonthAlreadySynced(
+    baseYm: string,
+  ): Promise<boolean> {
+    const source =
+      await this.getSource(
+        'NAVER_DATALAB',
+      );
+
+    const count =
+      await this.prisma.externalSyncRun.count({
+        where: {
+          sourceId:
+            source.id,
+
+          endpoint:
+            `month:${baseYm}`,
+
+          syncType:
+            'PERIODIC',
+
+          status:
+            'SUCCESS',
+        },
+      });
+
+    return count > 0;
   }
 
   private getMonthDateRange(
@@ -639,15 +669,79 @@ export class ExternalApiAutomationService {
     };
   }
 
-    /**
-   * 매월 18~22일 03:00 KST에 실행.
-   *
-   * 공공데이터 월간 갱신이 늦는 경우를 고려해
-   * 5일 동안 재확인한다.
-   *
-   * 이미 해당 공통월을 성공적으로 sync했다면
-   * 실제 데이터 수집은 하지 않는다.
-   */
+  async runGapNaverSync(
+    baseYm: string,
+  ) {
+    if (!/^\d{6}$/.test(baseYm)) {
+      throw new Error(
+        `Invalid GAP Naver baseYm: ${baseYm}`,
+      );
+    }
+
+    const source =
+      await this.getSource(
+        'NAVER_DATALAB',
+      );
+
+    const run =
+      await this.startRun(
+        source.id,
+        `month:${baseYm}`,
+      );
+
+    try {
+      /*
+      * 모든 외부 API 호출은 transaction 전에 끝낸다.
+      *
+      * prepare 단계에서는 DB source data를 변경하지 않는다.
+      */
+      const prepared =
+        await this.naverService.prepareTourPlaceSearchTrends(
+          baseYm,
+        );
+
+      /*
+      * API 전체 수집/검증 성공 이후에만
+      * normalized replacement + 새로운 RAW insert.
+      */
+      const result =
+        await this.prisma.$transaction(
+          async (tx) =>
+            this.naverService.applyPreparedTourPlaceSearchTrends(
+              prepared,
+              tx,
+            ),
+          {
+            maxWait:
+              10_000,
+
+            timeout:
+              180_000,
+          },
+        );
+
+      await this.completeRun(
+        run.id,
+        result.interestInsertedCount,
+      );
+
+      return {
+        commonMonth:
+          baseYm,
+
+        ...result,
+      };
+    } catch (error) {
+      await this.failRun(
+        run.id,
+        error,
+      );
+
+      throw error;
+    }
+  }
+
+
   @Cron(
     '0 0 3 18-22 * *',
     {
@@ -660,7 +754,7 @@ export class ExternalApiAutomationService {
       this.gapRegionalSyncRunning
     ) {
       this.logger.warn(
-        'GAP regional sync is already running. Skipping overlapping execution.',
+        'GAP pipeline is already running. Skipping overlapping execution.',
       );
 
       return;
@@ -680,31 +774,79 @@ export class ExternalApiAutomationService {
       const baseYm =
         period.commonMonth;
 
-      const alreadySynced =
+      /*
+      * 1. Regional
+      */
+      const regionalAlreadySynced =
         await this.isGapRegionalMonthAlreadySynced(
           baseYm,
         );
 
-      if (alreadySynced) {
+      if (
+        regionalAlreadySynced
+      ) {
         this.logger.log(
-          `GAP regional month ${baseYm} already synced successfully. Skipping.`,
+          `GAP regional month ${baseYm} already synced successfully. Skipping regional sync.`,
+        );
+      } else {
+        this.logger.log(
+          `Starting GAP regional sync for ${baseYm}`,
         );
 
-        return;
+        const regionalResult =
+          await this.runGapRegionalSync(
+            period,
+          );
+
+        this.logger.log(
+          `GAP regional sync completed successfully: ${regionalResult.commonMonth}`,
+        );
       }
 
-      this.logger.log(
-        `Starting GAP regional sync for ${baseYm}`,
-      );
-
-      const result =
-        await this.runGapRegionalSync(
-          period,
+      /*
+      * 2. Naver DataLab
+      *
+      * regional이 이미 이전 실행에서 성공했더라도
+      * 여기서 return하지 않는다.
+      *
+      * 동일 commonMonth를 끝점으로 하는 Naver window가
+      * 성공했는지 별도로 확인한다.
+      */
+      const naverAlreadySynced =
+        await this.isGapNaverMonthAlreadySynced(
+          baseYm,
         );
 
-      this.logger.log(
-        `GAP regional sync completed successfully: ${result.commonMonth}`,
-      );
+      if (
+        naverAlreadySynced
+      ) {
+        this.logger.log(
+          `GAP Naver month ${baseYm} already synced successfully. Skipping Naver sync.`,
+        );
+      } else {
+        this.logger.log(
+          `Starting GAP Naver sync ending at ${baseYm}`,
+        );
+
+        const naverResult =
+          await this.runGapNaverSync(
+            baseYm,
+          );
+
+        this.logger.log(
+          `GAP Naver sync completed successfully: ` +
+            `${naverResult.startDate} ~ ${naverResult.endDate}`,
+        );
+      }
+
+      /*
+      * NEXT:
+      *
+      * GAP score calculation은 여기 뒤에 붙인다.
+      *
+      * regional + Naver가 모두 SUCCESS라는 것이
+      * 검증된 이후에만 실행하도록 한다.
+      */
     } catch (error) {
       const message =
         error instanceof Error
@@ -713,7 +855,7 @@ export class ExternalApiAutomationService {
           : String(error);
 
       this.logger.error(
-        'Scheduled GAP regional sync failed',
+        'Scheduled GAP pipeline failed',
         message,
       );
     } finally {
@@ -721,4 +863,5 @@ export class ExternalApiAutomationService {
         false;
     }
   }
+
 }
