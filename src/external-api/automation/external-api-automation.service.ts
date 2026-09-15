@@ -10,6 +10,7 @@ import { TourismDemandStrengthService } from '../tourism-demand-strength/tourism
 import { GapDataPeriodService } from './gap-data-period.service';
 import { NaverService } from '../naver/naver.service';
 import { GapScoreCalculationService } from './gap-score-calculation.service';
+import { TourService } from '../tour/tour.service';
 
 @Injectable()
 export class ExternalApiAutomationService {
@@ -19,6 +20,9 @@ export class ExternalApiAutomationService {
     );
 
   private gapRegionalSyncRunning =
+    false;
+
+  private tourIncrementalSyncRunning =
     false;
 
   constructor(
@@ -32,6 +36,7 @@ export class ExternalApiAutomationService {
     private readonly naverService: NaverService,
     private readonly gapScoreCalculationService: GapScoreCalculationService,
 
+    private readonly tourService: TourService,
   ) {}
 
   async runGapScoreCalculation(
@@ -937,6 +942,285 @@ export class ExternalApiAutomationService {
     } finally {
       this.gapRegionalSyncRunning =
         false;
+    }
+  }
+
+  private async isTourIncrementalSyncDue() {
+    const source =
+      await this.getSource(
+        'TOUR_API',
+      );
+
+    const latestSuccess =
+      await this.prisma.externalSyncRun.findFirst({
+        where: {
+          sourceId:
+            source.id,
+
+          endpoint:
+            'areaBasedSyncList2:seoul',
+
+          syncType:
+            'INCREMENTAL',
+
+          status:
+            'SUCCESS',
+        },
+
+        orderBy: {
+          finishedAt:
+            'desc',
+        },
+
+        select: {
+          finishedAt:
+            true,
+        },
+      });
+
+    if (
+      !latestSuccess?.finishedAt
+    ) {
+      return true;
+    }
+
+    const fourteenDaysMs =
+      14 *
+      24 *
+      60 *
+      60 *
+      1000;
+
+    return (
+      Date.now() -
+        latestSuccess.finishedAt.getTime()
+      >= fourteenDaysMs
+    );
+  }
+
+  /**
+   * 서울 TourAPI 증분 동기화.
+   *
+   * 1. areaBasedSyncList2 변경분 수집/반영
+   * 2. 변경된 기존 ACTIVE 장소의
+   *    detailCommon2/detailIntro2 refresh
+   * 3. 전체 단계 성공 시 sync run SUCCESS
+   *
+   * 신규/unmapped TourAPI contentId는
+   * Place로 자동 생성하지 않는다.
+   */
+  async runTourIncrementalSync(
+    force = false,
+  ) {
+    if (
+      this.tourIncrementalSyncRunning
+    ) {
+      this.logger.warn(
+        'TourAPI incremental sync is already running. Skipping overlapping execution.',
+      );
+
+      return {
+        skipped: true,
+        reason:
+          'ALREADY_RUNNING',
+      };
+    }
+
+    if (!force) {
+      const due =
+        await this.isTourIncrementalSyncDue();
+
+      if (!due) {
+        this.logger.log(
+          'TourAPI incremental sync is not due yet. Skipping.',
+        );
+
+        return {
+          skipped: true,
+          reason:
+            'NOT_DUE',
+        };
+      }
+    }
+
+    this.tourIncrementalSyncRunning =
+      true;
+
+    let runId:
+      bigint | null =
+      null;
+
+    try {
+      const source =
+        await this.getSource(
+          'TOUR_API',
+        );
+
+      const run =
+        await this.prisma.externalSyncRun.create({
+          data: {
+            sourceId:
+              source.id,
+
+            endpoint:
+              'areaBasedSyncList2:seoul',
+
+            syncType:
+              'INCREMENTAL',
+
+            status:
+              'RUNNING',
+          },
+        });
+
+      runId =
+        run.id;
+
+      this.logger.log(
+        `Starting TourAPI incremental sync. run=${run.id.toString()}`,
+      );
+
+      /*
+       * Stage 1:
+       * 변경 목록 + RAW + 기존 장소 LCLS.
+       *
+       * 내부적으로 API prepare 후
+       * transaction apply.
+       */
+      const incremental =
+        await this.tourService
+          .syncSeoulIncremental();
+
+      /*
+       * Stage 2:
+       * 변경된 기존 ACTIVE 장소의
+       * detailCommon/detailIntro refresh.
+       *
+       * 이미 최신이면 targetCount=0.
+       */
+      const details =
+        await this.tourService
+          .refreshSeoulIncrementalDetails();
+
+      await this.prisma.externalSyncRun.update({
+        where: {
+          id:
+            run.id,
+        },
+
+        data: {
+          status:
+            'SUCCESS',
+
+          finishedAt:
+            new Date(),
+
+          /*
+           * 이번 증분 endpoint에서
+           * 관측한 content item 수.
+           */
+          resultCount:
+            incremental.fetchedCount,
+
+          errorMessage:
+            null,
+        },
+      });
+
+      this.logger.log(
+        `TourAPI incremental sync complete. ` +
+          `run=${run.id.toString()}, ` +
+          `fetched=${incremental.fetchedCount}, ` +
+          `active=${incremental.activeCount}, ` +
+          `inactive=${incremental.inactiveCount}, ` +
+          `unmappedActive=${incremental.unmappedActiveCount}, ` +
+          `detailCommon=${details.commonInsertedCount}, ` +
+          `detailIntro=${details.introInsertedCount}`,
+      );
+
+      return {
+        skipped:
+          false,
+
+        runId:
+          run.id,
+
+        incremental,
+        details,
+      };
+    } catch (error) {
+      if (runId !== null) {
+        const message =
+          error instanceof Error
+            ? error.message
+            : String(error);
+
+        await this.prisma.externalSyncRun.update({
+          where: {
+            id:
+              runId,
+          },
+
+          data: {
+            status:
+              'FAILED',
+
+            finishedAt:
+              new Date(),
+
+            errorMessage:
+              message.slice(
+                0,
+                5000,
+              ),
+          },
+        });
+      }
+
+      throw error;
+    } finally {
+      this.tourIncrementalSyncRunning =
+        false;
+    }
+  }
+
+  /**
+   * 매일 05:00 KST에 확인하되,
+   * 실제 TourAPI sync는 마지막 성공 후
+   * 14일 이상 지났을 때만 실행한다.
+   *
+   * 이렇게 하면 단순 1일/15일 cron보다
+   * 실제 BIWEEKLY 간격을 유지하면서,
+   * 실패한 경우 다음 날 자동 재시도할 수 있다.
+   */
+  @Cron(
+    '0 0 5 * * *',
+    {
+      timeZone:
+        'Asia/Seoul',
+    },
+  )
+  async scheduledTourIncrementalSync() {
+    try {
+      const result =
+        await this.runTourIncrementalSync(
+          false,
+        );
+
+      if (
+        result.skipped
+      ) {
+        this.logger.log(
+          `Scheduled TourAPI sync skipped: ${result.reason}`,
+        );
+      }
+    } catch (error) {
+      this.logger.error(
+        'Scheduled TourAPI incremental sync failed',
+        error instanceof Error
+          ? error.stack
+          : String(error),
+      );
     }
   }
 
