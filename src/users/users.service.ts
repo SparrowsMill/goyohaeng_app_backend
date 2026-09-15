@@ -7,8 +7,14 @@ import * as bcrypt from 'bcrypt';
 import { PrismaService } from '../prisma/prisma.service';
 
 import {
+  UploadsService,
+} from '../uploads/uploads.service';
+
+import {
   XP_PER_LEVEL,
 } from './user-xp.util';
+
+
 
 export interface User {
   id: number;
@@ -73,8 +79,11 @@ interface UpdateUserData {
 @Injectable()
 export class UsersService {
   constructor(
-    private readonly prisma: PrismaService,
-  ) {}
+  private readonly prisma: PrismaService,
+
+  private readonly uploadsService:
+    UploadsService,
+) {}
 
   async findByUsername(
     username: string,
@@ -938,35 +947,310 @@ async getMyFoods(
     return true;
   }
 
-  async softDelete(
-    id: number,
-  ): Promise<boolean> {
-    const user =
-      await this.findById(id);
+  async deleteAccount(
+  id: number,
+): Promise<boolean> {
+  const user =
+    await this.findById(id);
 
-    if (!user) {
-      return false;
-    }
+  if (!user) {
+    return false;
+  }
 
-    await this.prisma.user.update({
+  const userId =
+    BigInt(id);
+
+  /*
+   * 1. DB 데이터를 지우기 전에
+   * 사용자가 발자국에 등록한
+   * 이미지 URL을 확보한다.
+   *
+   * PostImage는 Post 삭제 시
+   * CASCADE로 함께 삭제되므로
+   * 반드시 먼저 URL을 가져와야 한다.
+   */
+  const postImages =
+    await this.prisma.postImage.findMany({
       where: {
-        id: BigInt(id),
+        post: {
+          userId,
+        },
       },
 
-      data: {
-        status:
-          'DELETED',
-
-        deletedAt:
-          new Date(),
-
-        updatedAt:
-          new Date(),
+      select: {
+        imageUrl: true,
       },
     });
 
-    return true;
+  /*
+   * 같은 URL이 중복되어 있을 경우
+   * Cloudinary 삭제를 여러 번 호출하지 않는다.
+   */
+  const imageUrls =
+    [
+      ...new Set(
+        postImages.map(
+          (image) =>
+            image.imageUrl,
+        ),
+      ),
+    ];
+
+  /*
+   * 2. Cloudinary 실제 이미지 삭제
+   *
+   * DB를 먼저 삭제하면
+   * 이미지 URL을 잃어버려
+   * Cloudinary 파일을 다시 찾기 어려우므로
+   * Cloudinary부터 정리한다.
+   *
+   * Cloudinary 삭제가 실패하면
+   * 예외가 발생하고 DB 회원 삭제는 진행되지 않는다.
+   */
+  for (
+    const imageUrl
+    of imageUrls
+  ) {
+    await this.uploadsService
+      .deleteImageByUrl(
+        imageUrl,
+      );
   }
+
+  /*
+   * 3. 사용자 관련 DB 데이터 삭제
+   *
+   * 하나라도 실패하면
+   * 전체 DB 변경사항이 rollback 되도록
+   * transaction으로 처리한다.
+   */
+  await this.prisma.$transaction(
+    async (tx) => {
+      /*
+       * -------------------------------------------------
+       * 사용자 삭제 전에
+       * 다른 서비스 데이터에 남아 있는
+       * nullable 사용자 FK를 제거한다.
+       *
+       * 장소 자체의 운영정보나 이미지는
+       * 서비스 데이터이므로 삭제하지 않고
+       * "누가 수정했는지" 연결만 제거한다.
+       * -------------------------------------------------
+       */
+
+      await tx.placeImage.updateMany({
+        where: {
+          uploadedByUserId:
+            userId,
+        },
+
+        data: {
+          uploadedByUserId:
+            null,
+        },
+      });
+
+      await tx.businessAccount.updateMany({
+        where: {
+          reviewedByUserId:
+            userId,
+        },
+
+        data: {
+          reviewedByUserId:
+            null,
+        },
+      });
+
+      await tx.placeOperatingHour.updateMany({
+        where: {
+          updatedByUserId:
+            userId,
+        },
+
+        data: {
+          updatedByUserId:
+            null,
+        },
+      });
+
+      await tx.placeSpecialHour.updateMany({
+        where: {
+          updatedByUserId:
+            userId,
+        },
+
+        data: {
+          updatedByUserId:
+            null,
+        },
+      });
+
+      await tx.placeBenefit.updateMany({
+        where: {
+          createdByUserId:
+            userId,
+        },
+
+        data: {
+          createdByUserId:
+            null,
+        },
+      });
+
+      await tx.placeVerificationSetting.updateMany({
+        where: {
+          updatedByUserId:
+            userId,
+        },
+
+        data: {
+          updatedByUserId:
+            null,
+        },
+      });
+
+      await tx.placeIssueReport.updateMany({
+        where: {
+          resolvedByUserId:
+            userId,
+        },
+
+        data: {
+          resolvedByUserId:
+            null,
+        },
+      });
+
+      /*
+       * -------------------------------------------------
+       * 자식 데이터 삭제
+       *
+       * FK 관계 때문에 순서가 중요하다.
+       * -------------------------------------------------
+       */
+
+      /*
+       * IngredientTransaction은
+       * User뿐 아니라
+       * VisitVerification,
+       * UserFood도 참조하므로
+       * 가장 먼저 삭제한다.
+       */
+      await tx.ingredientTransaction.deleteMany({
+        where: {
+          userId,
+        },
+      });
+
+      /*
+       * 발자국 삭제
+       *
+       * PostImage는 Post에
+       * onDelete: Cascade라 같이 삭제된다.
+       */
+      await tx.post.deleteMany({
+        where: {
+          userId,
+        },
+      });
+
+      /*
+       * 제작한 음식 삭제
+       *
+       * UserFoodSpecialIngredient는
+       * UserFood에 onDelete: Cascade라
+       * 함께 삭제된다.
+       */
+      await tx.userFood.deleteMany({
+        where: {
+          userId,
+        },
+      });
+
+      /*
+       * 방문 인증 이력 삭제
+       */
+      await tx.visitVerification.deleteMany({
+        where: {
+          userId,
+        },
+      });
+
+      /*
+       * 사용자가 제보한 장소 이슈 삭제
+       */
+      await tx.placeIssueReport.deleteMany({
+        where: {
+          reporterUserId:
+            userId,
+        },
+      });
+
+      /*
+       * 사용자 개인 분석 이벤트 삭제
+       */
+      await tx.analyticsEvent.deleteMany({
+        where: {
+          userId,
+        },
+      });
+
+      /*
+       * 재료 보유 정보
+       */
+      await tx.userIngredient.deleteMany({
+        where: {
+          userId,
+        },
+      });
+
+      /*
+       * 즐겨찾기
+       */
+      await tx.placeFavorite.deleteMany({
+        where: {
+          userId,
+        },
+      });
+
+      /*
+       * 소셜 로그인 정보
+       */
+      await tx.userSocialAccount.deleteMany({
+        where: {
+          userId,
+        },
+      });
+
+      /*
+       * 장소 관리자 계정이 있는 사용자라면
+       * BusinessAccount도 삭제한다.
+       *
+       * 일반 사용자는 결과가 0건이므로
+       * 문제없이 넘어간다.
+       */
+      await tx.businessAccount.deleteMany({
+        where: {
+          userId,
+        },
+      });
+
+      /*
+       * -------------------------------------------------
+       * 마지막으로 User 자체 실제 삭제
+       * -------------------------------------------------
+       */
+      await tx.user.delete({
+        where: {
+          id: userId,
+        },
+      });
+    },
+  );
+
+  return true;
+}
 
   /*
    * 한국 시간 기준

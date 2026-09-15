@@ -5,6 +5,10 @@ import { PrismaModule } from '../prisma/prisma.module';
 import { UsersController } from './users.controller';
 import { UsersService } from './users.service';
 
+import {
+  UploadsModule,
+} from '../uploads/uploads.module';
+
 @Module({
   imports: [
     PrismaModule,
@@ -12,6 +16,8 @@ import { UsersService } from './users.service';
     PassportModule.register({
       defaultStrategy: 'jwt',
     }),
+
+    UploadsModule,
   ],
 
   controllers: [

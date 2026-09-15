@@ -122,4 +122,118 @@ export class UploadsService {
       );
     }
   }
+
+  async deleteImageByUrl(
+  imageUrl: string,
+): Promise<void> {
+  const publicId =
+    this.extractPublicIdFromUrl(
+      imageUrl,
+    );
+
+  if (!publicId) {
+    console.warn(
+      'Cloudinary publicId를 추출할 수 없는 URL:',
+      imageUrl,
+    );
+
+    return;
+  }
+
+  try {
+    await cloudinary.uploader.destroy(
+      publicId,
+      {
+        resource_type: 'image',
+        invalidate: true,
+      },
+    );
+  } catch (error) {
+    console.error(
+      'Cloudinary image delete error:',
+      error,
+    );
+
+    throw new InternalServerErrorException(
+      '이미지 삭제 중 오류가 발생했습니다.',
+    );
+  }
+}
+
+private extractPublicIdFromUrl(
+  imageUrl: string,
+): string | null {
+  try {
+    const url =
+      new URL(imageUrl);
+
+    /*
+     * Cloudinary 공식 CDN URL만 허용
+     */
+    if (
+      url.hostname !==
+      'res.cloudinary.com'
+    ) {
+      return null;
+    }
+
+    const cloudName =
+      process.env
+        .CLOUDINARY_CLOUD_NAME;
+
+    if (!cloudName) {
+      return null;
+    }
+
+    /*
+     * 우리 Cloudinary 계정에
+     * 올라간 이미지인지 확인
+     *
+     * 예:
+     * /my-cloud/image/upload/...
+     */
+    const marker =
+      `/${cloudName}/image/upload/`;
+
+    if (
+      !url.pathname.startsWith(
+        marker,
+      )
+    ) {
+      return null;
+    }
+
+    let path =
+      url.pathname.slice(
+        marker.length,
+      );
+
+    /*
+     * Cloudinary version 제거
+     *
+     * v1789388583/
+     */
+    path = path.replace(
+      /^v\d+\//,
+      '',
+    );
+
+    /*
+     * 확장자 제거
+     *
+     * goyohaeng/records/abc.png
+     * ->
+     * goyohaeng/records/abc
+     */
+    const publicId =
+      path.replace(
+        /\.[^/.]+$/,
+        '',
+      );
+
+    return publicId || null;
+  } catch {
+    return null;
+  }
+}
 }

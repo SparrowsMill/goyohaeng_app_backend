@@ -414,7 +414,7 @@ async getMyFoods(
     },
   ) {
     const deleted =
-      await this.usersService.softDelete(
+      await this.usersService.deleteAccount(
         req.user.userId,
       );
 

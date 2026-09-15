@@ -28,5 +28,8 @@ import {
   providers: [
     UploadsService,
   ],
+  exports: [
+    UploadsService,
+  ],
 })
 export class UploadsModule {}
