@@ -9,6 +9,7 @@ import { TourismDemandStrengthService } from '../tourism-demand-strength/tourism
 
 import { GapDataPeriodService } from './gap-data-period.service';
 import { NaverService } from '../naver/naver.service';
+import { GapScoreCalculationService } from './gap-score-calculation.service';
 
 @Injectable()
 export class ExternalApiAutomationService {
@@ -29,8 +30,59 @@ export class ExternalApiAutomationService {
 
     private readonly gapDataPeriodService: GapDataPeriodService,
     private readonly naverService: NaverService,
+    private readonly gapScoreCalculationService: GapScoreCalculationService,
 
   ) {}
+
+  async runGapScoreCalculation(
+    baseYm: string,
+  ) {
+    if (!/^\d{6}$/.test(baseYm)) {
+      throw new Error(
+        `invalid GAP month: ${baseYm}`,
+      );
+    }
+
+    const regionalReady =
+      await this.isGapRegionalMonthAlreadySynced(
+        baseYm,
+      );
+
+    if (!regionalReady) {
+      throw new Error(
+        `GAP regional sync is not complete: ${baseYm}`,
+      );
+    }
+
+    const naverReady =
+      await this.isGapNaverMonthAlreadySynced(
+        baseYm,
+      );
+
+    if (!naverReady) {
+      throw new Error(
+        `GAP Naver sync is not complete: ${baseYm}`,
+      );
+    }
+
+    const result =
+      await this.gapScoreCalculationService
+        .calculateAndStoreGapScores(
+          baseYm,
+        );
+
+    this.logger.log(
+      result.skipped
+        ? `GAP score already calculated: ${baseYm}, ` +
+          `run=${result.runId.toString()}, ` +
+          `scores=${result.scoreCount}`
+        : `GAP score calculated: ${baseYm}, ` +
+          `run=${result.runId.toString()}, ` +
+          `scores=${result.scoreCount}`,
+    );
+
+    return result;
+  }
 
   private async isGapRegionalMonthAlreadySynced(
     baseYm: string,
@@ -840,13 +892,37 @@ export class ExternalApiAutomationService {
       }
 
       /*
-      * NEXT:
+      * 3. GAP Score
       *
-      * GAP score calculation은 여기 뒤에 붙인다.
+      * runGapScoreCalculation() 내부에서
+      * regional + Naver SUCCESS를 다시 검증한다.
       *
-      * regional + Naver가 모두 SUCCESS라는 것이
-      * 검증된 이후에만 실행하도록 한다.
+      * 동일한 완성 run이 이미 존재하면
+      * 새 history를 만들지 않고 skip한다.
       */
+      this.logger.log(
+        `Starting GAP score calculation for ${baseYm}`,
+      );
+
+      const gapResult =
+        await this.runGapScoreCalculation(
+          baseYm,
+        );
+
+      if (gapResult.skipped) {
+        this.logger.log(
+          `GAP score for ${baseYm} already exists. ` +
+            `Skipping calculation: ` +
+            `run=${gapResult.runId.toString()}, ` +
+            `scores=${gapResult.scoreCount}`,
+        );
+      } else {
+        this.logger.log(
+          `GAP score calculation completed successfully: ` +
+            `run=${gapResult.runId.toString()}, ` +
+            `scores=${gapResult.scoreCount}`,
+        );
+      }
     } catch (error) {
       const message =
         error instanceof Error
