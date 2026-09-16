@@ -197,19 +197,25 @@ async findAll(
   }
 
   const where = {
-    status: 'ACTIVE',
+  status: 'ACTIVE',
 
-    ...(regionId !== undefined && {
-      districtRegionId:
-        BigInt(regionId),
-    }),
+  coordinateValidation: {
+    is: {
+      status: 'VALID',
+    },
+  },
 
-    ...(categoryIds !== undefined && {
-      categoryId: {
-        in: categoryIds,
-      },
-    }),
-  };
+  ...(regionId !== undefined && {
+    districtRegionId:
+      BigInt(regionId),
+  }),
+
+  ...(categoryIds !== undefined && {
+    categoryId: {
+      in: categoryIds,
+    },
+  }),
+};
 
   const skip =
     (page - 1) * limit;
@@ -451,9 +457,15 @@ async findAll(
     await Promise.all([
       this.prisma.place.findFirst({
         where: {
-          id: BigInt(id),
-          status: 'ACTIVE',
-        },
+  id: BigInt(id),
+  status: 'ACTIVE',
+
+  coordinateValidation: {
+    is: {
+      status: 'VALID',
+    },
+  },
+},
 
         include: {
           images: {
@@ -1527,9 +1539,15 @@ private isOpenDuring24Hours(
   const place =
     await this.prisma.place.findFirst({
       where: {
-        id: BigInt(placeId),
-        status: 'ACTIVE',
-      },
+  id: BigInt(placeId),
+  status: 'ACTIVE',
+
+  coordinateValidation: {
+    is: {
+      status: 'VALID',
+    },
+  },
+},
 
       select: {
         id: true,
@@ -1685,9 +1703,15 @@ async rewardTrendFirstView(
   const place =
     await this.prisma.place.findFirst({
       where: {
-        id: BigInt(placeId),
-        status: 'ACTIVE',
-      },
+  id: BigInt(placeId),
+  status: 'ACTIVE',
+
+  coordinateValidation: {
+    is: {
+      status: 'VALID',
+    },
+  },
+},
       select: {
         id: true,
       },
@@ -1844,9 +1868,15 @@ async getGapScore(
   const place =
     await this.prisma.place.findFirst({
       where: {
-        id: BigInt(placeId),
-        status: 'ACTIVE',
-      },
+  id: BigInt(placeId),
+  status: 'ACTIVE',
+
+  coordinateValidation: {
+    is: {
+      status: 'VALID',
+    },
+  },
+},
 
       select: {
         id: true,
@@ -1992,14 +2022,20 @@ async getGapScore(
           runId: latestRun.id,
 
           place: {
-            status: 'ACTIVE',
+  status: 'ACTIVE',
 
-            districtRegionId:
-              place.districtRegionId,
+  coordinateValidation: {
+    is: {
+      status: 'VALID',
+    },
+  },
 
-            categoryId:
-              place.categoryId,
-          },
+  districtRegionId:
+    place.districtRegionId,
+
+  categoryId:
+    place.categoryId,
+},
         },
 
         _avg: {
@@ -2123,9 +2159,15 @@ async getGapHistory(
   const place =
     await this.prisma.place.findFirst({
       where: {
-        id: BigInt(placeId),
-        status: 'ACTIVE',
-      },
+  id: BigInt(placeId),
+  status: 'ACTIVE',
+
+  coordinateValidation: {
+    is: {
+      status: 'VALID',
+    },
+  },
+},
 
       select: {
         id: true,
@@ -2300,23 +2342,29 @@ async getGapRankings(
    * 위에서 선택한 단 하나의 production run만 사용
    */
   const where = {
-    runId: latestRun.id,
+  runId: latestRun.id,
 
-    place: {
-      status: 'ACTIVE',
+  place: {
+    status: 'ACTIVE',
 
-      ...(regionId !== undefined && {
-        districtRegionId:
-          BigInt(regionId),
-      }),
-
-      ...(categoryIds !== undefined && {
-        categoryId: {
-          in: categoryIds,
-        },
-      }),
+    coordinateValidation: {
+      is: {
+        status: 'VALID',
+      },
     },
-  };
+
+    ...(regionId !== undefined && {
+      districtRegionId:
+        BigInt(regionId),
+    }),
+
+    ...(categoryIds !== undefined && {
+      categoryId: {
+        in: categoryIds,
+      },
+    }),
+  },
+};
 
   const [scores, total] =
     await Promise.all([
@@ -2565,9 +2613,15 @@ async getRecommendations(
   const place =
     await this.prisma.place.findFirst({
       where: {
-        id: BigInt(placeId),
-        status: 'ACTIVE',
-      },
+  id: BigInt(placeId),
+  status: 'ACTIVE',
+
+  coordinateValidation: {
+    is: {
+      status: 'VALID',
+    },
+  },
+},
 
       select: {
         id: true,
@@ -2721,14 +2775,20 @@ async getRecommendations(
         },
 
         place: {
-          status: 'ACTIVE',
+  status: 'ACTIVE',
 
-          districtRegionId:
-            place.districtRegionId,
+  coordinateValidation: {
+    is: {
+      status: 'VALID',
+    },
+  },
 
-          categoryId:
-            place.categoryId,
-        },
+  districtRegionId:
+    place.districtRegionId,
+
+  categoryId:
+    place.categoryId,
+},
       },
 
       select: {
@@ -3038,31 +3098,37 @@ async getGapMap(
         runId: latestRun.id,
 
         place: {
-          status: 'ACTIVE',
+  status: 'ACTIVE',
 
-          /*
-           * 지도 마커를 찍으려면
-           * 좌표가 반드시 존재해야 함
-           */
-          latitude: {
-            not: null,
-          },
+  coordinateValidation: {
+    is: {
+      status: 'VALID',
+    },
+  },
 
-          longitude: {
-            not: null,
-          },
+  /*
+   * 지도 마커를 찍으려면
+   * 좌표가 반드시 존재해야 함
+   */
+  latitude: {
+    not: null,
+  },
 
-          ...(regionId !== undefined && {
-            districtRegionId:
-              BigInt(regionId),
-          }),
+  longitude: {
+    not: null,
+  },
 
-          ...(categoryIds !== undefined && {
-            categoryId: {
-              in: categoryIds,
-            },
-          }),
-        },
+  ...(regionId !== undefined && {
+    districtRegionId:
+      BigInt(regionId),
+  }),
+
+  ...(categoryIds !== undefined && {
+    categoryId: {
+      in: categoryIds,
+    },
+  }),
+},
       },
 
       orderBy: {
@@ -3256,9 +3322,15 @@ async addFavorite(
   const place =
     await this.prisma.place.findFirst({
       where: {
-        id: BigInt(placeId),
-        status: 'ACTIVE',
-      },
+  id: BigInt(placeId),
+  status: 'ACTIVE',
+
+  coordinateValidation: {
+    is: {
+      status: 'VALID',
+    },
+  },
+},
       select: {
         id: true,
       },
@@ -3342,9 +3414,15 @@ async removeFavorite(
   const place =
     await this.prisma.place.findFirst({
       where: {
-        id: BigInt(placeId),
-        status: 'ACTIVE',
-      },
+  id: BigInt(placeId),
+  status: 'ACTIVE',
+
+  coordinateValidation: {
+    is: {
+      status: 'VALID',
+    },
+  },
+},
       select: {
         id: true,
       },
