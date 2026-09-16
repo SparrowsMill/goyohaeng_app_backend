@@ -158,7 +158,7 @@ export class TourismDemandStrengthService {
     );
   }
 
-  private async monthHasData(
+  async monthHasData(
     baseYm: string,
   ): Promise<boolean> {
     const data = await this.request(
@@ -392,105 +392,492 @@ export class TourismDemandStrengthService {
     return metricRows.length;
   }
 
-  async syncLatestSeoulStrength() {
-    const source = await this.getSource();
+  /**
+   * API 호출 + 메모리 준비만 수행.
+   * DB는 변경하지 않는다.
+   */
+  async prepareSeoulStrength(
+    baseYm: string,
+  ) {
+    if (!/^\d{6}$/.test(baseYm)) {
+      throw new Error(
+        'baseYm must be YYYYMM',
+      );
+    }
 
-    const baseYm =
-      await this.findLatestAvailableMonth();
+    const available =
+      await this.monthHasData(baseYm);
 
-    await this.prisma.rawTourismDemandStrengthApi.deleteMany({
-      where: {
-        sourceId: source.id,
-        baseMonth: baseYm,
-      },
-    });
+    if (!available) {
+      throw new Error(
+        `Tourism Demand Strength data is not available for ${baseYm}`,
+      );
+    }
+
+    const source =
+      await this.getSource();
+
+    const regionCodes =
+      await this.prisma.regionExternalCode.findMany({
+        where: {
+          sourceId:
+            source.id,
+
+          codeType:
+            'SIGUNGU_CODE',
+        },
+
+        select: {
+          regionId:
+            true,
+
+          externalCode:
+            true,
+        },
+      });
+
+    const regionByCode =
+      new Map<string, bigint>();
+
+    for (const row of regionCodes) {
+      regionByCode.set(
+        row.externalCode,
+        row.regionId,
+      );
+    }
+
+    const rawRows: any[] = [];
+    const metricRows: any[] = [];
 
     let staySaved = 0;
     let expenditureSaved = 0;
     let apiCallCount = 0;
+    let stayNoData = 0;
+    let expenditureNoData = 0;
 
+    /*
+     * 1. 체류 강도
+     */
     for (const district of this.seoulDistricts) {
+      const regionId =
+        regionByCode.get(
+          district.code,
+        );
+
+      if (!regionId) {
+        throw new Error(
+          `Region mapping not found: ${district.code}`,
+        );
+      }
+
       for (const indicator of this.stayIndicators) {
-        const result = await this.fetchStay(
-          baseYm,
-          district,
-          indicator,
-        );
+        const result =
+          await this.fetchStay(
+            baseYm,
+            district,
+            indicator,
+          );
 
         apiCallCount++;
 
         if (result.items.length === 0) {
+          stayNoData++;
           continue;
         }
 
-        await this.prisma.rawTourismDemandStrengthApi.createMany({
-          data: result.items.map((item) => ({
-            sourceId: source.id,
-            endpoint: 'areaTarSjrnDsList',
-            areaCode: String(item.areaCd ?? '11'),
-            signguCode: String(
-              item.signguCd ?? district.code,
-            ),
-            baseMonth: String(item.baseYm ?? baseYm),
-            requestPayload: result.requestPayload,
-            responsePayload: item,
-          })),
-        });
+        for (const item of result.items) {
+          const itemBaseYm =
+            String(
+              item.baseYm ??
+                baseYm,
+            );
 
-        staySaved += result.items.length;
+          const signguCode =
+            String(
+              item.signguCd ??
+                district.code,
+            );
+
+          if (itemBaseYm !== baseYm) {
+            throw new Error(
+              `DEMAND_STRENGTH returned unexpected baseYm: ` +
+                `${itemBaseYm} (requested ${baseYm})`,
+            );
+          }
+
+          if (signguCode !== district.code) {
+            throw new Error(
+              `DEMAND_STRENGTH returned unexpected district: ` +
+                `${signguCode} (requested ${district.code})`,
+            );
+          }
+
+          if (
+            String(
+              item.tarSjrnDsIxCd ?? '',
+            ) !== indicator.code
+          ) {
+            throw new Error(
+              `DEMAND_STRENGTH returned unexpected stay indicator: ` +
+                `${item.tarSjrnDsIxCd}`,
+            );
+          }
+
+          if (
+            item.tarSjrnDsIxVal == null
+          ) {
+            throw new Error(
+              `DEMAND_STRENGTH missing value: ` +
+                `${district.code}/${indicator.code}`,
+            );
+          }
+
+          const fetchedAt =
+            new Date();
+
+          rawRows.push({
+            sourceId:
+              source.id,
+
+            endpoint:
+              'areaTarSjrnDsList',
+
+            areaCode:
+              String(
+                item.areaCd ??
+                  '11',
+              ),
+
+            signguCode,
+
+            baseMonth:
+              itemBaseYm,
+
+            requestPayload:
+              result.requestPayload,
+
+            responsePayload:
+              item,
+
+            fetchedAt,
+          });
+
+          metricRows.push({
+            regionId,
+            sourceId:
+              source.id,
+
+            metricFamily:
+              'STAY_STRENGTH',
+
+            metricCode:
+              indicator.code,
+
+            metricName:
+              item.tarSjrnDsIxNm == null
+                ? indicator.name
+                : String(
+                    item.tarSjrnDsIxNm,
+                  ),
+
+            dayOfWeekCode:
+              null,
+
+            dayOfWeekName:
+              null,
+
+            visitorTypeCode:
+              null,
+
+            visitorTypeName:
+              null,
+
+            periodDate:
+              null,
+
+            periodMonth:
+              baseYm,
+
+            metricValue:
+              String(
+                item.tarSjrnDsIxVal,
+              ),
+
+            fetchedAt,
+          });
+
+          staySaved++;
+        }
       }
     }
 
+    /*
+     * 2. 소비 강도
+     */
     for (const district of this.seoulDistricts) {
-      for (const indicator of this.expenditureIndicators) {
-        const result = await this.fetchExpenditure(
-          baseYm,
-          district,
-          indicator,
+      const regionId =
+        regionByCode.get(
+          district.code,
         );
+
+      if (!regionId) {
+        throw new Error(
+          `Region mapping not found: ${district.code}`,
+        );
+      }
+
+      for (const indicator of this.expenditureIndicators) {
+        const result =
+          await this.fetchExpenditure(
+            baseYm,
+            district,
+            indicator,
+          );
 
         apiCallCount++;
 
         if (result.items.length === 0) {
+          expenditureNoData++;
           continue;
         }
 
-        await this.prisma.rawTourismDemandStrengthApi.createMany({
-          data: result.items.map((item) => ({
-            sourceId: source.id,
-            endpoint: 'areaTarExpDsList',
-            areaCode: String(item.areaCd ?? '11'),
-            signguCode: String(
-              item.signguCd ?? district.code,
-            ),
-            baseMonth: String(item.baseYm ?? baseYm),
-            requestPayload: result.requestPayload,
-            responsePayload: item,
-          })),
-        });
+        for (const item of result.items) {
+          const itemBaseYm =
+            String(
+              item.baseYm ??
+                baseYm,
+            );
 
-        expenditureSaved += result.items.length;
+          const signguCode =
+            String(
+              item.signguCd ??
+                district.code,
+            );
+
+          if (itemBaseYm !== baseYm) {
+            throw new Error(
+              `DEMAND_STRENGTH returned unexpected baseYm: ` +
+                `${itemBaseYm} (requested ${baseYm})`,
+            );
+          }
+
+          if (signguCode !== district.code) {
+            throw new Error(
+              `DEMAND_STRENGTH returned unexpected district: ` +
+                `${signguCode} (requested ${district.code})`,
+            );
+          }
+
+          if (
+            String(
+              item.tarExpDsIxCd ?? '',
+            ) !== indicator.code
+          ) {
+            throw new Error(
+              `DEMAND_STRENGTH returned unexpected expenditure indicator: ` +
+                `${item.tarExpDsIxCd}`,
+            );
+          }
+
+          if (
+            item.tarExpDsIxVal == null
+          ) {
+            throw new Error(
+              `DEMAND_STRENGTH missing value: ` +
+                `${district.code}/${indicator.code}`,
+            );
+          }
+
+          const fetchedAt =
+            new Date();
+
+          rawRows.push({
+            sourceId:
+              source.id,
+
+            endpoint:
+              'areaTarExpDsList',
+
+            areaCode:
+              String(
+                item.areaCd ??
+                  '11',
+              ),
+
+            signguCode,
+
+            baseMonth:
+              itemBaseYm,
+
+            requestPayload:
+              result.requestPayload,
+
+            responsePayload:
+              item,
+
+            fetchedAt,
+          });
+
+          metricRows.push({
+            regionId,
+            sourceId:
+              source.id,
+
+            metricFamily:
+              'EXPENDITURE_STRENGTH',
+
+            metricCode:
+              indicator.code,
+
+            metricName:
+              item.tarExpDsIxNm == null
+                ? indicator.name
+                : String(
+                    item.tarExpDsIxNm,
+                  ),
+
+            dayOfWeekCode:
+              null,
+
+            dayOfWeekName:
+              null,
+
+            visitorTypeCode:
+              null,
+
+            visitorTypeName:
+              null,
+
+            periodDate:
+              null,
+
+            periodMonth:
+              baseYm,
+
+            metricValue:
+              String(
+                item.tarExpDsIxVal,
+              ),
+
+            fetchedAt,
+          });
+
+          expenditureSaved++;
+        }
       }
     }
 
-    const normalizedCount =
-      await this.normalizeRegionMetrics(
+    return {
+      sourceId:
         source.id,
+
+      baseYm,
+
+      rawRows,
+      metricRows,
+
+      result: {
+        baseYm,
+
+        districtCount:
+          this.seoulDistricts.length,
+
+        stayIndicatorCount:
+          this.stayIndicators.length,
+
+        expenditureIndicatorCount:
+          this.expenditureIndicators.length,
+
+        apiCallCount,
+
+        staySaved,
+        expenditureSaved,
+
+        stayNoData,
+        expenditureNoData,
+
+        totalSaved:
+          rawRows.length,
+
+        normalizedCount:
+          metricRows.length,
+      },
+    };
+  }
+
+  async applyPreparedSeoulStrength(
+    prepared: Awaited<
+      ReturnType<
+        TourismDemandStrengthService['prepareSeoulStrength']
+      >
+    >,
+    tx: any,
+  ) {
+    await tx.rawTourismDemandStrengthApi.deleteMany({
+      where: {
+        sourceId:
+          prepared.sourceId,
+
+        baseMonth:
+          prepared.baseYm,
+      },
+    });
+
+    if (
+      prepared.rawRows.length > 0
+    ) {
+      await tx.rawTourismDemandStrengthApi.createMany({
+        data:
+          prepared.rawRows,
+      });
+    }
+
+    await tx.regionMetric.deleteMany({
+      where: {
+        sourceId:
+          prepared.sourceId,
+
+        periodMonth:
+          prepared.baseYm,
+      },
+    });
+
+    if (
+      prepared.metricRows.length > 0
+    ) {
+      await tx.regionMetric.createMany({
+        data:
+          prepared.metricRows,
+      });
+    }
+  }
+
+  async syncSeoulStrength(
+    baseYm: string,
+  ) {
+    const prepared =
+      await this.prepareSeoulStrength(
         baseYm,
       );
 
-    return {
+    await this.prisma.$transaction(
+      async (tx) => {
+        await this.applyPreparedSeoulStrength(
+          prepared,
+          tx,
+        );
+      },
+    );
+
+    return prepared.result;
+  }
+
+  async syncLatestSeoulStrength() {
+    const baseYm =
+      await this.findLatestAvailableMonth();
+
+    return this.syncSeoulStrength(
       baseYm,
-      districtCount: 25,
-      stayIndicatorCount: this.stayIndicators.length,
-      expenditureIndicatorCount:
-        this.expenditureIndicators.length,
-      apiCallCount,
-      staySaved,
-      expenditureSaved,
-      totalSaved:
-        staySaved + expenditureSaved,
-      normalizedCount,
-    };
+    );
   }
 }

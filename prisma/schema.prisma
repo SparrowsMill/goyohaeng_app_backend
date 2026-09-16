@@ -12,13 +12,13 @@ datasource db {
 // ============================================================
 
 model ExternalSource {
-  id           BigInt   @id @default(autoincrement())
-  code         String   @unique @db.VarChar(80)
-  name         String   @db.VarChar(200)
-  baseUrl      String?  @map("base_url")
-  sourceRefreshCycle String? @map("source_refresh_cycle") @db.VarChar(100)
-  syncCycle          String? @map("sync_cycle") @db.VarChar(100)
-  createdAt    DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  id                 BigInt   @id @default(autoincrement())
+  code               String   @unique @db.VarChar(80)
+  name               String   @db.VarChar(200)
+  baseUrl            String?  @map("base_url")
+  sourceRefreshCycle String?  @map("source_refresh_cycle") @db.VarChar(100)
+  syncCycle          String?  @map("sync_cycle") @db.VarChar(100)
+  createdAt          DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
 
   rawTourApis                  RawTourApi[]
   rawSmallBusinessApis         RawSmallBusinessApi[]
@@ -354,6 +354,9 @@ model Place {
   operatingHoursRaw String?  @map("operating_hours_raw")
   restDaysRaw       String?  @map("rest_days_raw")
 
+  ownerLockedFields String[]  @default([]) @map("owner_locked_fields")
+  ownerUpdatedAt    DateTime? @map("owner_updated_at") @db.Timestamptz(6)
+
   status    String    @default("ACTIVE") @db.VarChar(20)
   createdAt DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
   updatedAt DateTime? @map("updated_at") @db.Timestamptz(6)
@@ -431,6 +434,8 @@ model RegionMetric {
   region Region         @relation(fields: [regionId], references: [id])
   source ExternalSource @relation(fields: [sourceId], references: [id])
 
+  @@unique([sourceId, regionId, metricFamily, metricCode, periodDate, visitorTypeCode], map: "region_metrics_daily_key")
+  @@unique([sourceId, regionId, metricFamily, metricCode, periodMonth], map: "region_metrics_monthly_key")
   @@index([regionId, metricFamily, metricCode, periodDate, periodMonth])
   @@unique([sourceId, regionId, metricFamily, metricCode, periodDate, visitorTypeCode], map: "region_metrics_daily_key")
   @@unique([sourceId, regionId, metricFamily, metricCode, periodMonth], map: "region_metrics_monthly_key")
@@ -534,9 +539,9 @@ model User {
   xp                           Int       @default(0)
   level                        Int       @default(0)
 
-  createdAt                    DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
-  updatedAt                    DateTime? @map("updated_at") @db.Timestamptz(6)
-  deletedAt                    DateTime? @map("deleted_at") @db.Timestamptz(6)
+  createdAt DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt DateTime? @map("updated_at") @db.Timestamptz(6)
+  deletedAt DateTime? @map("deleted_at") @db.Timestamptz(6)
 
   socialAccounts              UserSocialAccount[]
   uploadedPlaceImages         PlaceImage[]               @relation("PlaceImageUploader")
@@ -772,7 +777,7 @@ model IngredientDropPolicy {
 
 model Ingredient {
   id              BigInt   @id @default(autoincrement())
-  code            String  @unique @db.VarChar(20)
+  code            String   @unique @db.VarChar(20)
   name            String   @db.VarChar(200)
   description     String?
   ingredientType  String   @map("ingredient_type") @db.VarChar(20)
@@ -1043,6 +1048,7 @@ model ExternalSyncRun {
   status       String    @db.VarChar(20)
   resultCount  Int?      @map("result_count")
   errorMessage String?   @map("error_message")
+  metadata     Json?     @db.JsonB
 
   source ExternalSource @relation(fields: [sourceId], references: [id])
 

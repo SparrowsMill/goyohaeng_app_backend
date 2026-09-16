@@ -179,23 +179,6 @@ export class BusinessPlaceService {
     placeId: number,
     dto: UpdateBusinessPlaceDto,
   ) {
-    const existing =
-      await this.prisma.place.findUnique({
-        where: {
-          id: BigInt(placeId),
-        },
-
-        select: {
-          id: true,
-        },
-      });
-
-    if (!existing) {
-      throw new NotFoundException(
-        '관리 장소를 찾을 수 없습니다.',
-      );
-    }
-
     const normalizeNullableString = (
       value:
         | string
@@ -218,44 +201,123 @@ export class BusinessPlaceService {
         : trimmed;
     };
 
-    await this.prisma.place.update({
-      where: {
-        id: BigInt(placeId),
+    await this.prisma.$transaction(
+      async (tx) => {
+        const existing =
+          await tx.place.findUnique({
+            where: {
+              id: BigInt(placeId),
+            },
+
+            select: {
+              id: true,
+              ownerLockedFields: true,
+            },
+          });
+
+        if (!existing) {
+          throw new NotFoundException(
+            '관리 장소를 찾을 수 없습니다.',
+          );
+        }
+
+        /*
+        * 실제로 주인이 PATCH한 필드만
+        * 외부 자동화 overwrite 금지 대상으로 등록한다.
+        */
+        const newlyLockedFields: string[] =
+          [];
+
+        if (dto.name !== undefined) {
+          newlyLockedFields.push(
+            'name',
+          );
+        }
+
+        if (dto.phone !== undefined) {
+          newlyLockedFields.push(
+            'phone',
+          );
+        }
+
+        if (
+          dto.homepage !== undefined
+        ) {
+          newlyLockedFields.push(
+            'homepage',
+          );
+        }
+
+        if (
+          dto.overview !== undefined
+        ) {
+          newlyLockedFields.push(
+            'overview',
+          );
+        }
+
+        const ownerLockedFields =
+          Array.from(
+            new Set([
+              ...existing.ownerLockedFields,
+              ...newlyLockedFields,
+            ]),
+          );
+
+        await tx.place.update({
+          where: {
+            id: BigInt(placeId),
+          },
+
+          data: {
+            ...(dto.name !==
+              undefined && {
+              name:
+                dto.name.trim(),
+            }),
+
+            ...(dto.phone !==
+              undefined && {
+              phone:
+                normalizeNullableString(
+                  dto.phone,
+                ),
+            }),
+
+            ...(dto.homepage !==
+              undefined && {
+              homepage:
+                normalizeNullableString(
+                  dto.homepage,
+                ),
+            }),
+
+            ...(dto.overview !==
+              undefined && {
+              overview:
+                normalizeNullableString(
+                  dto.overview,
+                ),
+            }),
+
+            /*
+            * 아무 필드도 전달되지 않았다면
+            * 기존 lock 그대로 유지.
+            */
+            ownerLockedFields,
+
+            ...(newlyLockedFields.length >
+              0 && {
+              ownerUpdatedAt:
+                new Date(),
+            }),
+
+            updatedAt:
+              new Date(),
+          },
+        });
       },
-
-      data: {
-        ...(dto.name !== undefined && {
-          name:
-            dto.name.trim(),
-        }),
-
-        ...(dto.phone !== undefined && {
-          phone:
-            normalizeNullableString(
-              dto.phone,
-            ),
-        }),
-
-        ...(dto.homepage !==
-          undefined && {
-          homepage:
-            normalizeNullableString(
-              dto.homepage,
-            ),
-        }),
-
-        ...(dto.overview !==
-          undefined && {
-          overview:
-            normalizeNullableString(
-              dto.overview,
-            ),
-        }),
-
-        updatedAt:
-          new Date(),
-      },
-    });
+    );
 
     return this.getMyPlace(
       placeId,
