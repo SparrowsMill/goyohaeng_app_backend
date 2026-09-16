@@ -956,7 +956,13 @@ export class ExternalApiAutomationService {
         'TOUR_API',
       );
 
-    const latestSuccess =
+    /*
+     * SUCCESS뿐 아니라 가장 최근 attempt 자체를 본다.
+     *
+     * 그래야 NON_RETRYABLE 실패를
+     * 매일 무한 반복하지 않는다.
+     */
+    const latestRun =
       await this.prisma.externalSyncRun.findFirst({
         where: {
           sourceId:
@@ -967,40 +973,310 @@ export class ExternalApiAutomationService {
 
           syncType:
             'INCREMENTAL',
-
-          status:
-            'SUCCESS',
         },
 
         orderBy: {
-          finishedAt:
+          startedAt:
             'desc',
         },
 
         select: {
+          status:
+            true,
+
+          startedAt:
+            true,
+
           finishedAt:
+            true,
+
+          errorMessage:
             true,
         },
       });
 
-    if (
-      !latestSuccess?.finishedAt
-    ) {
+    if (!latestRun) {
       return true;
     }
 
-    const fourteenDaysMs =
-      14 *
+    const now =
+      Date.now();
+
+    const referenceAt =
+      latestRun.finishedAt ??
+      latestRun.startedAt;
+
+    const ageMs =
+      now -
+      referenceAt.getTime();
+
+    const oneDayMs =
       24 *
       60 *
       60 *
       1000;
 
-    return (
-      Date.now() -
-        latestSuccess.finishedAt.getTime()
-      >= fourteenDaysMs
-    );
+    const fourteenDaysMs =
+      14 *
+      oneDayMs;
+
+    const sixHoursMs =
+      6 *
+      60 *
+      60 *
+      1000;
+
+    /*
+     * 정상 완료:
+     * 다음 정기 실행은 14일 후.
+     */
+    if (
+      latestRun.status ===
+      'SUCCESS'
+    ) {
+      return (
+        ageMs >=
+        fourteenDaysMs
+      );
+    }
+
+    /*
+     * 서버가 죽어서 RUNNING row만
+     * 남은 경우.
+     *
+     * 6시간 이내면 아직 실행 중이라고 보고,
+     * 6시간 넘으면 stale run으로 취급한다.
+     */
+    if (
+      latestRun.status ===
+      'RUNNING'
+    ) {
+      return (
+        ageMs >=
+        sixHoursMs
+      );
+    }
+
+    if (
+      latestRun.status ===
+      'FAILED'
+    ) {
+      const errorMessage =
+        latestRun.errorMessage ??
+        '';
+
+      /*
+       * quota / network / 5xx:
+       * 다음날 다시 이어서 실행.
+       */
+      if (
+        errorMessage.startsWith(
+          'RETRYABLE:',
+        )
+      ) {
+        return (
+          ageMs >=
+          oneDayMs
+        );
+      }
+
+      /*
+       * auth / 설정 / 예상하지 못한 오류:
+       * 매일 API를 두드리지 않는다.
+       *
+       * 수정 후 즉시 재실행하고 싶다면
+       * runTourIncrementalSync(true)를 사용.
+       */
+      if (
+        errorMessage.startsWith(
+          'NON_RETRYABLE:',
+        )
+      ) {
+        return (
+          ageMs >=
+          fourteenDaysMs
+        );
+      }
+
+      /*
+       * 과거 형식의 FAILED row가 있을 경우만
+       * 보수적으로 하루 뒤 한 번 재시도.
+       */
+      return (
+        ageMs >=
+        oneDayMs
+      );
+    }
+
+    return false;
+  }
+
+  private async runTourOperatingHoursNormalization(
+    sourceId: bigint,
+  ) {
+    let normalizationRunId:
+      bigint | null =
+      null;
+
+    try {
+      /*
+      * Tour 수집 run과 분리된 별도 run.
+      *
+      * 이 run의 실패는
+      * areaBasedSyncList2:seoul의 성공 여부에
+      * 영향을 주지 않는다.
+      */
+      const run =
+        await this.prisma.externalSyncRun.create({
+          data: {
+            sourceId,
+
+            endpoint:
+              'operating-hours-normalize',
+
+            syncType:
+              'INCREMENTAL',
+
+            status:
+              'RUNNING',
+          },
+        });
+
+      normalizationRunId =
+        run.id;
+
+      this.logger.log(
+        `Starting TourAPI operating-hours normalization. ` +
+          `run=${run.id.toString()}`,
+      );
+
+      await this.tourService
+        .normalizeSeoulOperatingHours();
+
+      await this.prisma.externalSyncRun.update({
+        where: {
+          id:
+            run.id,
+        },
+
+        data: {
+          status:
+            'SUCCESS',
+
+          finishedAt:
+            new Date(),
+
+          errorMessage:
+            null,
+        },
+      });
+
+      this.logger.log(
+        `TourAPI operating-hours normalization complete. ` +
+          `run=${run.id.toString()}`,
+      );
+
+      return {
+        runId:
+          run.id,
+
+        status:
+          'SUCCESS',
+      };
+    } catch (error) {
+      const message =
+        error instanceof Error
+          ? error.message
+          : String(error);
+
+      /*
+      * normalizer 자체의 실패는
+      * 같은 RAW + 같은 parser로 다음날
+      * 반복할 이유가 없으므로 NON_RETRYABLE.
+      *
+      * 단, 이것은 별도 endpoint라
+      * TourAPI 본체의 due 계산에는
+      * 애초에 포함되지 않는다.
+      */
+      const storedMessage =
+        `NON_RETRYABLE:` +
+        `OPERATING_HOURS_NORMALIZATION_FAILED; ` +
+        message;
+
+      if (
+        normalizationRunId !==
+        null
+      ) {
+        try {
+          await this.prisma.externalSyncRun.update({
+            where: {
+              id:
+                normalizationRunId,
+            },
+
+            data: {
+              status:
+                'FAILED',
+
+              finishedAt:
+                new Date(),
+
+              errorMessage:
+                storedMessage.slice(
+                  0,
+                  5000,
+                ),
+            },
+          });
+        } catch (
+          recordError
+        ) {
+          this.logger.error(
+            `Failed to record TourAPI operating-hours normalization failure. ` +
+              `run=${normalizationRunId.toString()}`,
+            recordError instanceof Error
+              ? recordError.stack
+              : String(
+                  recordError,
+                ),
+          );
+        }
+      }
+
+      /*
+      * 매우 중요:
+      * 여기서 throw하지 않는다.
+      *
+      * 이미 성공한 TourAPI 수집 run을
+      * outer catch가 FAILED로 바꾸면 안 된다.
+      */
+      this.logger.error(
+        `TourAPI operating-hours normalization failed. ` +
+          `run=${
+            normalizationRunId !==
+            null
+              ? normalizationRunId.toString()
+              : 'NOT_CREATED'
+          }`,
+        error instanceof Error
+          ? error.stack
+          : String(error),
+      );
+
+      return {
+        runId:
+          normalizationRunId,
+
+        status:
+          'FAILED',
+
+        error:
+          storedMessage.slice(
+            0,
+            5000,
+          ),
+      };
+    }
   }
 
   /**
@@ -1105,8 +1381,78 @@ export class ExternalApiAutomationService {
        */
       const details =
         await this.tourService
-          .refreshSeoulIncrementalDetails();
+          .refreshSeoulIncrementalDetails(
+            850,
+          );
 
+      if (
+        !details.completed
+      ) {
+        const prefix =
+          details.retryable
+            ? 'RETRYABLE'
+            : 'NON_RETRYABLE';
+
+        const message =
+          `${prefix}:` +
+          `${details.stopReason ?? 'TOUR_DETAIL_INCOMPLETE'}; ` +
+          `apiCalls=${details.apiCallCount}; ` +
+          `processedPlaces=${details.processedPlaceCount}; ` +
+          `commonInserted=${details.commonInsertedCount}; ` +
+          `introInserted=${details.introInsertedCount}`;
+
+        await this.prisma.externalSyncRun.update({
+          where: {
+            id:
+              run.id,
+          },
+
+          data: {
+            status:
+              'FAILED',
+
+            finishedAt:
+              new Date(),
+
+            resultCount:
+              incremental.fetchedCount,
+
+            errorMessage:
+              message.slice(
+                0,
+                5000,
+              ),
+          },
+        });
+
+        this.logger.warn(
+          `TourAPI incremental sync stopped before completion. ` +
+            `run=${run.id.toString()}, ` +
+            `reason=${details.stopReason}, ` +
+            `retryable=${details.retryable}, ` +
+            `apiCalls=${details.apiCallCount}, ` +
+            `processedPlaces=${details.processedPlaceCount}`,
+        );
+
+        return {
+          skipped:
+            false,
+
+          runId:
+            run.id,
+
+          status:
+            'FAILED',
+
+          incremental,
+          details,
+        };
+      }
+
+      /*
+       * 여기까지 왔다는 것은
+       * detail refresh가 끝까지 완료됐다는 뜻.
+       */
       await this.prisma.externalSyncRun.update({
         where: {
           id:
@@ -1120,10 +1466,6 @@ export class ExternalApiAutomationService {
           finishedAt:
             new Date(),
 
-          /*
-           * 이번 증분 endpoint에서
-           * 관측한 content item 수.
-           */
           resultCount:
             incremental.fetchedCount,
 
@@ -1140,8 +1482,25 @@ export class ExternalApiAutomationService {
           `inactive=${incremental.inactiveCount}, ` +
           `unmappedActive=${incremental.unmappedActiveCount}, ` +
           `detailCommon=${details.commonInsertedCount}, ` +
-          `detailIntro=${details.introInsertedCount}`,
+          `detailIntro=${details.introInsertedCount}, ` +
+          `detailApiCalls=${details.apiCallCount}, ` +
+          `detailNoDataCommon=${details.commonNoDataCount}, ` +
+          `detailNoDataIntro=${details.introNoDataCount}`,
       );
+
+      /*
+      * Stage 3:
+      * TourAPI 본체의 성공을 먼저 확정한 뒤
+      * 운영시간 정규화를 별도 run으로 실행한다.
+      *
+      * 정규화 실패는 Tour 수집 성공을
+      * 되돌리지 않는다.
+      */
+      const operatingHours =
+        await this
+          .runTourOperatingHoursNormalization(
+            source.id,
+          );
 
       return {
         skipped:
@@ -1152,6 +1511,8 @@ export class ExternalApiAutomationService {
 
         incremental,
         details,
+
+        operatingHours,
       };
     } catch (error) {
       if (runId !== null) {
@@ -1159,6 +1520,55 @@ export class ExternalApiAutomationService {
           error instanceof Error
             ? error.message
             : String(error);
+
+        const upper =
+          message.toUpperCase();
+
+        const retryableFailure =
+          upper.includes('429') ||
+          upper.includes(
+            'LIMITED_NUMBER_OF_SERVICE_REQUESTS_EXCEEDS_ERROR',
+          ) ||
+          upper.includes(
+            'RESULTCODE=22',
+          ) ||
+          upper.includes(
+            ': 22 ',
+          ) ||
+          /\b5\d\d\b/.test(
+            upper,
+          ) ||
+          upper.includes(
+            'FETCH FAILED',
+          ) ||
+          upper.includes(
+            'ECONNRESET',
+          ) ||
+          upper.includes(
+            'ECONNREFUSED',
+          ) ||
+          upper.includes(
+            'ETIMEDOUT',
+          ) ||
+          upper.includes(
+            'ENOTFOUND',
+          ) ||
+          upper.includes(
+            'TIMEOUT',
+          ) ||
+          upper.includes(
+            'SOCKET',
+          ) ||
+          upper.includes(
+            'NETWORK',
+          );
+
+        const storedMessage =
+          `${
+            retryableFailure
+              ? 'RETRYABLE'
+              : 'NON_RETRYABLE'
+          }:${message}`;
 
         await this.prisma.externalSyncRun.update({
           where: {
@@ -1174,7 +1584,7 @@ export class ExternalApiAutomationService {
               new Date(),
 
             errorMessage:
-              message.slice(
+              storedMessage.slice(
                 0,
                 5000,
               ),

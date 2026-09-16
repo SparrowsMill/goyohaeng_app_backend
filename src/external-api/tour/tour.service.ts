@@ -3,6 +3,18 @@ import { ConfigService } from '@nestjs/config';
 
 import { PrismaService } from '../../prisma/prisma.service';
 
+import {
+  execFile,
+} from 'node:child_process';
+
+import {
+  promisify,
+} from 'node:util';
+
+const execFileAsync =
+  promisify(execFile);
+
+
 type PreparedTourDetailRaw = {
   placeId: bigint;
   contentId: string;
@@ -2094,28 +2106,32 @@ export class TourService {
             );
 
           if (homepage) {
-            const place =
-              await tx.place.findUnique({
+            const updated =
+              await tx.place.updateMany({
                 where: {
                   id:
                     item.placeId,
-                },
-                select: {
-                  homepage:
-                    true,
-                },
-              });
 
-            if (
-              place &&
-              place.homepage !==
-                homepage
-            ) {
-              await tx.place.update({
-                where: {
-                  id:
-                    item.placeId,
+                  NOT: {
+                    ownerLockedFields: {
+                      has:
+                        'homepage',
+                    },
+                  },
+
+                  OR: [
+                    {
+                      homepage: null,
+                    },
+                    {
+                      homepage: {
+                        not:
+                          homepage,
+                      },
+                    },
+                  ],
                 },
+
                 data: {
                   homepage,
                   updatedAt:
@@ -2123,8 +2139,8 @@ export class TourService {
                 },
               });
 
-              homepageUpdatedCount++;
-            }
+            homepageUpdatedCount +=
+              updated.count;
           }
         }
 
@@ -2275,22 +2291,772 @@ export class TourService {
     );
   }
 
-  async refreshSeoulIncrementalDetails() {
-    /*
-     * 모든 외부 API 호출을 먼저 끝낸다.
-     * 여기서 하나라도 실패하면 DB mutation 없음.
-     */
-    const prepared =
-      await this
-        .prepareSeoulIncrementalDetailRefresh();
+  async refreshSeoulIncrementalDetails(
+    maxApiCalls = 850,
+  ) {
+    if (
+      !Number.isInteger(maxApiCalls) ||
+      maxApiCalls < 0
+    ) {
+      throw new Error(
+        `Invalid TourAPI detail call budget: ${maxApiCalls}`,
+      );
+    }
 
-    const result =
-      await this
-        .applyPreparedSeoulDetailRefresh(
-          prepared,
+    const source =
+      await this.getTourApiSource();
+
+    /*
+     * 최신 areaBasedSyncList2 중
+     * showflag=1 + 기존 Place에 매핑된 장소만.
+     *
+     * showflag=0은 detail refresh하지 않는다.
+     */
+    const latestSyncRows:
+      Array<{
+        contentId: string;
+        contentTypeId: string | null;
+        sourceModifiedAt: Date;
+        placeId: bigint;
+      }> =
+      await this.prisma.$queryRaw`
+        WITH latest_sync AS (
+          SELECT DISTINCT ON (r.content_id)
+            r.content_id,
+            r.content_type_id,
+            r.source_modified_at
+
+          FROM raw_tour_api r
+
+          WHERE
+            r.source_id = ${source.id}
+            AND r.endpoint =
+                'areaBasedSyncList2'
+            AND r.response_payload->>'showflag'
+                = '1'
+            AND r.content_id IS NOT NULL
+            AND r.source_modified_at IS NOT NULL
+
+          ORDER BY
+            r.content_id,
+            r.source_modified_at DESC,
+            r.fetched_at DESC,
+            r.id DESC
+        )
+
+        SELECT
+          ls.content_id AS "contentId",
+          ls.content_type_id AS "contentTypeId",
+          ls.source_modified_at AS "sourceModifiedAt",
+          pei.place_id AS "placeId"
+
+        FROM latest_sync ls
+
+        JOIN place_external_ids pei
+          ON pei.source_id = ${source.id}
+         AND pei.id_type = 'CONTENT_ID'
+         AND pei.external_id = ls.content_id
+
+        ORDER BY
+          ls.source_modified_at,
+          ls.content_id
+      `;
+
+    /*
+     * API 호출 전에 DB freshness만 확인한다.
+     */
+    const targets:
+      Array<{
+        placeId: bigint;
+        contentId: string;
+        contentTypeId: string | null;
+        sourceModifiedAt: Date;
+        commonNeedsRefresh: boolean;
+        introNeedsRefresh: boolean;
+      }> = [];
+
+    let commonTargetCount =
+      0;
+
+    let introTargetCount =
+      0;
+
+    let skippedFreshCount =
+      0;
+
+    for (
+      const target
+      of latestSyncRows
+    ) {
+      const [
+        latestCommon,
+        latestIntro,
+      ] =
+        await Promise.all([
+          this.prisma.rawTourApi.findFirst({
+            where: {
+              sourceId:
+                source.id,
+
+              endpoint:
+                'detailCommon2',
+
+              contentId:
+                target.contentId,
+
+              sourceModifiedAt: {
+                not: null,
+              },
+            },
+
+            orderBy: [
+              {
+                sourceModifiedAt:
+                  'desc',
+              },
+              {
+                fetchedAt:
+                  'desc',
+              },
+              {
+                id:
+                  'desc',
+              },
+            ],
+
+            select: {
+              sourceModifiedAt:
+                true,
+            },
+          }),
+
+          this.prisma.rawTourApi.findFirst({
+            where: {
+              sourceId:
+                source.id,
+
+              endpoint:
+                'detailIntro2',
+
+              contentId:
+                target.contentId,
+
+              sourceModifiedAt: {
+                not: null,
+              },
+            },
+
+            orderBy: [
+              {
+                sourceModifiedAt:
+                  'desc',
+              },
+              {
+                fetchedAt:
+                  'desc',
+              },
+              {
+                id:
+                  'desc',
+              },
+            ],
+
+            select: {
+              sourceModifiedAt:
+                true,
+            },
+          }),
+        ]);
+
+      const commonNeedsRefresh =
+        !latestCommon?.sourceModifiedAt ||
+        latestCommon.sourceModifiedAt.getTime() <
+          target.sourceModifiedAt.getTime();
+
+      const introNeedsRefresh =
+        !latestIntro?.sourceModifiedAt ||
+        latestIntro.sourceModifiedAt.getTime() <
+          target.sourceModifiedAt.getTime();
+
+      if (commonNeedsRefresh) {
+        commonTargetCount++;
+      }
+
+      if (introNeedsRefresh) {
+        introTargetCount++;
+      }
+
+      if (
+        !commonNeedsRefresh &&
+        !introNeedsRefresh
+      ) {
+        skippedFreshCount++;
+        continue;
+      }
+
+      targets.push({
+        ...target,
+        commonNeedsRefresh,
+        introNeedsRefresh,
+      });
+    }
+
+    let apiCallCount =
+      0;
+
+    let processedPlaceCount =
+      0;
+
+    let commonInsertedCount =
+      0;
+
+    let introInsertedCount =
+      0;
+
+    let homepageUpdatedCount =
+      0;
+
+    let commonNoDataCount =
+      0;
+
+    let introNoDataCount =
+      0;
+
+    let completed =
+      true;
+
+    let retryable =
+      false;
+
+    let stopReason:
+      string | null =
+      null;
+
+    /*
+     * 외부 API 오류 분류.
+     *
+     * AUTH:
+     *   자동으로 매일 반복하면 안 됨.
+     *
+     * RETRYABLE:
+     *   quota / 서버 / 네트워크 문제.
+     *   다음날 이어서 실행.
+     *
+     * FATAL:
+     *   예상하지 못한 오류.
+     *   상위 automation에서 FAILED 처리.
+     */
+    const classifyError = (
+      error: unknown,
+    ):
+      | 'AUTH'
+      | 'RETRYABLE'
+      | 'FATAL' => {
+      const message =
+        error instanceof Error
+          ? error.message
+          : String(error);
+
+      const upper =
+        message.toUpperCase();
+
+      if (
+        upper.includes('401') ||
+        upper.includes('403') ||
+        upper.includes('SERVICE KEY') ||
+        upper.includes('SERVICE_KEY') ||
+        upper.includes('UNREGISTERED') ||
+        upper.includes('ACCESS DENIED') ||
+        upper.includes('ACCESS_DENIED') ||
+        upper.includes('AUTHENTICATION')
+      ) {
+        return 'AUTH';
+      }
+
+      if (
+        upper.includes('429') ||
+        upper.includes(
+          'LIMITED_NUMBER_OF_SERVICE_REQUESTS_EXCEEDS_ERROR',
+        ) ||
+        upper.includes('RESULTCODE=22') ||
+        upper.includes(': 22 ') ||
+        /\b5\d\d\b/.test(upper) ||
+        upper.includes('FETCH FAILED') ||
+        upper.includes('ECONNRESET') ||
+        upper.includes('ECONNREFUSED') ||
+        upper.includes('ETIMEDOUT') ||
+        upper.includes('ENOTFOUND') ||
+        upper.includes('TIMEOUT') ||
+        upper.includes('SOCKET') ||
+        upper.includes('NETWORK')
+      ) {
+        return 'RETRYABLE';
+      }
+
+      return 'FATAL';
+    };
+
+    /*
+     * 장소 단위 checkpoint.
+     *
+     * 해당 장소에 필요한 API를 모두 받은 뒤
+     * 그 장소만 transaction commit한다.
+     */
+    for (
+      const target
+      of targets
+    ) {
+      const callsNeeded =
+        Number(
+          target.commonNeedsRefresh,
+        ) +
+        Number(
+          target.introNeedsRefresh,
         );
 
-    return result;
+      /*
+       * 장소 절반만 처리하지 않도록
+       * 해당 장소에 필요한 call 수가
+       * 남은 budget보다 크면 시작하지 않는다.
+       */
+      if (
+        apiCallCount +
+          callsNeeded >
+        maxApiCalls
+      ) {
+        completed =
+          false;
+
+        retryable =
+          true;
+
+        stopReason =
+          'DAILY_BUDGET';
+
+        break;
+      }
+
+      const commonPrepared:
+        PreparedTourDetailRaw[] = [];
+
+      const introPrepared:
+        PreparedTourDetailRaw[] = [];
+
+      /*
+       * -------------------------
+       * detailCommon2
+       * -------------------------
+       */
+      if (
+        target.commonNeedsRefresh
+      ) {
+        const params = {
+          contentId:
+            target.contentId,
+
+          numOfRows:
+            1,
+
+          pageNo:
+            1,
+        };
+
+        try {
+          /*
+           * 실패한 요청도 quota를 썼을 수 있으므로
+           * request 전에 count한다.
+           */
+          apiCallCount++;
+
+          const data =
+            await this.request(
+              'detailCommon2',
+              params,
+            );
+
+          this.assertTourApiSuccess(
+            data,
+            'detailCommon2',
+            target.contentId,
+          );
+
+          const items =
+            this.extractDetailCommonItems(
+              data,
+            );
+
+          if (
+            items.length === 0
+          ) {
+            /*
+             * 200 OK지만 해당 contentId에
+             * detailCommon이 없는 경우.
+             *
+             * 이 sync version에서는
+             * "확인했지만 데이터 없음"으로 저장한다.
+             *
+             * 그래야 매일 같은 contentId를
+             * 무한 재시도하지 않는다.
+             */
+            commonNoDataCount++;
+
+            commonPrepared.push({
+              placeId:
+                target.placeId,
+
+              contentId:
+                target.contentId,
+
+              contentTypeId:
+                target.contentTypeId,
+
+              sourceModifiedAt:
+                target.sourceModifiedAt,
+
+              requestPayload:
+                params,
+
+              responsePayload: {
+                __noData:
+                  true,
+
+                contentid:
+                  target.contentId,
+
+                contenttypeid:
+                  target.contentTypeId,
+
+                apiResponse:
+                  data,
+              },
+            });
+          } else {
+            const item =
+              items[0];
+
+            const apiModifiedAt =
+              this.parseTourDateTime(
+                item?.modifiedtime
+                  ? String(
+                      item.modifiedtime,
+                    )
+                  : undefined,
+              );
+
+            commonPrepared.push({
+              placeId:
+                target.placeId,
+
+              contentId:
+                target.contentId,
+
+              contentTypeId:
+                item?.contenttypeid != null
+                  ? String(
+                      item.contenttypeid,
+                    )
+                  : target.contentTypeId,
+
+              sourceModifiedAt:
+                apiModifiedAt ??
+                target.sourceModifiedAt,
+
+              requestPayload:
+                params,
+
+              responsePayload:
+                item,
+            });
+          }
+        } catch (error) {
+          const kind =
+            classifyError(
+              error,
+            );
+
+          if (
+            kind ===
+            'RETRYABLE'
+          ) {
+            completed =
+              false;
+
+            retryable =
+              true;
+
+            stopReason =
+              `RETRYABLE_DETAIL_COMMON:` +
+              target.contentId;
+
+            break;
+          }
+
+          if (
+            kind ===
+            'AUTH'
+          ) {
+            completed =
+              false;
+
+            retryable =
+              false;
+
+            stopReason =
+              `AUTH_FAILURE_DETAIL_COMMON:` +
+              target.contentId;
+
+            break;
+          }
+
+          throw error;
+        }
+      }
+
+      /*
+       * -------------------------
+       * detailIntro2
+       * -------------------------
+       */
+      if (
+        target.introNeedsRefresh
+      ) {
+        if (
+          !target.contentTypeId
+        ) {
+          /*
+           * API request 자체가 불가능하다.
+           * 매일 같은 row를 재시도하지 않도록
+           * 예상하지 못한 데이터 오류로 처리.
+           */
+          throw new Error(
+            `detailIntro2 requires contentTypeId: ` +
+              `contentId=${target.contentId}`,
+          );
+        }
+
+        const params = {
+          contentId:
+            target.contentId,
+
+          contentTypeId:
+            target.contentTypeId,
+
+          numOfRows:
+            10,
+
+          pageNo:
+            1,
+        };
+
+        try {
+          apiCallCount++;
+
+          const data =
+            await this.request(
+              'detailIntro2',
+              params,
+            );
+
+          this.assertTourApiSuccess(
+            data,
+            'detailIntro2',
+            target.contentId,
+          );
+
+          const rawIntroItem =
+            data?.response
+              ?.body
+              ?.items
+              ?.item;
+
+          const introItems =
+            !rawIntroItem
+              ? []
+              : Array.isArray(
+                    rawIntroItem,
+                  )
+                ? rawIntroItem
+                : [
+                    rawIntroItem,
+                  ];
+
+          if (
+            introItems.length ===
+            0
+          ) {
+            /*
+             * detailIntro2는 애초에
+             * totalCount=0도 정상 결과다.
+             */
+            introNoDataCount++;
+          }
+
+          introPrepared.push({
+            placeId:
+              target.placeId,
+
+            contentId:
+              target.contentId,
+
+            contentTypeId:
+              target.contentTypeId,
+
+            sourceModifiedAt:
+              target.sourceModifiedAt,
+
+            requestPayload:
+              params,
+
+            /*
+             * operating-hours normalizer가
+             * 전체 response 구조를 사용한다.
+             */
+            responsePayload:
+              data,
+          });
+        } catch (error) {
+          const kind =
+            classifyError(
+              error,
+            );
+
+          if (
+            kind ===
+            'RETRYABLE'
+          ) {
+            completed =
+              false;
+
+            retryable =
+              true;
+
+            stopReason =
+              `RETRYABLE_DETAIL_INTRO:` +
+              target.contentId;
+
+            break;
+          }
+
+          if (
+            kind ===
+            'AUTH'
+          ) {
+            completed =
+              false;
+
+            retryable =
+              false;
+
+            stopReason =
+              `AUTH_FAILURE_DETAIL_INTRO:` +
+              target.contentId;
+
+            break;
+          }
+
+          throw error;
+        }
+      }
+
+      /*
+       * common + intro가 모두 성공했을 때만
+       * 이 장소를 commit한다.
+       *
+       * 여기서 기존 apply method의 transaction을
+       * 그대로 재사용한다.
+       */
+      const applied =
+        await this
+          .applyPreparedSeoulDetailRefresh({
+            common:
+              commonPrepared,
+
+            intro:
+              introPrepared,
+
+            mappedActiveCount:
+              1,
+
+            commonTargetCount:
+              commonPrepared.length,
+
+            introTargetCount:
+              introPrepared.length,
+          });
+
+      commonInsertedCount +=
+        applied.commonInsertedCount;
+
+      introInsertedCount +=
+        applied.introInsertedCount;
+
+      homepageUpdatedCount +=
+        applied.homepageUpdatedCount;
+
+      processedPlaceCount++;
+    }
+
+    return {
+      mappedActiveCount:
+        latestSyncRows.length,
+
+      stalePlaceCount:
+        targets.length,
+
+      skippedFreshCount,
+
+      commonTargetCount,
+      introTargetCount,
+
+      processedPlaceCount,
+
+      apiCallCount,
+      maxApiCalls,
+
+      commonInsertedCount,
+      introInsertedCount,
+      homepageUpdatedCount,
+
+      commonNoDataCount,
+      introNoDataCount,
+
+      completed,
+      retryable,
+      stopReason,
+    };
+  }
+
+  async normalizeSeoulOperatingHours() {
+    const {
+      stdout,
+      stderr,
+    } =
+      await execFileAsync(
+        'python3',
+        [
+          'scripts/tour_operating_hours_normalize.py',
+          '--apply',
+          '--replace-system-hours',
+        ],
+        {
+          cwd:
+            process.cwd(),
+
+          env:
+            process.env,
+
+          maxBuffer:
+            10 * 1024 * 1024,
+        },
+      );
+
+    return {
+      stdout:
+        stdout.trim(),
+
+      stderr:
+        stderr.trim(),
+    };
   }
 
   async syncAllSeoulPlaces() {
@@ -2501,28 +3267,41 @@ export class TourService {
             );
 
           if (homepage) {
-            const place =
-              await this.prisma.place.findUnique({
+            const updated =
+              await this.prisma.place.updateMany({
                 where: {
-                  id: placeId,
-                },
-                select: {
-                  homepage: true,
-                },
-              });
+                  id:
+                    placeId,
 
-            if (place?.homepage !== homepage) {
-              await this.prisma.place.update({
-                where: {
-                  id: placeId,
+                  NOT: {
+                    ownerLockedFields: {
+                      has:
+                        'homepage',
+                    },
+                  },
+
+                  OR: [
+                    {
+                      homepage: null,
+                    },
+                    {
+                      homepage: {
+                        not:
+                          homepage,
+                      },
+                    },
+                  ],
                 },
+
                 data: {
                   homepage,
+                  updatedAt:
+                    new Date(),
                 },
               });
 
-              homepageUpdatedCount++;
-            }
+            homepageUpdatedCount +=
+              updated.count;
           } else {
             noHomepageCount++;
           }
@@ -2590,28 +3369,41 @@ export class TourService {
           );
 
         if (homepage) {
-          const place =
-            await this.prisma.place.findUnique({
+          const updated =
+            await this.prisma.place.updateMany({
               where: {
-                id: placeId,
-              },
-              select: {
-                homepage: true,
-              },
-            });
+                id:
+                  placeId,
 
-          if (place?.homepage !== homepage) {
-            await this.prisma.place.update({
-              where: {
-                id: placeId,
+                NOT: {
+                  ownerLockedFields: {
+                    has:
+                      'homepage',
+                  },
+                },
+
+                OR: [
+                  {
+                    homepage: null,
+                  },
+                  {
+                    homepage: {
+                      not:
+                        homepage,
+                    },
+                  },
+                ],
               },
+
               data: {
                 homepage,
+                updatedAt:
+                  new Date(),
               },
             });
 
-            homepageUpdatedCount++;
-          }
+          homepageUpdatedCount +=
+            updated.count;
         } else {
           noHomepageCount++;
         }

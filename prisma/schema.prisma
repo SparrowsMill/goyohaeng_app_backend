@@ -354,6 +354,9 @@ model Place {
   operatingHoursRaw String?  @map("operating_hours_raw")
   restDaysRaw       String?  @map("rest_days_raw")
 
+  ownerLockedFields String[]  @default([]) @map("owner_locked_fields")
+  ownerUpdatedAt    DateTime? @map("owner_updated_at") @db.Timestamptz(6)
+
   status    String    @default("ACTIVE") @db.VarChar(20)
   createdAt DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
   updatedAt DateTime? @map("updated_at") @db.Timestamptz(6)
@@ -919,6 +922,7 @@ model Post {
   id                  BigInt    @id @default(autoincrement())
   userId              BigInt    @map("user_id")
   placeId             BigInt?   @map("place_id")
+  manualPlaceName     String?   @map("manual_place_name") @db.VarChar(100)
   userFoodId          BigInt?   @map("user_food_id")
   visitVerificationId BigInt?   @map("visit_verification_id")
   visitedAt           DateTime? @map("visited_at") @db.Timestamptz(6)
