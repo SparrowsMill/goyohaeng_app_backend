@@ -39,6 +39,18 @@ export interface Place {
   overview: string | null;
 
   status: string;
+
+  /*
+   * 최신 production GAP run 기준
+   * GAP 정보가 없는 장소는 null
+   */
+  gapScore: number | null;
+  gapPercentile: number | null;
+
+  onlineScore: number | null;
+  offlineScore: number | null;
+
+  calculatedAt: Date | null;
 }
 
 interface PlaceImage {
@@ -112,14 +124,43 @@ export class PlacesService {
     private readonly prisma: PrismaService,
   ) {}
 
-  async findAll(
+private async getLatestProductionGapRun() {
+  return this.prisma.gapScoreRun.findFirst({
+    where: {
+      formulaVersion: 'GAP_V1_PROXY',
+      dataStage: 'COLD_START',
+
+      // 실제 score가 생성된 run만 사용
+      scores: {
+        some: {},
+      },
+    },
+
+    orderBy: [
+      {
+        calculatedAt: 'desc',
+      },
+      {
+        id: 'desc',
+      },
+    ],
+
+    select: {
+      id: true,
+      formulaVersion: true,
+      dataStage: true,
+      calculatedAt: true,
+    },
+  });
+}
+
+async findAll(
   regionId?: number,
   categoryId?: number,
   page = 1,
   limit = 20,
 ): Promise<PaginatedPlacesResponse> {
-
-    let categoryIds:
+  let categoryIds:
     bigint[] | undefined;
 
   if (categoryId !== undefined) {
@@ -159,332 +200,640 @@ export class PlacesService {
     status: 'ACTIVE',
 
     ...(regionId !== undefined && {
-      districtRegionId: BigInt(regionId),
+      districtRegionId:
+        BigInt(regionId),
     }),
 
     ...(categoryIds !== undefined && {
-  categoryId: {
-    in: categoryIds,
-  },
-}),
+      categoryId: {
+        in: categoryIds,
+      },
+    }),
   };
 
-  const skip = (page - 1) * limit;
+  const skip =
+    (page - 1) * limit;
 
-  const [places, total] = await Promise.all([
-    this.prisma.place.findMany({
-      where,
+  /*
+   * 장소 목록과 전체 개수,
+   * 최신 production GAP run을 병렬 조회
+   */
+  const [
+    places,
+    total,
+    latestRun,
+  ] =
+    await Promise.all([
+      this.prisma.place.findMany({
+        where,
 
-      orderBy: {
-        id: 'asc',
-      },
+        orderBy: {
+          id: 'asc',
+        },
 
-      skip,
-      take: limit,
-    }),
+        skip,
+        take: limit,
+      }),
 
-    this.prisma.place.count({
-      where,
-    }),
-  ]);
+      this.prisma.place.count({
+        where,
+      }),
 
-  const items: Place[] = places.map((place) => ({
-    id: Number(place.id),
+      this.getLatestProductionGapRun(),
+    ]);
 
-    name: place.name,
+  /*
+   * 목록에 포함된 장소들의 GAP를
+   * 한 번의 쿼리로 조회한다.
+   *
+   * 장소별 findFirst를 반복하지 않으므로
+   * N+1 문제가 발생하지 않는다.
+   */
+  const gapScores =
+    latestRun &&
+    places.length > 0
+      ? await this.prisma.gapScoreHistory.findMany({
+          where: {
+            runId:
+              latestRun.id,
 
-    categoryId:
-      place.categoryId === null
-        ? null
-        : Number(place.categoryId),
+            placeId: {
+              in:
+                places.map(
+                  (place) =>
+                    place.id,
+                ),
+            },
+          },
 
-    districtRegionId:
-      place.districtRegionId === null
-        ? null
-        : Number(place.districtRegionId),
+          select: {
+            placeId: true,
 
-    adminDongRegionId:
-      place.adminDongRegionId === null
-        ? null
-        : Number(place.adminDongRegionId),
+            gapScore: true,
+            gapPercentile: true,
 
-    legalDongRegionId:
-      place.legalDongRegionId === null
-        ? null
-        : Number(place.legalDongRegionId),
+            onlineScore: true,
+            offlineScore: true,
 
-    roadAddress: place.roadAddress,
-    lotAddress: place.lotAddress,
-    postalCode: place.postalCode,
+            calculatedAt: true,
+          },
+        })
+      : [];
 
-    latitude:
-      place.latitude === null
-        ? null
-        : Number(place.latitude),
+  /*
+   * placeId -> GAP
+   * 빠르게 찾기 위한 Map
+   */
+  const gapByPlaceId =
+    new Map(
+      gapScores.map(
+        (score) =>
+          [
+            score.placeId.toString(),
+            score,
+          ] as const,
+      ),
+    );
 
-    longitude:
-      place.longitude === null
-        ? null
-        : Number(place.longitude),
+  const items: Place[] =
+    places.map((place) => {
+      const gap =
+        gapByPlaceId.get(
+          place.id.toString(),
+        );
 
-    phone: place.phone,
-    homepage: place.homepage,
+      return {
+        id:
+          Number(place.id),
 
-    overview: place.overview,
+        name:
+          place.name,
 
-    status: place.status,
-  }));
+        categoryId:
+          place.categoryId === null
+            ? null
+            : Number(
+                place.categoryId,
+              ),
+
+        districtRegionId:
+          place.districtRegionId === null
+            ? null
+            : Number(
+                place.districtRegionId,
+              ),
+
+        adminDongRegionId:
+          place.adminDongRegionId === null
+            ? null
+            : Number(
+                place.adminDongRegionId,
+              ),
+
+        legalDongRegionId:
+          place.legalDongRegionId === null
+            ? null
+            : Number(
+                place.legalDongRegionId,
+              ),
+
+        roadAddress:
+          place.roadAddress,
+
+        lotAddress:
+          place.lotAddress,
+
+        postalCode:
+          place.postalCode,
+
+        latitude:
+          place.latitude === null
+            ? null
+            : Number(
+                place.latitude,
+              ),
+
+        longitude:
+          place.longitude === null
+            ? null
+            : Number(
+                place.longitude,
+              ),
+
+        phone:
+          place.phone,
+
+        homepage:
+          place.homepage,
+
+        overview:
+          place.overview,
+
+        status:
+          place.status,
+
+        /*
+         * 최신 production run에
+         * GAP가 없는 장소는 null
+         */
+        gapScore:
+          gap
+            ? Number(
+                gap.gapScore,
+              )
+            : null,
+
+        gapPercentile:
+          gap?.gapPercentile ===
+          null ||
+          gap?.gapPercentile ===
+          undefined
+            ? null
+            : Number(
+                gap.gapPercentile,
+              ),
+
+        onlineScore:
+          gap?.onlineScore ===
+          null ||
+          gap?.onlineScore ===
+          undefined
+            ? null
+            : Number(
+                gap.onlineScore,
+              ),
+
+        offlineScore:
+          gap?.offlineScore ===
+          null ||
+          gap?.offlineScore ===
+          undefined
+            ? null
+            : Number(
+                gap.offlineScore,
+              ),
+
+        calculatedAt:
+          gap?.calculatedAt ??
+          null,
+      };
+    });
 
   return {
     items,
+
     page,
     limit,
     total,
-    totalPages: Math.ceil(total / limit),
+
+    totalPages:
+      Math.ceil(
+        total / limit,
+      ),
   };
 }
 
   async findById(
-    id: number,
-    userId: number,
-  ): Promise<PlaceDetail | undefined> {
+  id: number,
+  userId: number,
+): Promise<PlaceDetail | undefined> {
+  const now =
+    new Date();
 
-    const now = new Date();
-    const place = await this.prisma.place.findFirst({
+  /*
+   * 장소 상세와 최신 production GAP run을
+   * 동시에 조회
+   */
+  const [
+    place,
+    latestRun,
+  ] =
+    await Promise.all([
+      this.prisma.place.findFirst({
+        where: {
+          id: BigInt(id),
+          status: 'ACTIVE',
+        },
+
+        include: {
+          images: {
+            where: {
+              isActive: true,
+            },
+
+            orderBy: {
+              displayOrder: 'asc',
+            },
+          },
+
+          operatingHours: {
+            orderBy: {
+              dayOfWeek: 'asc',
+            },
+          },
+
+          specialHours: true,
+
+          benefits: {
+            where: {
+              isActive: true,
+
+              AND: [
+                {
+                  OR: [
+                    {
+                      validFrom:
+                        null,
+                    },
+                    {
+                      validFrom: {
+                        lte: now,
+                      },
+                    },
+                  ],
+                },
+
+                {
+                  OR: [
+                    {
+                      validUntil:
+                        null,
+                    },
+                    {
+                      validUntil: {
+                        gte: now,
+                      },
+                    },
+                  ],
+                },
+              ],
+            },
+
+            orderBy: {
+              createdAt:
+                'desc',
+            },
+          },
+
+          verificationSetting:
+            true,
+
+          ingredientRewards: {
+            where: {
+              isActive: true,
+            },
+
+            include: {
+              ingredient: true,
+            },
+          },
+        },
+      }),
+
+      this.getLatestProductionGapRun(),
+    ]);
+
+  if (!place) {
+    return undefined;
+  }
+
+  /*
+   * 즐겨찾기 여부
+   */
+  const favorite =
+    await this.prisma.placeFavorite.findUnique({
       where: {
-        id: BigInt(id),
-        status: 'ACTIVE',
+        userId_placeId: {
+          userId:
+            BigInt(userId),
+
+          placeId:
+            BigInt(id),
+        },
       },
 
-      include: {
-        images: {
-          where: {
-            isActive: true,
-          },
-          orderBy: {
-            displayOrder: 'asc',
-          },
-        },
-
-        operatingHours: {
-          orderBy: {
-            dayOfWeek: 'asc',
-          },
-        },
-
-        specialHours: true,
-
-        benefits: {
-  where: {
-    isActive: true,
-
-    AND: [
-      {
-        OR: [
-          {
-            validFrom: null,
-          },
-          {
-            validFrom: {
-              lte: now,
-            },
-          },
-        ],
-      },
-
-      {
-        OR: [
-          {
-            validUntil: null,
-          },
-          {
-            validUntil: {
-              gte: now,
-            },
-          },
-        ],
-      },
-    ],
-  },
-
-  orderBy: {
-    createdAt: 'desc',
-  },
-},
-
-        verificationSetting: true,
-
-        ingredientRewards: {
-          where: {
-            isActive: true,
-          },
-          include: {
-            ingredient: true,
-          },
-        },
+      select: {
+        userId: true,
       },
     });
 
-    if (!place) {
-      return undefined;
-    }
-const favorite =
-  await this.prisma.placeFavorite.findUnique({
-    where: {
-      userId_placeId: {
-        userId: BigInt(userId),
-        placeId: BigInt(id),
-      },
-    },
-    select: {
-      userId: true,
-    },
-  });
+  const isFavorite =
+    !!favorite;
 
-const isFavorite = !!favorite;
+  /*
+   * 장소별 최신 history가 아니라
+   * 현재 production run 안의 GAP만 조회
+   */
+  const gap =
+    latestRun
+      ? await this.prisma.gapScoreHistory.findFirst({
+          where: {
+            runId:
+              latestRun.id,
 
-    const operatingHours: PlaceOperatingHour[] =
-      place.operatingHours.map((hours) => ({
-        dayOfWeek: hours.dayOfWeek,
-        isClosed: hours.isClosed,
+            placeId:
+              place.id,
+          },
 
-        openTime: this.formatTime(
-          hours.openTime,
-        ),
+          select: {
+            gapScore: true,
+            gapPercentile: true,
 
-        closeTime: this.formatTime(
-          hours.closeTime,
-        ),
+            onlineScore: true,
+            offlineScore: true,
 
-        breakStartTime: this.formatTime(
-          hours.breakStartTime,
-        ),
+            calculatedAt: true,
+          },
+        })
+      : null;
 
-        breakEndTime: this.formatTime(
-          hours.breakEndTime,
-        ),
-      }));
+  const operatingHours:
+    PlaceOperatingHour[] =
+    place.operatingHours.map(
+      (hours) => ({
+        dayOfWeek:
+          hours.dayOfWeek,
 
-    const operatingStatus =
+        isClosed:
+          hours.isClosed,
+
+        openTime:
+          this.formatTime(
+            hours.openTime,
+          ),
+
+        closeTime:
+          this.formatTime(
+            hours.closeTime,
+          ),
+
+        breakStartTime:
+          this.formatTime(
+            hours.breakStartTime,
+          ),
+
+        breakEndTime:
+          this.formatTime(
+            hours.breakEndTime,
+          ),
+      }),
+    );
+
+  const operatingStatus =
     this.calculateOperatingStatus(
-    place.operatingHours,
-    place.specialHours,
-  );
+      place.operatingHours,
+      place.specialHours,
+    );
 
-const isOpenNow =
-  operatingStatus === 'OPEN';
+  const isOpenNow =
+    operatingStatus === 'OPEN';
 
-    return {
-      id: Number(place.id),
+  return {
+    id:
+      Number(place.id),
 
-      name: place.name,
+    name:
+      place.name,
 
-      categoryId:
-        place.categoryId === null
-          ? null
-          : Number(place.categoryId),
+    categoryId:
+      place.categoryId === null
+        ? null
+        : Number(
+            place.categoryId,
+          ),
 
-      districtRegionId:
-        place.districtRegionId === null
-          ? null
-          : Number(place.districtRegionId),
+    districtRegionId:
+      place.districtRegionId === null
+        ? null
+        : Number(
+            place.districtRegionId,
+          ),
 
-      adminDongRegionId:
-        place.adminDongRegionId === null
-          ? null
-          : Number(place.adminDongRegionId),
+    adminDongRegionId:
+      place.adminDongRegionId === null
+        ? null
+        : Number(
+            place.adminDongRegionId,
+          ),
 
-      legalDongRegionId:
-        place.legalDongRegionId === null
-          ? null
-          : Number(place.legalDongRegionId),
+    legalDongRegionId:
+      place.legalDongRegionId === null
+        ? null
+        : Number(
+            place.legalDongRegionId,
+          ),
 
-      roadAddress: place.roadAddress,
-      lotAddress: place.lotAddress,
-      postalCode: place.postalCode,
+    roadAddress:
+      place.roadAddress,
 
-      latitude:
-        place.latitude === null
-          ? null
-          : Number(place.latitude),
+    lotAddress:
+      place.lotAddress,
 
-      longitude:
-        place.longitude === null
-          ? null
-          : Number(place.longitude),
+    postalCode:
+      place.postalCode,
 
-      phone: place.phone,
-      homepage: place.homepage,
+    latitude:
+      place.latitude === null
+        ? null
+        : Number(
+            place.latitude,
+          ),
 
-      overview: place.overview,
+    longitude:
+      place.longitude === null
+        ? null
+        : Number(
+            place.longitude,
+          ),
 
-      status: place.status,
+    phone:
+      place.phone,
 
-      images: place.images.map((image) => ({
-        id: Number(image.id),
-        placeId: Number(image.placeId),
+    homepage:
+      place.homepage,
 
-        originalUrl: image.originalUrl,
-        thumbnailUrl: image.thumbnailUrl,
+    overview:
+      place.overview,
 
-        displayOrder: image.displayOrder,
-      })),
+    status:
+      place.status,
 
-      operatingHours,
+    /*
+     * 최신 production GAP 정보
+     */
+    gapScore:
+      gap
+        ? Number(
+            gap.gapScore,
+          )
+        : null,
 
-      isOpenNow,
+    gapPercentile:
+      gap?.gapPercentile === null ||
+      gap?.gapPercentile === undefined
+        ? null
+        : Number(
+            gap.gapPercentile,
+          ),
 
-      operatingStatus,
+    onlineScore:
+      gap?.onlineScore === null ||
+      gap?.onlineScore === undefined
+        ? null
+        : Number(
+            gap.onlineScore,
+          ),
 
-      benefits: place.benefits.map(
-        (benefit) => ({
-          id: Number(benefit.id),
-          title: benefit.title,
-          description: benefit.description,
+    offlineScore:
+      gap?.offlineScore === null ||
+      gap?.offlineScore === undefined
+        ? null
+        : Number(
+            gap.offlineScore,
+          ),
+
+    calculatedAt:
+      gap?.calculatedAt ??
+      null,
+
+    images:
+      place.images.map(
+        (image) => ({
+          id:
+            Number(image.id),
+
+          placeId:
+            Number(
+              image.placeId,
+            ),
+
+          originalUrl:
+            image.originalUrl,
+
+          thumbnailUrl:
+            image.thumbnailUrl,
+
+          displayOrder:
+            image.displayOrder,
         }),
       ),
 
-      availableIngredients:
-        place.ingredientRewards.map(
-          (reward) => ({
-            id: Number(reward.ingredient.id),
+    operatingHours,
 
-            name: reward.ingredient.name,
+    isOpenNow,
 
-            imageUrl:
-              reward.ingredient.imageUrl,
+    operatingStatus,
 
-            rarity:
-              reward.ingredient.rarity,
+    benefits:
+      place.benefits.map(
+        (benefit) => ({
+          id:
+            Number(
+              benefit.id,
+            ),
 
-            quantity: reward.quantity,
+          title:
+            benefit.title,
 
-            rewardRule:
-              reward.rewardRule,
-          }),
-        ),
+          description:
+            benefit.description,
+        }),
+      ),
 
-      verification:
-        place.verificationSetting === null
-          ? null
-          : {
-              enabled:
-                place.verificationSetting.enabled,
+    availableIngredients:
+      place.ingredientRewards.map(
+        (reward) => ({
+          id:
+            Number(
+              reward.ingredient.id,
+            ),
 
-              controlMode:
-                place.verificationSetting
-                  .controlMode,
+          name:
+            reward.ingredient.name,
 
-              hoursMode:
-                place.verificationSetting.hoursMode,
+          imageUrl:
+            reward.ingredient.imageUrl,
 
-              codeValidMinutes:
-                place.verificationSetting
-                  .codeValidMinutes,
-            },
-            isFavorite,
-    };
-  }
+          rarity:
+            reward.ingredient.rarity,
+
+          quantity:
+            reward.quantity,
+
+          rewardRule:
+            reward.rewardRule,
+        }),
+      ),
+
+    verification:
+      place.verificationSetting ===
+      null
+        ? null
+        : {
+            enabled:
+              place
+                .verificationSetting
+                .enabled,
+
+            controlMode:
+              place
+                .verificationSetting
+                .controlMode,
+
+            hoursMode:
+              place
+                .verificationSetting
+                .hoursMode,
+
+            codeValidMinutes:
+              place
+                .verificationSetting
+                .codeValidMinutes,
+          },
+
+    isFavorite,
+  };
+}
 
 private calculateOperatingStatus(
   operatingHours: Array<{
@@ -1489,7 +1838,9 @@ await tx.$executeRaw`
 async getGapScore(
   placeId: number,
 ) {
-  // 1. 활성 장소인지 먼저 확인
+  /*
+   * 1. 활성 장소 확인
+   */
   const place =
     await this.prisma.place.findFirst({
       where: {
@@ -1509,26 +1860,61 @@ async getGapScore(
     return undefined;
   }
 
-  // 2. 해당 장소의 가장 최신 GAP Score 조회
+  /*
+   * 2. 현재 production에서 사용할
+   * 최신 GAP run을 하나만 선택
+   */
+  const latestRun =
+    await this.getLatestProductionGapRun();
+
+  /*
+   * 아직 유효한 GAP run 자체가 없는 경우
+   */
+  if (!latestRun) {
+    return {
+      placeId: Number(place.id),
+      placeName: place.name,
+
+      available: false,
+
+      gapScore: null,
+      gapPercentile: null,
+
+      regionCategoryAverageGapScore:
+        null,
+
+      onlineScore: null,
+      offlineScore: null,
+
+      percentiles: null,
+
+      explanation: null,
+
+      formulaVersion: null,
+      dataStage: null,
+      calculatedAt: null,
+      runId: null,
+      gapMetricMappingId: null,
+    };
+  }
+
+  /*
+   * 3. 장소별 최신 history를 찾지 않고
+   * 위에서 선택한 동일 run의 score만 조회
+   */
   const gap =
     await this.prisma.gapScoreHistory.findFirst({
       where: {
         placeId: BigInt(placeId),
+        runId: latestRun.id,
       },
-
-      orderBy: [
-        {
-          calculatedAt: 'desc',
-        },
-        {
-          id: 'desc',
-        },
-      ],
 
       select: {
         id: true,
 
         gapScore: true,
+        gapPercentile: true,
+
         onlineScore: true,
         offlineScore: true,
 
@@ -1542,8 +1928,6 @@ async getGapScore(
 
         explanationText: true,
 
-        formulaVersion: true,
-        dataStage: true,
         calculatedAt: true,
 
         runId: true,
@@ -1551,26 +1935,49 @@ async getGapScore(
       },
     });
 
-  // 장소는 있지만 아직 GAP 점수가 없는 경우
+  /*
+   * 장소는 존재하지만
+   * 최신 production run에 이 장소의 GAP가 없는 경우
+   */
   if (!gap) {
     return {
       placeId: Number(place.id),
       placeName: place.name,
 
       available: false,
+
       gapScore: null,
+      gapPercentile: null,
 
       regionCategoryAverageGapScore:
         null,
+
+      onlineScore: null,
+      offlineScore: null,
+
+      percentiles: null,
+
+      explanation: null,
+
+      formulaVersion:
+        latestRun.formulaVersion,
+
+      dataStage:
+        latestRun.dataStage,
+
+      calculatedAt:
+        latestRun.calculatedAt,
+
+      runId:
+        Number(latestRun.id),
+
+      gapMetricMappingId: null,
     };
   }
 
   /*
-   * 3. 최신 GAP Score와 같은 계산 회차에서
-   * 같은 시군구 + 같은 카테고리 장소들의 평균 GAP Score 계산
-   *
-   * 장소에 지역 또는 카테고리가 없는 경우에는
-   * 비교 기준을 만들 수 없으므로 null 반환
+   * 4. 동일 run 안에서
+   * 같은 지역 + 같은 카테고리 평균 GAP 계산
    */
   let regionCategoryAverageGapScore:
     number | null = null;
@@ -1582,7 +1989,7 @@ async getGapScore(
     const average =
       await this.prisma.gapScoreHistory.aggregate({
         where: {
-          runId: gap.runId,
+          runId: latestRun.id,
 
           place: {
             status: 'ACTIVE',
@@ -1617,17 +2024,28 @@ async getGapScore(
     gapScore:
       Number(gap.gapScore),
 
+    gapPercentile:
+      gap.gapPercentile === null
+        ? null
+        : Number(
+            gap.gapPercentile,
+          ),
+
     regionCategoryAverageGapScore,
 
     onlineScore:
       gap.onlineScore === null
         ? null
-        : Number(gap.onlineScore),
+        : Number(
+            gap.onlineScore,
+          ),
 
     offlineScore:
       gap.offlineScore === null
         ? null
-        : Number(gap.offlineScore),
+        : Number(
+            gap.offlineScore,
+          ),
 
     percentiles: {
       naver:
@@ -1680,16 +2098,16 @@ async getGapScore(
       gap.explanationText,
 
     formulaVersion:
-      gap.formulaVersion,
+      latestRun.formulaVersion,
 
     dataStage:
-      gap.dataStage,
+      latestRun.dataStage,
 
     calculatedAt:
       gap.calculatedAt,
 
     runId:
-      Number(gap.runId),
+      Number(latestRun.id),
 
     gapMetricMappingId:
       Number(
@@ -1816,33 +2234,19 @@ async getGapRankings(
     (safePage - 1) *
     safeLimit;
 
-  // 실제 GAP Score가 존재하는 가장 최신 계산 회차
+  /*
+   * 모든 GAP API에서 공통으로 사용하는
+   * 최신 production GAP run 조회
+   *
+   * formulaVersion = GAP_V1_PROXY
+   * dataStage = COLD_START
+   */
   const latestRun =
-    await this.prisma.gapScoreRun.findFirst({
-      where: {
-        scores: {
-          some: {},
-        },
-      },
+    await this.getLatestProductionGapRun();
 
-      orderBy: [
-        {
-          calculatedAt: 'desc',
-        },
-        {
-          id: 'desc',
-        },
-      ],
-
-      select: {
-        id: true,
-        formulaVersion: true,
-        dataStage: true,
-        calculatedAt: true,
-      },
-    });
-
-  // 아직 GAP Score 계산 결과가 없는 경우
+  /*
+   * 아직 production GAP 계산 결과가 없는 경우
+   */
   if (!latestRun) {
     return {
       run: null,
@@ -1892,6 +2296,9 @@ async getGapRankings(
       );
   }
 
+  /*
+   * 위에서 선택한 단 하나의 production run만 사용
+   */
   const where = {
     runId: latestRun.id,
 
@@ -1916,6 +2323,12 @@ async getGapRankings(
       this.prisma.gapScoreHistory.findMany({
         where,
 
+        /*
+         * 기존 GAP Score 순위 정책 유지
+         *
+         * gapPercentile도 응답에는 제공하지만
+         * 기존 랭킹 정렬 동작은 바꾸지 않는다.
+         */
         orderBy: [
           {
             gapScore: 'desc',
@@ -1932,6 +2345,8 @@ async getGapRankings(
           id: true,
 
           gapScore: true,
+          gapPercentile: true,
+
           onlineScore: true,
           offlineScore: true,
 
@@ -2065,7 +2480,6 @@ async getGapRankings(
 
           /*
            * 방문 인증 기능 활성화 여부
-           * 영업 상태와는 별개
            */
           verificationAvailable:
             score.place
@@ -2073,17 +2487,14 @@ async getGapRankings(
               ?.enabled ?? false,
 
           /*
-           * 현재 영업 상태
-           *
-           * true  = 영업 중
-           * false = 영업 종료 / 휴무 / 브레이크타임
-           * null  = 운영시간 정보 부족으로 판단 불가
+           * 현재 영업 여부 및 세부 상태
            */
           isOpenNow:
             this.calculateIsOpenNow(
               score.place.operatingHours,
               score.place.specialHours,
             ),
+
           operatingStatus:
             this.calculateOperatingStatus(
               score.place.operatingHours,
@@ -2099,6 +2510,13 @@ async getGapRankings(
 
           gapScore:
             Number(score.gapScore),
+
+          gapPercentile:
+            score.gapPercentile === null
+              ? null
+              : Number(
+                  score.gapPercentile,
+                ),
 
           onlineScore:
             score.onlineScore === null
@@ -2141,7 +2559,9 @@ async getRecommendations(
       20,
     );
 
-  // 1. 기준 장소 조회
+  /*
+   * 1. 기준 장소 조회
+   */
   const place =
     await this.prisma.place.findFirst({
       where: {
@@ -2189,58 +2609,97 @@ async getRecommendations(
               ),
 
         gapScore: null,
+        gapPercentile: null,
       },
+
+      run: null,
 
       available: false,
       items: [],
     };
   }
 
-  // 2. 기준 장소의 최신 GAP Score
+  /*
+   * 2. 모든 GAP API와 동일한
+   * 최신 production run 선택
+   *
+   * GAP_V1_PROXY + COLD_START
+   */
+  const latestRun =
+    await this.getLatestProductionGapRun();
+
+  if (!latestRun) {
+    return {
+      basePlace: {
+        id: Number(place.id),
+        name: place.name,
+
+        categoryId:
+          Number(place.categoryId),
+
+        regionId:
+          Number(place.districtRegionId),
+
+        gapScore: null,
+        gapPercentile: null,
+      },
+
+      run: null,
+
+      available: false,
+      items: [],
+    };
+  }
+
+  /*
+   * 3. 기준 장소의 GAP는
+   * latest production run에서만 조회
+   */
   const baseGap =
     await this.prisma.gapScoreHistory.findFirst({
       where: {
         placeId: place.id,
+        runId: latestRun.id,
       },
-
-      orderBy: [
-        {
-          calculatedAt: 'desc',
-        },
-        {
-          id: 'desc',
-        },
-      ],
 
       select: {
         gapScore: true,
-        runId: true,
-        formulaVersion: true,
-        dataStage: true,
-        calculatedAt: true,
+        gapPercentile: true,
       },
     });
 
-  // 장소에는 GAP Score가 아직 없는 경우
+  /*
+   * 최신 production run에
+   * 기준 장소의 GAP가 없는 경우
+   */
   if (!baseGap) {
     return {
       basePlace: {
         id: Number(place.id),
-
-        name:
-          place.name,
+        name: place.name,
 
         categoryId:
-          Number(
-            place.categoryId,
-          ),
+          Number(place.categoryId),
 
         regionId:
-          Number(
-            place.districtRegionId,
-          ),
+          Number(place.districtRegionId),
 
         gapScore: null,
+        gapPercentile: null,
+      },
+
+      run: {
+        id:
+          Number(latestRun.id),
+
+        formulaVersion:
+          latestRun.formulaVersion,
+
+        dataStage:
+          latestRun.dataStage,
+
+        calculatedAt:
+          latestRun.calculatedAt,
       },
 
       available: false,
@@ -2249,13 +2708,13 @@ async getRecommendations(
   }
 
   /*
-   * 3. 같은 GAP 계산 회차(run) 안에서
+   * 4. 동일한 production run 안에서
    * 같은 지역 + 같은 카테고리 후보 조회
    */
   const candidates =
     await this.prisma.gapScoreHistory.findMany({
       where: {
-        runId: baseGap.runId,
+        runId: latestRun.id,
 
         placeId: {
           not: place.id,
@@ -2274,6 +2733,8 @@ async getRecommendations(
 
       select: {
         gapScore: true,
+        gapPercentile: true,
+
         onlineScore: true,
         offlineScore: true,
 
@@ -2286,9 +2747,6 @@ async getRecommendations(
             categoryId: true,
             districtRegionId: true,
 
-            /*
-             * 대표 이미지
-             */
             images: {
               where: {
                 isActive: true,
@@ -2348,8 +2806,16 @@ async getRecommendations(
       baseGap.gapScore,
     );
 
+  const baseGapPercentile =
+    baseGap.gapPercentile === null
+      ? null
+      : Number(
+          baseGap.gapPercentile,
+        );
+
   /*
-   * 4. GAP Score 차이가 작은 순서로 정렬
+   * 5. 기존 추천 정책 유지:
+   * GAP Score 차이가 작은 장소 우선
    */
   const items =
     candidates
@@ -2395,13 +2861,6 @@ async getRecommendations(
               ?.originalUrl ??
             null,
 
-          /*
-           * 현재 영업 상태
-           *
-           * true  = 영업 중
-           * false = 영업 종료 / 휴무 / 브레이크타임
-           * null  = 운영시간 정보 부족
-           */
           isOpenNow:
             this.calculateIsOpenNow(
               candidate.place
@@ -2409,14 +2868,24 @@ async getRecommendations(
               candidate.place
                 .specialHours,
             ),
+
           operatingStatus:
             this.calculateOperatingStatus(
-              candidate.place.operatingHours,
-              candidate.place.specialHours,
+              candidate.place
+                .operatingHours,
+              candidate.place
+                .specialHours,
             ),
 
           gapScore:
             candidateGapScore,
+
+          gapPercentile:
+            candidate.gapPercentile === null
+              ? null
+              : Number(
+                  candidate.gapPercentile,
+                ),
 
           gapDifference:
             Number(
@@ -2473,22 +2942,23 @@ async getRecommendations(
 
       gapScore:
         baseGapScore,
+
+      gapPercentile:
+        baseGapPercentile,
     },
 
     run: {
       id:
-        Number(
-          baseGap.runId,
-        ),
+        Number(latestRun.id),
 
       formulaVersion:
-        baseGap.formulaVersion,
+        latestRun.formulaVersion,
 
       dataStage:
-        baseGap.dataStage,
+        latestRun.dataStage,
 
       calculatedAt:
-        baseGap.calculatedAt,
+        latestRun.calculatedAt,
     },
 
     available: true,
@@ -2501,33 +2971,15 @@ async getGapMap(
   regionId?: number,
   categoryId?: number,
 ) {
-  // GAP Score가 실제 존재하는 가장 최신 계산 회차
+  /*
+   * 모든 GAP API에서 공통으로 사용하는
+   * 최신 production GAP run
+   *
+   * GAP_V1_PROXY + COLD_START
+   */
   const latestRun =
-    await this.prisma.gapScoreRun.findFirst({
-      where: {
-        scores: {
-          some: {},
-        },
-      },
+    await this.getLatestProductionGapRun();
 
-      orderBy: [
-        {
-          calculatedAt: 'desc',
-        },
-        {
-          id: 'desc',
-        },
-      ],
-
-      select: {
-        id: true,
-        formulaVersion: true,
-        dataStage: true,
-        calculatedAt: true,
-      },
-    });
-
-  // 아직 GAP 계산 결과가 없는 경우
   if (!latestRun) {
     return {
       run: null,
@@ -2538,14 +2990,7 @@ async getGapMap(
 
   /*
    * 상위 카테고리를 선택한 경우
-   * 선택 카테고리 + 활성 직계 하위 카테고리까지 포함
-   *
-   * 예:
-   * FOOD(1)
-   * → FOOD + KOREAN / CHINESE / CAFE 등
-   *
-   * CAFE(15)
-   * → CAFE만
+   * 선택 카테고리 + 활성 직계 하위 카테고리 포함
    */
   let categoryIds:
     bigint[] | undefined;
@@ -2583,6 +3028,10 @@ async getGapMap(
       );
   }
 
+  /*
+   * 위에서 선택한 production run의
+   * GAP Score만 지도에 사용
+   */
   const scores =
     await this.prisma.gapScoreHistory.findMany({
       where: {
@@ -2591,7 +3040,10 @@ async getGapMap(
         place: {
           status: 'ACTIVE',
 
-          // 지도 마커를 찍으려면 좌표가 반드시 있어야 함
+          /*
+           * 지도 마커를 찍으려면
+           * 좌표가 반드시 존재해야 함
+           */
           latitude: {
             not: null,
           },
@@ -2619,6 +3071,8 @@ async getGapMap(
 
       select: {
         gapScore: true,
+        gapPercentile: true,
+
         onlineScore: true,
         offlineScore: true,
 
@@ -2662,7 +3116,7 @@ async getGapMap(
             },
 
             /*
-             * 특정 날짜 운영 일정 / 임시 휴무
+             * 특정 날짜 특별 운영 / 임시 휴무
              */
             specialHours: {
               select: {
@@ -2720,7 +3174,6 @@ async getGapMap(
 
       /*
        * 방문 인증 기능 활성화 여부
-       * 영업 여부와는 별개
        */
       verificationAvailable:
         score.place
@@ -2729,16 +3182,13 @@ async getGapMap(
 
       /*
        * 현재 영업 상태
-       *
-       * true  = 영업 중
-       * false = 영업 종료 / 휴무 / 브레이크타임
-       * null  = 운영시간 정보 부족으로 판단 불가
        */
       isOpenNow:
         this.calculateIsOpenNow(
           score.place.operatingHours,
           score.place.specialHours,
         ),
+
       operatingStatus:
         this.calculateOperatingStatus(
           score.place.operatingHours,
@@ -2747,6 +3197,13 @@ async getGapMap(
 
       gapScore:
         Number(score.gapScore),
+
+      gapPercentile:
+        score.gapPercentile === null
+          ? null
+          : Number(
+              score.gapPercentile,
+            ),
 
       onlineScore:
         score.onlineScore === null
