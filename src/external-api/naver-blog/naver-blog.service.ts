@@ -235,6 +235,7 @@ export class NaverBlogService {
 
   private async getTargets(
     limit?: number,
+    onlyPlaceIds?: bigint[],
   ): Promise<BlogTarget[]> {
     const rows:
       Array<{
@@ -275,7 +276,7 @@ export class NaverBlogService {
           p.id
       `;
 
-    const targets =
+    let targets =
       rows.map(
         (row) => ({
           placeId:
@@ -292,6 +293,28 @@ export class NaverBlogService {
             0n,
         }),
       );
+
+    if (
+      onlyPlaceIds &&
+      onlyPlaceIds.length > 0
+    ) {
+      const allowed =
+        new Set(
+          onlyPlaceIds.map(
+            (id) =>
+              id.toString(),
+          ),
+        );
+
+      targets =
+        targets.filter(
+          (target) =>
+            allowed.has(
+              target.placeId
+                .toString(),
+            ),
+        );
+    }
 
     if (
       limit &&
@@ -640,10 +663,12 @@ export class NaverBlogService {
    */
   async syncActivePlaces(
     limit?: number,
+    onlyPlaceIds?: bigint[],
   ) {
     const targets =
       await this.getTargets(
         limit,
+        onlyPlaceIds,
       );
 
     let successCount =
