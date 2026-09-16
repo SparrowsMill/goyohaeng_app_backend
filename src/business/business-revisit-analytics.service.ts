@@ -6,6 +6,10 @@ import {
   PrismaService,
 } from '../prisma/prisma.service';
 
+import {
+  AnalyticsEventType,
+} from '../analytics/analytics-event-type';
+
 @Injectable()
 export class BusinessRevisitAnalyticsService {
   constructor(
@@ -423,4 +427,127 @@ export class BusinessRevisitAnalyticsService {
       ),
   };
 }
+
+  async getPageFunnel(
+    placeId: number,
+  ) {
+    const placeIdBigInt =
+      BigInt(placeId);
+
+    const [
+      placeDetailViewCount,
+      visitAuthPageEnterCount,
+      verifiedVisitCount,
+    ] =
+      await Promise.all([
+        /*
+         * 장소 상세페이지 조회 횟수
+         */
+        this.prisma
+          .analyticsEvent
+          .count({
+            where: {
+              placeId:
+                placeIdBigInt,
+
+              eventType:
+                AnalyticsEventType
+                  .PLACE_DETAIL_VIEW,
+            },
+          }),
+
+        /*
+         * 방문인증 페이지 진입 횟수
+         */
+        this.prisma
+          .analyticsEvent
+          .count({
+            where: {
+              placeId:
+                placeIdBigInt,
+
+              eventType:
+                AnalyticsEventType
+                  .VISIT_AUTH_PAGE_ENTER,
+            },
+          }),
+
+        /*
+         * 실제 방문 인증 완료 횟수
+         *
+         * 기존 VisitVerification 데이터를 사용한다.
+         */
+        this.prisma
+          .visitVerification
+          .count({
+            where: {
+              placeId:
+                placeIdBigInt,
+
+              status:
+                'VERIFIED',
+            },
+          }),
+      ]);
+
+    const rate = (
+      numerator: number,
+      denominator: number,
+    ) => {
+      if (
+        denominator === 0
+      ) {
+        return 0;
+      }
+
+      return Number(
+        (
+          (
+            numerator /
+            denominator
+          ) *
+          100
+        ).toFixed(2),
+      );
+    };
+
+    return {
+      placeId,
+
+      funnel: {
+        placeDetailView: {
+          count:
+            placeDetailViewCount,
+        },
+
+        visitAuthPageEnter: {
+          count:
+            visitAuthPageEnterCount,
+
+          conversionRate:
+            rate(
+              visitAuthPageEnterCount,
+              placeDetailViewCount,
+            ),
+        },
+
+        verifiedVisit: {
+          count:
+            verifiedVisitCount,
+
+          conversionRate:
+            rate(
+              verifiedVisitCount,
+              visitAuthPageEnterCount,
+            ),
+        },
+      },
+
+      overallConversionRate:
+        rate(
+          verifiedVisitCount,
+          placeDetailViewCount,
+        ),
+    };
+  }
 }

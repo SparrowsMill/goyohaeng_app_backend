@@ -8,6 +8,14 @@ export type PlaceStatus =
   | 'CLOSED'
   | 'HIDDEN';
 
+  export type OperatingStatus =
+  | 'OPEN'
+  | 'BEFORE_OPEN'
+  | 'BREAK_TIME'
+  | 'CLOSED'
+  | 'DAY_OFF'
+  | 'UNKNOWN';
+
 export interface Place {
   id: number;
   name: string;
@@ -78,6 +86,8 @@ export interface PlaceDetail extends Place {
   operatingHours: PlaceOperatingHour[];
 
   isOpenNow: boolean;
+
+  operatingStatus: OperatingStatus;
 
   benefits: PlaceBenefit[];
 
@@ -355,10 +365,14 @@ const isFavorite = !!favorite;
         ),
       }));
 
-    const isOpenNow = this.calculateIsOpenNow(
-      place.operatingHours,
-      place.specialHours,
-    );
+    const operatingStatus =
+    this.calculateOperatingStatus(
+    place.operatingHours,
+    place.specialHours,
+  );
+
+const isOpenNow =
+  operatingStatus === 'OPEN';
 
     return {
       id: Number(place.id),
@@ -420,6 +434,8 @@ const isFavorite = !!favorite;
 
       isOpenNow,
 
+      operatingStatus,
+
       benefits: place.benefits.map(
         (benefit) => ({
           id: Number(benefit.id),
@@ -470,202 +486,662 @@ const isFavorite = !!favorite;
     };
   }
 
-  private calculateIsOpenNow(
-    operatingHours: Array<{
-      dayOfWeek: number;
-      isClosed: boolean;
-      openTime: Date | null;
-      closeTime: Date | null;
-      breakStartTime: Date | null;
-      breakEndTime: Date | null;
-    }>,
-    specialHours: Array<{
-      targetDate: Date;
-      scheduleType: string;
-      openTime: Date | null;
-      closeTime: Date | null;
-      breakStartTime: Date | null;
-      breakEndTime: Date | null;
-    }>,
-  ): boolean {
-    const now = new Date();
+private calculateOperatingStatus(
+  operatingHours: Array<{
+    dayOfWeek: number;
+    isClosed: boolean;
+    is24Hours: boolean;
+    openTime: Date | null;
+    closeTime: Date | null;
+    breakStartTime: Date | null;
+    breakEndTime: Date | null;
+  }>,
+  specialHours: Array<{
+    targetDate: Date;
+    scheduleType: string;
+    openTime: Date | null;
+    closeTime: Date | null;
+    breakStartTime: Date | null;
+    breakEndTime: Date | null;
+  }>,
+): OperatingStatus {
+  const now = new Date();
 
-    const parts =
-      new Intl.DateTimeFormat(
-        'en-US',
-        {
-          timeZone: 'Asia/Seoul',
-          year: 'numeric',
-          month: '2-digit',
-          day: '2-digit',
-          weekday: 'short',
-          hour: '2-digit',
-          minute: '2-digit',
-          hour12: false,
-        },
-      ).formatToParts(now);
+  /*
+   * 서버 위치와 관계없이
+   * 현재 시간을 Asia/Seoul 기준으로 계산
+   */
+  const parts =
+    new Intl.DateTimeFormat(
+      'en-US',
+      {
+        timeZone: 'Asia/Seoul',
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit',
+        weekday: 'short',
+        hour: '2-digit',
+        minute: '2-digit',
+        hour12: false,
+      },
+    ).formatToParts(now);
 
-    const getPart = (type: string) =>
-      parts.find(
-        (part) => part.type === type,
-      )?.value;
+  const getPart = (
+    type: string,
+  ) =>
+    parts.find(
+      (part) =>
+        part.type === type,
+    )?.value;
 
-    const year = getPart('year');
-    const month = getPart('month');
-    const day = getPart('day');
+  const year = getPart('year');
+  const month = getPart('month');
+  const day = getPart('day');
+  const weekday =
+    getPart('weekday');
 
-    const weekday = getPart('weekday');
+  const hour =
+    Number(getPart('hour'));
 
-    const hour = Number(
-      getPart('hour'),
+  const minute =
+    Number(getPart('minute'));
+
+  if (
+    !year ||
+    !month ||
+    !day ||
+    !weekday ||
+    Number.isNaN(hour) ||
+    Number.isNaN(minute)
+  ) {
+    return 'UNKNOWN';
+  }
+
+  const today =
+    `${year}-${month}-${day}`;
+
+  const currentMinutes =
+    hour * 60 + minute;
+
+  const dayMap: Record<
+    string,
+    number
+  > = {
+    Mon: 1,
+    Tue: 2,
+    Wed: 3,
+    Thu: 4,
+    Fri: 5,
+    Sat: 6,
+    Sun: 7,
+  };
+
+  const dayOfWeek =
+    dayMap[weekday];
+
+  if (!dayOfWeek) {
+    return 'UNKNOWN';
+  }
+
+  /*
+   * ==================================================
+   * 1. 오늘 특별 영업정보 확인
+   *
+   * 특별 영업정보가 있으면
+   * 일반 주간 영업정보보다 우선한다.
+   * ==================================================
+   */
+  const todaySpecial =
+    specialHours.find(
+      (specialHour) =>
+        specialHour.targetDate
+          .toISOString()
+          .slice(0, 10) ===
+        today,
     );
 
-    const minute = Number(
-      getPart('minute'),
-    );
-
+  if (todaySpecial) {
+    /*
+     * 명시적인 특별 휴무
+     */
     if (
-      !year ||
-      !month ||
-      !day ||
-      !weekday
+      todaySpecial.scheduleType ===
+      'CLOSED'
     ) {
-      return false;
+      return 'DAY_OFF';
     }
-
-    const today =
-      `${year}-${month}-${day}`;
-
-    const currentMinutes =
-      hour * 60 + minute;
 
     /*
-     * 특정 날짜 영업정보가 있으면
-     * 일반 주간 영업시간보다 우선한다.
+     * 특별 영업일
      */
-    const special =
-      specialHours.find(
-        (specialHour) =>
-          specialHour.targetDate
-            .toISOString()
-            .slice(0, 10) === today,
+    if (
+      todaySpecial.scheduleType ===
+      'SPECIAL_OPEN'
+    ) {
+      return this.evaluateScheduleStatus(
+        currentMinutes,
+        todaySpecial.openTime,
+        todaySpecial.closeTime,
+        todaySpecial.breakStartTime,
+        todaySpecial.breakEndTime,
       );
-
-    if (special) {
-      if (
-        special.scheduleType ===
-        'CLOSED'
-      ) {
-        return false;
-      }
-
-      if (
-        special.scheduleType ===
-        'SPECIAL_OPEN'
-      ) {
-        return this.isWithinOpeningHours(
-          currentMinutes,
-          special.openTime,
-          special.closeTime,
-          special.breakStartTime,
-          special.breakEndTime,
-        );
-      }
     }
+  }
 
-    const dayMap: Record<
-      string,
-      number
-    > = {
-      Mon: 1,
-      Tue: 2,
-      Wed: 3,
-      Thu: 4,
-      Fri: 5,
-      Sat: 6,
-      Sun: 7,
+  /*
+   * ==================================================
+   * 2. 전날 시작한 심야 영업이
+   * 오늘 새벽까지 이어지는지 확인
+   *
+   * 예:
+   * 화요일 18:00 ~ 수요일 02:00
+   *
+   * 수요일 01:00에도 OPEN이어야 한다.
+   * ==================================================
+   */
+  const previousDate =
+    new Date(
+      Date.UTC(
+        Number(year),
+        Number(month) - 1,
+        Number(day),
+      ),
+    );
+
+  previousDate.setUTCDate(
+    previousDate.getUTCDate() - 1,
+  );
+
+  const previousDateString =
+    previousDate
+      .toISOString()
+      .slice(0, 10);
+
+  const previousDayOfWeek =
+    dayOfWeek === 1
+      ? 7
+      : dayOfWeek - 1;
+
+  const previousSpecial =
+    specialHours.find(
+      (specialHour) =>
+        specialHour.targetDate
+          .toISOString()
+          .slice(0, 10) ===
+        previousDateString,
+    );
+
+  let previousSchedule:
+    | {
+        openTime: Date | null;
+        closeTime: Date | null;
+        breakStartTime:
+          Date | null;
+        breakEndTime:
+          Date | null;
+      }
+    | null = null;
+
+  /*
+   * 전날 특별 영업이 있었다면
+   * 그 시간을 우선 사용
+   */
+  if (
+    previousSpecial
+      ?.scheduleType ===
+    'SPECIAL_OPEN'
+  ) {
+    previousSchedule = {
+      openTime:
+        previousSpecial.openTime,
+
+      closeTime:
+        previousSpecial.closeTime,
+
+      breakStartTime:
+        previousSpecial
+          .breakStartTime,
+
+      breakEndTime:
+        previousSpecial
+          .breakEndTime,
     };
-
-    const dayOfWeek =
-      dayMap[weekday];
-
-    const todayHours =
+  } else if (
+    previousSpecial
+      ?.scheduleType !==
+    'CLOSED'
+  ) {
+    /*
+     * 전날 특별 휴무가 아니면
+     * 일반 주간 영업시간 확인
+     */
+    const previousHours =
       operatingHours.find(
         (hours) =>
-          hours.dayOfWeek === dayOfWeek,
+          hours.dayOfWeek ===
+          previousDayOfWeek,
       );
 
     if (
-      !todayHours ||
-      todayHours.isClosed
+      previousHours &&
+      !previousHours.isClosed
     ) {
-      return false;
-    }
+      previousSchedule = {
+        openTime:
+          previousHours.openTime,
 
-    return this.isWithinOpeningHours(
+        closeTime:
+          previousHours.closeTime,
+
+        breakStartTime:
+          previousHours
+            .breakStartTime,
+
+        breakEndTime:
+          previousHours
+            .breakEndTime,
+      };
+    }
+  }
+
+  if (
+    previousSchedule?.openTime &&
+    previousSchedule?.closeTime
+  ) {
+    const previousOpenMinutes =
+      this.dateTimeToMinutes(
+        previousSchedule.openTime,
+      );
+
+    const previousCloseMinutes =
+      this.dateTimeToMinutes(
+        previousSchedule.closeTime,
+      );
+
+    /*
+     * close < open이면 자정을 넘긴 영업
+     *
+     * 예:
+     * 18:00 -> 02:00
+     */
+    const isOvernight =
+      previousCloseMinutes <
+      previousOpenMinutes;
+
+    /*
+     * 전날 영업의 새벽 구간
+     */
+    if (
+      isOvernight &&
+      currentMinutes <
+        previousCloseMinutes
+    ) {
+      if (
+        this.isInBreakTime(
+          currentMinutes,
+          previousSchedule
+            .breakStartTime,
+          previousSchedule
+            .breakEndTime,
+        )
+      ) {
+        return 'BREAK_TIME';
+      }
+
+      return 'OPEN';
+    }
+  }
+
+  /*
+   * ==================================================
+   * 3. 오늘 일반 영업시간 확인
+   * ==================================================
+   */
+  const todayHours =
+    operatingHours.find(
+      (hours) =>
+        hours.dayOfWeek ===
+        dayOfWeek,
+    );
+
+  /*
+   * 오늘 영업시간 데이터 자체가 없음
+   */
+  if (!todayHours) {
+    return 'UNKNOWN';
+  }
+
+  /*
+   * DB에서 명시적으로 휴무 처리된 날
+   */
+  if (todayHours.isClosed) {
+  return 'DAY_OFF';
+}
+
+/*
+ * 24시간 영업
+ *
+ * 기존 isOpenDuring24Hours()를 사용해서
+ * 브레이크타임까지 반영한다.
+ */
+if (todayHours.is24Hours) {
+  const isOpen =
+    this.isOpenDuring24Hours(
       currentMinutes,
-      todayHours.openTime,
-      todayHours.closeTime,
       todayHours.breakStartTime,
       todayHours.breakEndTime,
     );
+
+  if (isOpen === null) {
+    return 'UNKNOWN';
   }
 
-  private isWithinOpeningHours(
-    currentMinutes: number,
-    openTime: Date | null,
-    closeTime: Date | null,
-    breakStartTime: Date | null,
-    breakEndTime: Date | null,
-  ): boolean {
+  return isOpen
+    ? 'OPEN'
+    : 'BREAK_TIME';
+}
+
+/*
+ * 일반 영업 상태 계산
+ */
+return this.evaluateScheduleStatus(
+  currentMinutes,
+  todayHours.openTime,
+  todayHours.closeTime,
+  todayHours.breakStartTime,
+  todayHours.breakEndTime,
+);
+}
+
+private calculateIsOpenNow(
+  operatingHours: Array<{
+    dayOfWeek: number;
+    isClosed: boolean;
+    is24Hours: boolean;
+    openTime: Date | null;
+    closeTime: Date | null;
+    breakStartTime: Date | null;
+    breakEndTime: Date | null;
+  }>,
+  specialHours: Array<{
+    targetDate: Date;
+    scheduleType: string;
+    openTime: Date | null;
+    closeTime: Date | null;
+    breakStartTime: Date | null;
+    breakEndTime: Date | null;
+  }>,
+): boolean {
+  return (
+    this.calculateOperatingStatus(
+      operatingHours,
+      specialHours,
+    ) === 'OPEN'
+  );
+}
+
+private evaluateScheduleStatus(
+  currentMinutes: number,
+  openTime: Date | null,
+  closeTime: Date | null,
+  breakStartTime: Date | null,
+  breakEndTime: Date | null,
+): OperatingStatus {
+  /*
+   * 시작/종료 시간이 없으면
+   * 영업 여부를 확정할 수 없음
+   */
+  if (
+    !openTime ||
+    !closeTime
+  ) {
+    return 'UNKNOWN';
+  }
+
+  const openMinutes =
+    this.dateTimeToMinutes(
+      openTime,
+    );
+
+  const closeMinutes =
+    this.dateTimeToMinutes(
+      closeTime,
+    );
+
+  /*
+   * 시작과 종료가 동일한 경우
+   * 현재 데이터만으로는
+   * 24시간 영업인지 잘못된 데이터인지
+   * 판단할 수 없으므로 UNKNOWN
+   */
+  if (
+    openMinutes ===
+    closeMinutes
+  ) {
+    return 'UNKNOWN';
+  }
+
+  /*
+   * 일반 영업시간
+   *
+   * 예:
+   * 10:00 ~ 22:00
+   */
+  if (
+    closeMinutes >
+    openMinutes
+  ) {
+    /*
+     * 영업 시작 전
+     */
     if (
-      !openTime ||
-      !closeTime
+      currentMinutes <
+      openMinutes
     ) {
-      return false;
+      return 'BEFORE_OPEN';
     }
 
-    const openMinutes =
-      this.dateTimeToMinutes(
-        openTime,
-      );
-
-    const closeMinutes =
-      this.dateTimeToMinutes(
-        closeTime,
-      );
-
+    /*
+     * 영업 종료 후
+     */
     if (
-      currentMinutes < openMinutes ||
-      currentMinutes >= closeMinutes
+      currentMinutes >=
+      closeMinutes
     ) {
-      return false;
+      return 'CLOSED';
     }
 
+    /*
+     * 영업시간 안이지만
+     * 브레이크타임
+     */
     if (
-      breakStartTime &&
-      breakEndTime
+      this.isInBreakTime(
+        currentMinutes,
+        breakStartTime,
+        breakEndTime,
+      )
     ) {
-      const breakStart =
-        this.dateTimeToMinutes(
-          breakStartTime,
-        );
-
-      const breakEnd =
-        this.dateTimeToMinutes(
-          breakEndTime,
-        );
-
-      if (
-        currentMinutes >= breakStart &&
-        currentMinutes < breakEnd
-      ) {
-        return false;
-      }
+      return 'BREAK_TIME';
     }
 
+    return 'OPEN';
+  }
+
+  /*
+   * 자정을 넘기는 영업시간
+   *
+   * 예:
+   * 18:00 ~ 02:00
+   *
+   * 오늘 날짜의 영업은
+   * openTime 이후부터 시작한다.
+   * 새벽 구간은 위에서 전날 영업으로 처리한다.
+   */
+  if (
+    currentMinutes <
+    openMinutes
+  ) {
+    return 'BEFORE_OPEN';
+  }
+
+  if (
+    this.isInBreakTime(
+      currentMinutes,
+      breakStartTime,
+      breakEndTime,
+    )
+  ) {
+    return 'BREAK_TIME';
+  }
+
+  return 'OPEN';
+}
+
+private isInBreakTime(
+  currentMinutes: number,
+  breakStartTime: Date | null,
+  breakEndTime: Date | null,
+): boolean {
+  if (
+    !breakStartTime ||
+    !breakEndTime
+  ) {
+    return false;
+  }
+
+  const breakStart =
+    this.dateTimeToMinutes(
+      breakStartTime,
+    );
+
+  const breakEnd =
+    this.dateTimeToMinutes(
+      breakEndTime,
+    );
+
+  /*
+   * 시작과 끝이 같으면
+   * 브레이크타임 없음으로 처리
+   */
+  if (
+    breakStart === breakEnd
+  ) {
+    return false;
+  }
+
+  /*
+   * 일반 브레이크
+   *
+   * 예:
+   * 15:00 ~ 17:00
+   */
+  if (
+    breakEnd >
+    breakStart
+  ) {
+    return (
+      currentMinutes >=
+        breakStart &&
+      currentMinutes <
+        breakEnd
+    );
+  }
+
+  /*
+   * 자정을 넘기는 브레이크
+   *
+   * 예:
+   * 23:30 ~ 00:30
+   */
+  return (
+    currentMinutes >=
+      breakStart ||
+    currentMinutes <
+      breakEnd
+  );
+}
+
+private isOpenDuring24Hours(
+  currentMinutes: number,
+  breakStartTime: Date | null,
+  breakEndTime: Date | null,
+): boolean | null {
+  /*
+   * 24시간 영업 + 브레이크 없음
+   */
+  if (
+    !breakStartTime &&
+    !breakEndTime
+  ) {
     return true;
   }
+
+  /*
+   * 브레이크 정보가 한쪽만 존재
+   */
+  if (
+    !breakStartTime ||
+    !breakEndTime
+  ) {
+    return null;
+  }
+
+  const breakStart =
+    this.dateTimeToMinutes(
+      breakStartTime,
+    );
+
+  const breakEnd =
+    this.dateTimeToMinutes(
+      breakEndTime,
+    );
+
+  /*
+   * 시작과 종료가 같으면
+   * 브레이크 시간 범위를
+   * 판단할 수 없음
+   */
+  if (
+    breakStart ===
+    breakEnd
+  ) {
+    return null;
+  }
+
+  /*
+   * 일반 브레이크
+   *
+   * 예:
+   * 15:00 ~ 16:00
+   */
+  if (
+    breakStart <
+    breakEnd
+  ) {
+    const isBreakTime =
+      currentMinutes >=
+        breakStart &&
+      currentMinutes <
+        breakEnd;
+
+    return !isBreakTime;
+  }
+
+  /*
+   * 자정을 넘는 브레이크
+   *
+   * 예:
+   * 23:30 ~ 00:30
+   */
+  const isBreakTime =
+    currentMinutes >=
+      breakStart ||
+    currentMinutes <
+      breakEnd;
+
+  return !isBreakTime;
+}
 
   private dateTimeToMinutes(
     time: Date,
@@ -967,6 +1443,33 @@ async rewardTrendFirstView(
         },
       });
 
+      /*
+ * 트렌드 최초 조회 보상
+ * 사용자별·장소별 최초 1회만 XP +5
+ *
+ * TREND_FIRST_VIEW 지급 이력이 이미 있으면
+ * 위에서 return되므로 중복 지급되지 않는다.
+ */
+await tx.$executeRaw`
+  UPDATE "users"
+  SET
+    "level" =
+      COALESCE("level", 1)
+      + (
+          (
+            COALESCE("xp", 0)
+            + 5
+          ) / 100
+        ),
+    "xp" =
+      (
+        COALESCE("xp", 0)
+        + 5
+      ) % 100,
+    "updated_at" = NOW()
+  WHERE "id" = ${BigInt(userId)}
+`;
+
       return {
         firstView: true,
         rewarded: true,
@@ -997,6 +1500,8 @@ async getGapScore(
       select: {
         id: true,
         name: true,
+        categoryId: true,
+        districtRegionId: true,
       },
     });
 
@@ -1054,7 +1559,53 @@ async getGapScore(
 
       available: false,
       gapScore: null,
+
+      regionCategoryAverageGapScore:
+        null,
     };
+  }
+
+  /*
+   * 3. 최신 GAP Score와 같은 계산 회차에서
+   * 같은 시군구 + 같은 카테고리 장소들의 평균 GAP Score 계산
+   *
+   * 장소에 지역 또는 카테고리가 없는 경우에는
+   * 비교 기준을 만들 수 없으므로 null 반환
+   */
+  let regionCategoryAverageGapScore:
+    number | null = null;
+
+  if (
+    place.districtRegionId !== null &&
+    place.categoryId !== null
+  ) {
+    const average =
+      await this.prisma.gapScoreHistory.aggregate({
+        where: {
+          runId: gap.runId,
+
+          place: {
+            status: 'ACTIVE',
+
+            districtRegionId:
+              place.districtRegionId,
+
+            categoryId:
+              place.categoryId,
+          },
+        },
+
+        _avg: {
+          gapScore: true,
+        },
+      });
+
+    regionCategoryAverageGapScore =
+      average._avg.gapScore === null
+        ? null
+        : Number(
+            average._avg.gapScore,
+          );
   }
 
   return {
@@ -1065,6 +1616,8 @@ async getGapScore(
 
     gapScore:
       Number(gap.gapScore),
+
+    regionCategoryAverageGapScore,
 
     onlineScore:
       gap.onlineScore === null
@@ -1092,7 +1645,8 @@ async getGapScore(
             ),
 
       navigation:
-        gap.navigationPercentile === null
+        gap.navigationPercentile ===
+        null
           ? null
           : Number(
               gap.navigationPercentile,
@@ -1106,14 +1660,16 @@ async getGapScore(
             ),
 
       expenditure:
-        gap.expenditurePercentile === null
+        gap.expenditurePercentile ===
+        null
           ? null
           : Number(
               gap.expenditurePercentile,
             ),
 
       nonlocalVisitor:
-        gap.nonlocalVisitorPercentile === null
+        gap.nonlocalVisitorPercentile ===
+        null
           ? null
           : Number(
               gap.nonlocalVisitorPercentile,
@@ -1138,6 +1694,105 @@ async getGapScore(
     gapMetricMappingId:
       Number(
         gap.gapMetricMappingId,
+      ),
+  };
+}
+
+async getGapHistory(
+  placeId: number,
+  period: '7d' | '1m' | '3m',
+) {
+  const place =
+    await this.prisma.place.findFirst({
+      where: {
+        id: BigInt(placeId),
+        status: 'ACTIVE',
+      },
+
+      select: {
+        id: true,
+      },
+    });
+
+  if (!place) {
+    return undefined;
+  }
+
+  const now =
+    new Date();
+
+  const startDate =
+    new Date(now);
+
+  switch (period) {
+    case '7d':
+      startDate.setUTCDate(
+        startDate.getUTCDate() - 7,
+      );
+      break;
+
+    case '1m':
+      startDate.setUTCMonth(
+        startDate.getUTCMonth() - 1,
+      );
+      break;
+
+    case '3m':
+      startDate.setUTCMonth(
+        startDate.getUTCMonth() - 3,
+      );
+      break;
+  }
+
+  /*
+   * 해당 기간 내 존재하는 GAP 계산 회차만 반환.
+   * 계산되지 않은 날짜에 대해서는
+   * 임의의 값을 생성하거나 보간하지 않음.
+   */
+  const history =
+    await this.prisma.gapScoreHistory.findMany({
+      where: {
+        placeId:
+          BigInt(placeId),
+
+        calculatedAt: {
+          gte: startDate,
+          lte: now,
+        },
+      },
+
+      orderBy: [
+        {
+          calculatedAt: 'asc',
+        },
+        {
+          id: 'asc',
+        },
+      ],
+
+      select: {
+        calculatedAt: true,
+        gapScore: true,
+      },
+    });
+
+  return {
+    placeId:
+      Number(place.id),
+
+    period,
+
+    items:
+      history.map(
+        (item) => ({
+          calculatedAt:
+            item.calculatedAt,
+
+          gapScore:
+            Number(
+              item.gapScore,
+            ),
+        }),
       ),
   };
 }
@@ -1202,40 +1857,40 @@ async getGapRankings(
   }
 
   let categoryIds:
-  bigint[] | undefined;
+    bigint[] | undefined;
 
-if (categoryId !== undefined) {
-  const selectedCategoryId =
-    BigInt(categoryId);
+  if (categoryId !== undefined) {
+    const selectedCategoryId =
+      BigInt(categoryId);
 
-  const categories =
-    await this.prisma.category.findMany({
-      where: {
-        isActive: true,
+    const categories =
+      await this.prisma.category.findMany({
+        where: {
+          isActive: true,
 
-        OR: [
-          {
-            id:
-              selectedCategoryId,
-          },
-          {
-            parentId:
-              selectedCategoryId,
-          },
-        ],
-      },
+          OR: [
+            {
+              id:
+                selectedCategoryId,
+            },
+            {
+              parentId:
+                selectedCategoryId,
+            },
+          ],
+        },
 
-      select: {
-        id: true,
-      },
-    });
+        select: {
+          id: true,
+        },
+      });
 
-  categoryIds =
-    categories.map(
-      (category) =>
-        category.id,
-    );
-}
+    categoryIds =
+      categories.map(
+        (category) =>
+          category.id,
+      );
+  }
 
   const where = {
     runId: latestRun.id,
@@ -1249,10 +1904,10 @@ if (categoryId !== undefined) {
       }),
 
       ...(categoryIds !== undefined && {
-  categoryId: {
-    in: categoryIds,
-  },
-}),
+        categoryId: {
+          in: categoryIds,
+        },
+      }),
     },
   };
 
@@ -1291,6 +1946,48 @@ if (categoryId !== undefined) {
               districtRegionId: true,
 
               roadAddress: true,
+
+              /*
+               * 방문 인증 활성화 여부
+               */
+              verificationSetting: {
+                select: {
+                  enabled: true,
+                },
+              },
+
+              /*
+               * 현재 영업 상태 계산용
+               */
+              operatingHours: {
+                select: {
+                  dayOfWeek: true,
+                  isClosed: true,
+                  is24Hours: true,
+
+                  openTime: true,
+                  closeTime: true,
+
+                  breakStartTime: true,
+                  breakEndTime: true,
+                },
+              },
+
+              /*
+               * 특정 날짜 운영 일정 / 임시 휴무
+               */
+              specialHours: {
+                select: {
+                  targetDate: true,
+                  scheduleType: true,
+
+                  openTime: true,
+                  closeTime: true,
+
+                  breakStartTime: true,
+                  breakEndTime: true,
+                },
+              },
 
               images: {
                 where: {
@@ -1365,6 +2062,33 @@ if (categoryId !== undefined) {
 
           roadAddress:
             score.place.roadAddress,
+
+          /*
+           * 방문 인증 기능 활성화 여부
+           * 영업 상태와는 별개
+           */
+          verificationAvailable:
+            score.place
+              .verificationSetting
+              ?.enabled ?? false,
+
+          /*
+           * 현재 영업 상태
+           *
+           * true  = 영업 중
+           * false = 영업 종료 / 휴무 / 브레이크타임
+           * null  = 운영시간 정보 부족으로 판단 불가
+           */
+          isOpenNow:
+            this.calculateIsOpenNow(
+              score.place.operatingHours,
+              score.place.specialHours,
+            ),
+          operatingStatus:
+            this.calculateOperatingStatus(
+              score.place.operatingHours,
+              score.place.specialHours,
+            ),
 
           imageUrl:
             score.place.images[0]
@@ -1449,16 +2173,21 @@ async getRecommendations(
       basePlace: {
         id: Number(place.id),
         name: place.name,
+
         categoryId:
           place.categoryId === null
             ? null
-            : Number(place.categoryId),
+            : Number(
+                place.categoryId,
+              ),
+
         regionId:
           place.districtRegionId === null
             ? null
             : Number(
                 place.districtRegionId,
               ),
+
         gapScore: null,
       },
 
@@ -1497,13 +2226,20 @@ async getRecommendations(
     return {
       basePlace: {
         id: Number(place.id),
-        name: place.name,
+
+        name:
+          place.name,
+
         categoryId:
-          Number(place.categoryId),
+          Number(
+            place.categoryId,
+          ),
+
         regionId:
           Number(
             place.districtRegionId,
           ),
+
         gapScore: null,
       },
 
@@ -1546,9 +2282,13 @@ async getRecommendations(
             id: true,
             name: true,
             roadAddress: true,
+
             categoryId: true,
             districtRegionId: true,
 
+            /*
+             * 대표 이미지
+             */
             images: {
               where: {
                 isActive: true,
@@ -1565,13 +2305,48 @@ async getRecommendations(
                 thumbnailUrl: true,
               },
             },
+
+            /*
+             * 현재 영업 상태 계산용
+             */
+            operatingHours: {
+              select: {
+                dayOfWeek: true,
+                isClosed: true,
+                is24Hours: true,
+
+                openTime: true,
+                closeTime: true,
+
+                breakStartTime: true,
+                breakEndTime: true,
+              },
+            },
+
+            /*
+             * 특정 날짜 특별 운영 / 임시 휴무
+             */
+            specialHours: {
+              select: {
+                targetDate: true,
+                scheduleType: true,
+
+                openTime: true,
+                closeTime: true,
+
+                breakStartTime: true,
+                breakEndTime: true,
+              },
+            },
           },
         },
       },
     });
 
   const baseGapScore =
-    Number(baseGap.gapScore);
+    Number(
+      baseGap.gapScore,
+    );
 
   /*
    * 4. GAP Score 차이가 작은 순서로 정렬
@@ -1580,11 +2355,15 @@ async getRecommendations(
     candidates
       .map((candidate) => {
         const candidateGapScore =
-          Number(candidate.gapScore);
+          Number(
+            candidate.gapScore,
+          );
 
         return {
           placeId:
-            Number(candidate.place.id),
+            Number(
+              candidate.place.id,
+            ),
 
           placeName:
             candidate.place.name,
@@ -1606,7 +2385,8 @@ async getRecommendations(
                 ),
 
           roadAddress:
-            candidate.place.roadAddress,
+            candidate.place
+              .roadAddress,
 
           imageUrl:
             candidate.place.images[0]
@@ -1615,16 +2395,36 @@ async getRecommendations(
               ?.originalUrl ??
             null,
 
+          /*
+           * 현재 영업 상태
+           *
+           * true  = 영업 중
+           * false = 영업 종료 / 휴무 / 브레이크타임
+           * null  = 운영시간 정보 부족
+           */
+          isOpenNow:
+            this.calculateIsOpenNow(
+              candidate.place
+                .operatingHours,
+              candidate.place
+                .specialHours,
+            ),
+          operatingStatus:
+            this.calculateOperatingStatus(
+              candidate.place.operatingHours,
+              candidate.place.specialHours,
+            ),
+
           gapScore:
             candidateGapScore,
 
           gapDifference:
-  Number(
-    Math.abs(
-      candidateGapScore -
-        baseGapScore,
-    ).toFixed(4),
-  ),
+            Number(
+              Math.abs(
+                candidateGapScore -
+                  baseGapScore,
+              ).toFixed(4),
+            ),
 
           onlineScore:
             candidate.onlineScore === null
@@ -1662,7 +2462,9 @@ async getRecommendations(
         place.name,
 
       categoryId:
-        Number(place.categoryId),
+        Number(
+          place.categoryId,
+        ),
 
       regionId:
         Number(
@@ -1675,7 +2477,9 @@ async getRecommendations(
 
     run: {
       id:
-        Number(baseGap.runId),
+        Number(
+          baseGap.runId,
+        ),
 
       formulaVersion:
         baseGap.formulaVersion,
@@ -1830,6 +2634,48 @@ async getGapMap(
             longitude: true,
 
             roadAddress: true,
+
+            /*
+             * 방문 인증 활성화 여부
+             */
+            verificationSetting: {
+              select: {
+                enabled: true,
+              },
+            },
+
+            /*
+             * 현재 영업 상태 계산용
+             */
+            operatingHours: {
+              select: {
+                dayOfWeek: true,
+                isClosed: true,
+                is24Hours: true,
+
+                openTime: true,
+                closeTime: true,
+
+                breakStartTime: true,
+                breakEndTime: true,
+              },
+            },
+
+            /*
+             * 특정 날짜 운영 일정 / 임시 휴무
+             */
+            specialHours: {
+              select: {
+                targetDate: true,
+                scheduleType: true,
+
+                openTime: true,
+                closeTime: true,
+
+                breakStartTime: true,
+                breakEndTime: true,
+              },
+            },
           },
         },
       },
@@ -1871,6 +2717,33 @@ async getGapMap(
 
       roadAddress:
         score.place.roadAddress,
+
+      /*
+       * 방문 인증 기능 활성화 여부
+       * 영업 여부와는 별개
+       */
+      verificationAvailable:
+        score.place
+          .verificationSetting
+          ?.enabled ?? false,
+
+      /*
+       * 현재 영업 상태
+       *
+       * true  = 영업 중
+       * false = 영업 종료 / 휴무 / 브레이크타임
+       * null  = 운영시간 정보 부족으로 판단 불가
+       */
+      isOpenNow:
+        this.calculateIsOpenNow(
+          score.place.operatingHours,
+          score.place.specialHours,
+        ),
+      operatingStatus:
+        this.calculateOperatingStatus(
+          score.place.operatingHours,
+          score.place.specialHours,
+        ),
 
       gapScore:
         Number(score.gapScore),

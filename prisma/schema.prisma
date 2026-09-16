@@ -437,6 +437,8 @@ model RegionMetric {
   @@unique([sourceId, regionId, metricFamily, metricCode, periodDate, visitorTypeCode], map: "region_metrics_daily_key")
   @@unique([sourceId, regionId, metricFamily, metricCode, periodMonth], map: "region_metrics_monthly_key")
   @@index([regionId, metricFamily, metricCode, periodDate, periodMonth])
+  @@unique([sourceId, regionId, metricFamily, metricCode, periodDate, visitorTypeCode], map: "region_metrics_daily_key")
+  @@unique([sourceId, regionId, metricFamily, metricCode, periodMonth], map: "region_metrics_monthly_key")
   @@map("region_metrics")
 }
 

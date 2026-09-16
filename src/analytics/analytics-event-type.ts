@@ -1,0 +1,7 @@
+export enum AnalyticsEventType {
+  PLACE_DETAIL_VIEW =
+    'PLACE_DETAIL_VIEW',
+
+  VISIT_AUTH_PAGE_ENTER =
+    'VISIT_AUTH_PAGE_ENTER',
+}

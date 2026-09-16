@@ -1098,6 +1098,38 @@ export class VisitVerificationsService {
               },
             });
 
+            /*
+ * 방문 인증 성공 보상
+ * XP +15
+ *
+ * XP 100마다 level +1,
+ * 남은 XP만 저장한다.
+ *
+ * 예:
+ * level 2 / xp 90
+ * +15
+ * -> level 3 / xp 5
+ */
+await tx.$executeRaw`
+  UPDATE "users"
+  SET
+    "level" =
+      COALESCE("level", 1)
+      + (
+          (
+            COALESCE("xp", 0)
+            + 15
+          ) / 100
+        ),
+    "xp" =
+      (
+        COALESCE("xp", 0)
+        + 15
+      ) % 100,
+    "updated_at" = NOW()
+  WHERE "id" = ${verification.userId}
+`;
+
           /*
            * 최종 인증 데이터 반환
            */

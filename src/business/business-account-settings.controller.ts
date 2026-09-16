@@ -97,7 +97,7 @@ export class BusinessAccountSettingsController {
     request: BusinessRequest,
   ) {
     const deleted =
-      await this.usersService.softDelete(
+      await this.usersService.deleteAccount(
         request.user.userId,
       );
 

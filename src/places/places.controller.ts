@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   Controller,
   DefaultValuePipe,
   Delete,
@@ -67,81 +68,173 @@ export class PlacesController {
   }
 
   // =========================================================
-  // GAP Score 장소 랭킹 조회
-  // =========================================================
+// GAP Score 장소 랭킹 조회
+// =========================================================
 
-  @ApiOperation({
-    summary: 'GAP Score 장소 랭킹 조회',
-  })
-  @ApiOkResponse({
-    description:
-      '최신 GAP Score 기준 장소 랭킹 조회 성공',
-  })
-  @ApiQuery({
-    name: 'regionId',
-    required: false,
-    type: Number,
-    description: '지역 ID',
-  })
-  @ApiQuery({
-    name: 'categoryId',
-    required: false,
-    type: Number,
-    description: '카테고리 ID',
-  })
-  @ApiQuery({
-    name: 'page',
-    required: false,
-    type: Number,
-    example: 1,
-  })
-  @ApiQuery({
-    name: 'limit',
-    required: false,
-    type: Number,
-    example: 20,
-  })
-  @Get('gap/rankings')
-  async getGapRankings(
-    @Query(
-      'regionId',
-      new ParseIntPipe({
-        optional: true,
-      }),
-    )
-    regionId?: number,
+@ApiOperation({
+  summary: 'GAP Score 장소 랭킹 조회',
+})
+@ApiOkResponse({
+  description:
+    '최신 GAP Score 기준 장소 랭킹 조회 성공',
+  schema: {
+    type: 'object',
+    properties: {
+      run: {
+        type: 'object',
+        nullable: true,
+        additionalProperties: true,
+      },
 
-    @Query(
-      'categoryId',
-      new ParseIntPipe({
-        optional: true,
-      }),
-    )
-    categoryId?: number,
+      items: {
+        type: 'array',
+        items: {
+          type: 'object',
+          additionalProperties: true,
 
-    @Query(
-      'page',
-      new DefaultValuePipe(1),
-      ParseIntPipe,
-    )
-    page: number = 1,
+          properties: {
+            isOpenNow: {
+              type: 'boolean',
+              nullable: true,
+              example: true,
+              description:
+                'Asia/Seoul 기준 요청 시점의 영업 여부. true=영업 중, false=영업 종료·정기휴무·특별휴무·휴게시간, null=영업시간 정보가 없거나 불완전하여 판단 불가',
+            },
 
-    @Query(
-      'limit',
-      new DefaultValuePipe(20),
-      ParseIntPipe,
-    )
-    limit: number = 20,
-  ) {
-    return this.placesService.getGapRankings(
-      regionId,
-      categoryId,
-      page,
-      limit,
-    );
-  }
+            verificationAvailable: {
+              type: 'boolean',
+              example: true,
+              description:
+                '방문 인증 가능 여부. isOpenNow와는 독립적인 값',
+            },
+          },
+        },
+      },
 
-  // =========================================================
+      page: {
+        type: 'number',
+        example: 1,
+      },
+
+      limit: {
+        type: 'number',
+        example: 20,
+      },
+
+      total: {
+        type: 'number',
+        example: 100,
+      },
+
+      totalPages: {
+        type: 'number',
+        example: 5,
+      },
+    },
+
+    example: {
+      run: {
+        id: 1,
+        formulaVersion: 'v1',
+        dataStage: 'PRODUCTION',
+        calculatedAt:
+          '2026-09-14T10:00:00.000Z',
+      },
+
+      items: [
+        {
+          rank: 1,
+          placeId: 4155,
+          placeName:
+            '남대문 종합상가',
+          categoryId: 10,
+          regionId: 1,
+          roadAddress:
+            '서울특별시 중구 ...',
+          verificationAvailable:
+            true,
+          isOpenNow: true,
+          imageUrl: null,
+          gapScore: 0.82,
+          onlineScore: 0.73,
+          offlineScore: 0.91,
+          explanation:
+            '상대적으로 덜 알려진 장소입니다.',
+        },
+      ],
+
+      page: 1,
+      limit: 20,
+      total: 1,
+      totalPages: 1,
+    },
+  },
+})
+@ApiQuery({
+  name: 'regionId',
+  required: false,
+  type: Number,
+  description: '지역 ID',
+})
+@ApiQuery({
+  name: 'categoryId',
+  required: false,
+  type: Number,
+  description: '카테고리 ID',
+})
+@ApiQuery({
+  name: 'page',
+  required: false,
+  type: Number,
+  example: 1,
+})
+@ApiQuery({
+  name: 'limit',
+  required: false,
+  type: Number,
+  example: 20,
+})
+@Get('gap/rankings')
+async getGapRankings(
+  @Query(
+    'regionId',
+    new ParseIntPipe({
+      optional: true,
+    }),
+  )
+  regionId?: number,
+
+  @Query(
+    'categoryId',
+    new ParseIntPipe({
+      optional: true,
+    }),
+  )
+  categoryId?: number,
+
+  @Query(
+    'page',
+    new DefaultValuePipe(1),
+    ParseIntPipe,
+  )
+  page: number = 1,
+
+  @Query(
+    'limit',
+    new DefaultValuePipe(20),
+    ParseIntPipe,
+  )
+  limit: number = 20,
+) {
+  return this.placesService.getGapRankings(
+    regionId,
+    categoryId,
+    page,
+    limit,
+  );
+}
+
+// =========================================================
 // GAP Score 지도 조회
 // =========================================================
 
@@ -151,6 +244,80 @@ export class PlacesController {
 @ApiOkResponse({
   description:
     '최신 GAP Score 기준 지도 마커 조회 성공',
+  schema: {
+    type: 'object',
+
+    properties: {
+      run: {
+        type: 'object',
+        nullable: true,
+        additionalProperties: true,
+      },
+
+      items: {
+        type: 'array',
+
+        items: {
+          type: 'object',
+          additionalProperties: true,
+
+          properties: {
+            isOpenNow: {
+              type: 'boolean',
+              nullable: true,
+              example: false,
+              description:
+                'Asia/Seoul 기준 요청 시점의 영업 여부. true=영업 중, false=영업 종료·정기휴무·특별휴무·휴게시간, null=영업시간 정보가 없거나 불완전하여 판단 불가',
+            },
+
+            verificationAvailable: {
+              type: 'boolean',
+              example: true,
+              description:
+                '방문 인증 가능 여부. isOpenNow와는 독립적인 값',
+            },
+          },
+        },
+      },
+
+      total: {
+        type: 'number',
+        example: 1,
+      },
+    },
+
+    example: {
+      run: {
+        id: 1,
+        formulaVersion: 'v1',
+        dataStage: 'PRODUCTION',
+        calculatedAt:
+          '2026-09-14T10:00:00.000Z',
+      },
+
+      items: [
+        {
+          placeId: 4155,
+          placeName:
+            '남대문 종합상가',
+          categoryId: 10,
+          regionId: 1,
+          latitude: 37.56,
+          longitude: 126.98,
+          roadAddress:
+            '서울특별시 중구 ...',
+          verificationAvailable:
+            true,
+          isOpenNow: false,
+          gapScore: 0.82,
+          onlineScore: 0.73,
+          offlineScore: 0.91,
+        },
+      ],
+
+      total: 1,
+    },
+  },
 })
 @ApiQuery({
   name: 'regionId',
@@ -413,6 +580,88 @@ async getGapMap(
   }
 
   // =========================================================
+// 장소 GAP Score 히스토리 조회
+// =========================================================
+
+@ApiOperation({
+  summary:
+    '장소 GAP Score 히스토리 조회',
+})
+@ApiOkResponse({
+  description:
+    '기간 내 존재하는 GAP Score 계산 이력 조회 성공',
+  schema: {
+    example: {
+      placeId: 4155,
+      period: '7d',
+      items: [
+        {
+          calculatedAt:
+            '2026-09-08T00:00:00.000Z',
+          gapScore: 58,
+        },
+        {
+          calculatedAt:
+            '2026-09-09T00:00:00.000Z',
+          gapScore: 61,
+        },
+      ],
+    },
+  },
+})
+@ApiNotFoundResponse({
+  description:
+    '장소를 찾을 수 없음',
+})
+@ApiQuery({
+  name: 'period',
+  required: true,
+  enum: [
+    '7d',
+    '1m',
+    '3m',
+  ],
+  example: '7d',
+  description:
+    '조회 기간. 7d=최근 7일, 1m=최근 1개월, 3m=최근 3개월',
+})
+@Get(':id/gap/history')
+async getGapHistory(
+  @Param(
+    'id',
+    ParseIntPipe,
+  )
+  id: number,
+
+  @Query('period')
+  period: string,
+) {
+  if (
+    period !== '7d' &&
+    period !== '1m' &&
+    period !== '3m'
+  ) {
+    throw new BadRequestException(
+      'period는 7d, 1m, 3m 중 하나여야 합니다.',
+    );
+  }
+
+  const result =
+    await this.placesService.getGapHistory(
+      id,
+      period,
+    );
+
+  if (!result) {
+    throw new NotFoundException(
+      '장소를 찾을 수 없습니다.',
+    );
+  }
+
+  return result;
+}
+
+  // =========================================================
   // 장소 GAP Score 조회
   // =========================================================
 
@@ -448,101 +697,247 @@ async getGapMap(
     return result;
   }
 
-  // =========================================================
-  // GAP 기반 연관 관광지 추천
-  // =========================================================
+// =========================================================
+// GAP 기반 연관 관광지 추천
+// =========================================================
 
-  @ApiOperation({
-    summary: 'GAP 기반 연관 관광지 추천',
-  })
-  @ApiOkResponse({
-    description:
-      '같은 지역·카테고리의 유사 GAP 관광지 추천 성공',
-  })
-  @ApiNotFoundResponse({
-    description: '장소를 찾을 수 없음',
-  })
-  @ApiQuery({
-    name: 'limit',
-    required: false,
-    type: Number,
-    example: 5,
-    description: '추천 장소 개수',
-  })
-  @Get(':id/recommendations')
-  async getRecommendations(
-    @Param(
-      'id',
-      ParseIntPipe,
-    )
-    id: number,
+@ApiOperation({
+  summary: 'GAP 기반 연관 관광지 추천',
+})
+@ApiOkResponse({
+  description:
+    '같은 지역·카테고리의 유사 GAP 관광지 추천 성공',
+  schema: {
+    type: 'object',
 
-    @Query(
-      'limit',
-      new DefaultValuePipe(5),
-      ParseIntPipe,
-    )
-    limit: number = 5,
-  ) {
-    const result =
-      await this.placesService.getRecommendations(
-        id,
-        limit,
-      );
+    properties: {
+      basePlace: {
+        type: 'object',
+        additionalProperties: true,
+      },
 
-    if (!result) {
-      throw new NotFoundException(
-        '장소를 찾을 수 없습니다.',
-      );
-    }
+      run: {
+        type: 'object',
+        nullable: true,
+        additionalProperties: true,
+      },
 
-    return result;
-  }
+      available: {
+        type: 'boolean',
+        example: true,
+      },
 
-  // =========================================================
-  // 장소 상세 조회
-  // 반드시 범용 :id 라우트는 아래쪽에 둠
-  // =========================================================
+      items: {
+        type: 'array',
 
-  @ApiBearerAuth()
-  @ApiOperation({
-    summary: '장소 상세 조회',
-  })
-  @ApiOkResponse({
-    description: '장소 상세 조회 성공',
-  })
-  @ApiUnauthorizedResponse({
-    description: '로그인이 필요함',
-  })
-  @ApiNotFoundResponse({
-    description: '장소를 찾을 수 없음',
-  })
-  @UseGuards(JwtAuthGuard)
-  @Get(':id')
-  async findById(
-    @Req()
-    req: {
-      user: AuthenticatedUser;
+        items: {
+          type: 'object',
+          additionalProperties: true,
+
+          properties: {
+            isOpenNow: {
+              type: 'boolean',
+              nullable: true,
+              example: null,
+              description:
+                'Asia/Seoul 기준 요청 시점의 영업 여부. true=영업 중, false=영업 종료·정기휴무·특별휴무·휴게시간, null=영업시간 정보가 없거나 불완전하여 판단 불가',
+            },
+          },
+        },
+      },
     },
 
-    @Param(
-      'id',
-      ParseIntPipe,
-    )
-    id: number,
-  ) {
-    const place =
-      await this.placesService.findById(
-        id,
-        req.user.userId,
-      );
+    example: {
+      basePlace: {
+        id: 4155,
+        name:
+          '남대문 종합상가',
+        categoryId: 10,
+        regionId: 1,
+        gapScore: 0.82,
+      },
 
-    if (!place) {
-      throw new NotFoundException(
-        '장소를 찾을 수 없습니다.',
-      );
-    }
+      run: {
+        id: 1,
+        formulaVersion: 'v1',
+        dataStage: 'PRODUCTION',
+        calculatedAt:
+          '2026-09-14T10:00:00.000Z',
+      },
 
-    return place;
+      available: true,
+
+      items: [
+        {
+          placeId: 4156,
+          placeName:
+            '추천 장소',
+          categoryId: 10,
+          regionId: 1,
+          roadAddress:
+            '서울특별시 중구 ...',
+          imageUrl: null,
+          gapScore: 0.8,
+          gapDifference: 0.02,
+          onlineScore: 0.7,
+          offlineScore: 0.9,
+
+          isOpenNow: null,
+        },
+      ],
+    },
+  },
+})
+@ApiNotFoundResponse({
+  description:
+    '장소를 찾을 수 없음',
+})
+@ApiQuery({
+  name: 'limit',
+  required: false,
+  type: Number,
+  example: 5,
+  description:
+    '추천 장소 개수',
+})
+@Get(':id/recommendations')
+async getRecommendations(
+  @Param(
+    'id',
+    ParseIntPipe,
+  )
+  id: number,
+
+  @Query(
+    'limit',
+    new DefaultValuePipe(5),
+    ParseIntPipe,
+  )
+  limit: number = 5,
+) {
+  const result =
+    await this.placesService.getRecommendations(
+      id,
+      limit,
+    );
+
+  if (!result) {
+    throw new NotFoundException(
+      '장소를 찾을 수 없습니다.',
+    );
   }
+
+  return result;
+}
+
+// =========================================================
+// 장소 상세 조회
+// 반드시 범용 :id 라우트는 아래쪽에 둠
+// =========================================================
+
+@ApiBearerAuth()
+@ApiOperation({
+  summary: '장소 상세 조회',
+})
+@ApiOkResponse({
+  description:
+    '장소 상세 조회 성공',
+  schema: {
+    type: 'object',
+    additionalProperties: true,
+
+    properties: {
+      isOpenNow: {
+        type: 'boolean',
+        nullable: true,
+        example: true,
+        description:
+          'Asia/Seoul 기준 요청 시점의 영업 여부. true=현재 영업 중, false=영업시간 외·정기휴무·특별휴무·휴게시간, null=영업시간 정보가 없거나 불완전하여 판단할 수 없음',
+      },
+
+      operatingHours: {
+        type: 'array',
+        description:
+          '요일별 기본 영업시간',
+        items: {
+          type: 'object',
+          additionalProperties: true,
+        },
+      },
+
+      verification: {
+        type: 'object',
+        nullable: true,
+        description:
+          '방문 인증 설정. isOpenNow와 독립적으로 동작함',
+        additionalProperties: true,
+      },
+    },
+
+    example: {
+      id: 4155,
+      name:
+        '남대문 종합상가',
+
+      isOpenNow: true,
+
+      operatingHours: [
+        {
+          dayOfWeek: 1,
+          isClosed: false,
+          openTime: '09:00',
+          closeTime: '18:00',
+          breakStartTime: null,
+          breakEndTime: null,
+        },
+      ],
+
+      verification: {
+        enabled: true,
+        controlMode: 'MANUAL',
+        hoursMode:
+          'SAME_AS_OPERATING',
+        codeValidMinutes: 30,
+      },
+
+      isFavorite: false,
+    },
+  },
+})
+@ApiUnauthorizedResponse({
+  description:
+    '로그인이 필요함',
+})
+@ApiNotFoundResponse({
+  description:
+    '장소를 찾을 수 없음',
+})
+@UseGuards(JwtAuthGuard)
+@Get(':id')
+async findById(
+  @Req()
+  req: {
+    user: AuthenticatedUser;
+  },
+
+  @Param(
+    'id',
+    ParseIntPipe,
+  )
+  id: number,
+) {
+  const place =
+    await this.placesService.findById(
+      id,
+      req.user.userId,
+    );
+
+  if (!place) {
+    throw new NotFoundException(
+      '장소를 찾을 수 없습니다.',
+    );
+  }
+
+  return place;
+}
 }

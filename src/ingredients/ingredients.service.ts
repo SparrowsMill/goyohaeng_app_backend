@@ -227,10 +227,9 @@ export class IngredientsService {
         method:
           'GAP_BASED_RANDOM_DROP',
 
-        description:
-          isLegendary
-            ? '방문 인증 보상에서 획득할 수 있으며, 해당 지역의 LEGENDARY 재료 후보 중에서 추첨됩니다.'
-            : '방문 인증 보상에서 획득할 수 있으며, 장소의 GAP 구간에 따라 해당 희귀도의 등장 확률이 달라집니다.',
+        description: isLegendary
+  ? '재료는 방문인증 or 트렌드 요약 확인 후 획득 가능하며, 해당 지역의 전설 재료 후보 중에서 추첨됩니다.'
+  : '재료는 방문인증 or 트렌드 요약 확인 후 획득 가능하며, 장소의 고요지수에 따라 획득 재료 종류가 달라집니다.',
 
         region:
           isLegendary &&

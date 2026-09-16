@@ -28,6 +28,14 @@ import { BusinessModule } from './business/business.module';
 import { ExternalApiAutomationModule } from './external-api/automation/external-api-automation.module';
 import { ScheduleModule } from '@nestjs/schedule';
 
+import {
+  AnalyticsModule,
+} from './analytics/analytics.module';
+
+import {
+  UploadsModule,
+} from './uploads/uploads.module';
+
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -58,9 +66,18 @@ import { ScheduleModule } from '@nestjs/schedule';
 
     BusinessModule,
     ExternalApiAutomationModule,
+
+    AnalyticsModule,
+
+    UploadsModule,
   ],
 
-  controllers: [AppController],
-  providers: [AppService],
+  controllers: [
+    AppController,
+  ],
+
+  providers: [
+    AppService,
+  ],
 })
 export class AppModule {}
