@@ -174,16 +174,18 @@ model Region {
   parent   Region?  @relation("RegionHierarchy", fields: [parentId], references: [id])
   children Region[] @relation("RegionHierarchy")
 
-  externalCodes             RegionExternalCode[]
-  districtPlaces            Place[]                   @relation("PlaceDistrictRegion")
-  adminDongPlaces           Place[]                   @relation("PlaceAdminDongRegion")
-  legalDongPlaces           Place[]                   @relation("PlaceLegalDongRegion")
-  metrics                   RegionMetric[]
-  comparedGapScores         GapScoreHistory[]         @relation("GapComparisonRegion")
-  ingredients               Ingredient[]
-  foods                     Food[]
-  foodRegionMappings        RegionFoodRegionMapping[] @relation("SourceRegionFoodMapping")
-  mappedAdministrativeAreas RegionFoodRegionMapping[] @relation("FoodRegionMapping")
+  externalCodes                 RegionExternalCode[]
+  districtPlaces                Place[]                     @relation("PlaceDistrictRegion")
+  adminDongPlaces               Place[]                     @relation("PlaceAdminDongRegion")
+  legalDongPlaces               Place[]                     @relation("PlaceLegalDongRegion")
+  metrics                       RegionMetric[]
+  comparedGapScores             GapScoreHistory[]           @relation("GapComparisonRegion")
+  ingredients                   Ingredient[]
+  foods                         Food[]
+  foodRegionMappings            RegionFoodRegionMapping[]   @relation("SourceRegionFoodMapping")
+  mappedAdministrativeAreas     RegionFoodRegionMapping[]   @relation("FoodRegionMapping")
+  coordinateExpectedValidations PlaceCoordinateValidation[] @relation("CoordinateExpectedDistrict")
+  coordinateMatchedValidations  PlaceCoordinateValidation[] @relation("CoordinateMatchedDistrict")
 
   @@index([parentId])
   @@index([name, regionType])
@@ -296,6 +298,31 @@ model PlaceExternalCategory {
   @@map("place_external_categories")
 }
 
+model PlaceCoordinateValidation {
+  placeId BigInt @id @map("place_id")
+
+  expectedDistrictRegionId BigInt? @map("expected_district_region_id")
+  matchedDistrictRegionId  BigInt? @map("matched_district_region_id")
+
+  latitude  Decimal? @db.Decimal(10, 7)
+  longitude Decimal? @db.Decimal(10, 7)
+
+  status String  @db.VarChar(20)
+  reason String? @db.VarChar(50)
+
+  validatorVersion String   @map("validator_version") @db.VarChar(30)
+  validatedAt      DateTime @default(now()) @map("validated_at") @db.Timestamptz(6)
+
+  place            Place   @relation(fields: [placeId], references: [id], onDelete: Cascade)
+  expectedDistrict Region? @relation("CoordinateExpectedDistrict", fields: [expectedDistrictRegionId], references: [id])
+  matchedDistrict  Region? @relation("CoordinateMatchedDistrict", fields: [matchedDistrictRegionId], references: [id])
+
+  @@index([status])
+  @@index([expectedDistrictRegionId])
+  @@index([matchedDistrictRegionId])
+  @@map("place_coordinate_validations")
+}
+
 model GapMetricMapping {
   id                   BigInt   @id @default(autoincrement())
   formulaVersion       String   @map("formula_version") @db.VarChar(50)
@@ -361,10 +388,11 @@ model Place {
   createdAt DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
   updatedAt DateTime? @map("updated_at") @db.Timestamptz(6)
 
-  category        Category? @relation(fields: [categoryId], references: [id])
-  districtRegion  Region?   @relation("PlaceDistrictRegion", fields: [districtRegionId], references: [id])
-  adminDongRegion Region?   @relation("PlaceAdminDongRegion", fields: [adminDongRegionId], references: [id])
-  legalDongRegion Region?   @relation("PlaceLegalDongRegion", fields: [legalDongRegionId], references: [id])
+  category             Category?                  @relation(fields: [categoryId], references: [id])
+  districtRegion       Region?                    @relation("PlaceDistrictRegion", fields: [districtRegionId], references: [id])
+  adminDongRegion      Region?                    @relation("PlaceAdminDongRegion", fields: [adminDongRegionId], references: [id])
+  legalDongRegion      Region?                    @relation("PlaceLegalDongRegion", fields: [legalDongRegionId], references: [id])
+  coordinateValidation PlaceCoordinateValidation?
 
   externalIds                PlaceExternalId[]
   externalCategories         PlaceExternalCategory[]
