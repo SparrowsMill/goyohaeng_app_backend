@@ -610,45 +610,76 @@ export class VisitVerificationsService {
           }
 
           /*
-           * 장소의 가장 최신
-           * GAP percentile 조회
-           */
-          const latestGap =
-            await tx.gapScoreHistory
-              .findFirst({
-                where: {
-                  placeId:
-                    verification.placeId,
-                },
+ * 모든 GAP API와 동일한 기준으로
+ * 최신 production GAP run 조회
+ *
+ * formulaVersion = GAP_V1_PROXY
+ * dataStage = COLD_START
+ */
+const latestRun =
+  await tx.gapScoreRun.findFirst({
+    where: {
+      formulaVersion:
+        'GAP_V1_PROXY',
 
-                orderBy: [
-                  {
-                    calculatedAt:
-                      'desc',
-                  },
-                  {
-                    id: 'desc',
-                  },
-                ],
+      dataStage:
+        'COLD_START',
 
-                select: {
-                  gapPercentile:
-                    true,
-                },
-              });
+      scores: {
+        some: {},
+      },
+    },
 
-          const gapPercentile =
-            latestGap
-              ?.gapPercentile ===
-                null ||
-            latestGap
-              ?.gapPercentile ===
-                undefined
-              ? null
-              : Number(
-                  latestGap
-                    .gapPercentile,
-                );
+    orderBy: [
+      {
+        calculatedAt:
+          'desc',
+      },
+      {
+        id:
+          'desc',
+      },
+    ],
+
+    select: {
+      id: true,
+    },
+  });
+
+/*
+ * 장소별 최신 history가 아니라
+ * 선택된 production run 안의 GAP percentile만 사용
+ */
+const latestGap =
+  latestRun
+    ? await tx.gapScoreHistory.findFirst({
+        where: {
+          runId:
+            latestRun.id,
+
+          placeId:
+            verification.placeId,
+        },
+
+        select: {
+          gapPercentile:
+            true,
+        },
+      })
+    : null;
+
+const gapPercentile =
+  latestGap
+    ?.gapPercentile ===
+      null ||
+  latestGap
+    ?.gapPercentile ===
+      undefined
+    ? null
+    : Number(
+        latestGap
+          .gapPercentile,
+      );
 
           /*
            * 활성화된 드랍 정책 조회

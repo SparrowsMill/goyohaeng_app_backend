@@ -70,29 +70,32 @@ export class RegionsService {
   async getGapScores() {
   // 1. 실제 GAP Score가 존재하는 가장 최신 계산 회차 조회
   const latestRun =
-    await this.prisma.gapScoreRun.findFirst({
-      where: {
-        scores: {
-          some: {},
-        },
-      },
+  await this.prisma.gapScoreRun.findFirst({
+    where: {
+      formulaVersion: 'GAP_V1_PROXY',
+      dataStage: 'COLD_START',
 
-      orderBy: [
-        {
-          calculatedAt: 'desc',
-        },
-        {
-          id: 'desc',
-        },
-      ],
-
-      select: {
-        id: true,
-        formulaVersion: true,
-        dataStage: true,
-        calculatedAt: true,
+      scores: {
+        some: {},
       },
-    });
+    },
+
+    orderBy: [
+      {
+        calculatedAt: 'desc',
+      },
+      {
+        id: 'desc',
+      },
+    ],
+
+    select: {
+      id: true,
+      formulaVersion: true,
+      dataStage: true,
+      calculatedAt: true,
+    },
+  });
 
   // 아직 GAP Score 계산 결과가 없는 경우
   if (!latestRun) {
