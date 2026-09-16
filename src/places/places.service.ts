@@ -8,6 +8,14 @@ export type PlaceStatus =
   | 'CLOSED'
   | 'HIDDEN';
 
+  export type OperatingStatus =
+  | 'OPEN'
+  | 'BEFORE_OPEN'
+  | 'BREAK_TIME'
+  | 'CLOSED'
+  | 'DAY_OFF'
+  | 'UNKNOWN';
+
 export interface Place {
   id: number;
   name: string;
@@ -77,7 +85,9 @@ export interface PlaceDetail extends Place {
 
   operatingHours: PlaceOperatingHour[];
 
-  isOpenNow: boolean | null;
+  isOpenNow: boolean;
+
+  operatingStatus: OperatingStatus;
 
   benefits: PlaceBenefit[];
 
@@ -355,10 +365,14 @@ const isFavorite = !!favorite;
         ),
       }));
 
-    const isOpenNow = this.calculateIsOpenNow(
-      place.operatingHours,
-      place.specialHours,
-    );
+    const operatingStatus =
+    this.calculateOperatingStatus(
+    place.operatingHours,
+    place.specialHours,
+  );
+
+const isOpenNow =
+  operatingStatus === 'OPEN';
 
     return {
       id: Number(place.id),
@@ -420,6 +434,8 @@ const isFavorite = !!favorite;
 
       isOpenNow,
 
+      operatingStatus,
+
       benefits: place.benefits.map(
         (benefit) => ({
           id: Number(benefit.id),
@@ -470,6 +486,373 @@ const isFavorite = !!favorite;
     };
   }
 
+private calculateOperatingStatus(
+  operatingHours: Array<{
+    dayOfWeek: number;
+    isClosed: boolean;
+    is24Hours: boolean;
+    openTime: Date | null;
+    closeTime: Date | null;
+    breakStartTime: Date | null;
+    breakEndTime: Date | null;
+  }>,
+  specialHours: Array<{
+    targetDate: Date;
+    scheduleType: string;
+    openTime: Date | null;
+    closeTime: Date | null;
+    breakStartTime: Date | null;
+    breakEndTime: Date | null;
+  }>,
+): OperatingStatus {
+  const now = new Date();
+
+  /*
+   * 서버 위치와 관계없이
+   * 현재 시간을 Asia/Seoul 기준으로 계산
+   */
+  const parts =
+    new Intl.DateTimeFormat(
+      'en-US',
+      {
+        timeZone: 'Asia/Seoul',
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit',
+        weekday: 'short',
+        hour: '2-digit',
+        minute: '2-digit',
+        hour12: false,
+      },
+    ).formatToParts(now);
+
+  const getPart = (
+    type: string,
+  ) =>
+    parts.find(
+      (part) =>
+        part.type === type,
+    )?.value;
+
+  const year = getPart('year');
+  const month = getPart('month');
+  const day = getPart('day');
+  const weekday =
+    getPart('weekday');
+
+  const hour =
+    Number(getPart('hour'));
+
+  const minute =
+    Number(getPart('minute'));
+
+  if (
+    !year ||
+    !month ||
+    !day ||
+    !weekday ||
+    Number.isNaN(hour) ||
+    Number.isNaN(minute)
+  ) {
+    return 'UNKNOWN';
+  }
+
+  const today =
+    `${year}-${month}-${day}`;
+
+  const currentMinutes =
+    hour * 60 + minute;
+
+  const dayMap: Record<
+    string,
+    number
+  > = {
+    Mon: 1,
+    Tue: 2,
+    Wed: 3,
+    Thu: 4,
+    Fri: 5,
+    Sat: 6,
+    Sun: 7,
+  };
+
+  const dayOfWeek =
+    dayMap[weekday];
+
+  if (!dayOfWeek) {
+    return 'UNKNOWN';
+  }
+
+  /*
+   * ==================================================
+   * 1. 오늘 특별 영업정보 확인
+   *
+   * 특별 영업정보가 있으면
+   * 일반 주간 영업정보보다 우선한다.
+   * ==================================================
+   */
+  const todaySpecial =
+    specialHours.find(
+      (specialHour) =>
+        specialHour.targetDate
+          .toISOString()
+          .slice(0, 10) ===
+        today,
+    );
+
+  if (todaySpecial) {
+    /*
+     * 명시적인 특별 휴무
+     */
+    if (
+      todaySpecial.scheduleType ===
+      'CLOSED'
+    ) {
+      return 'DAY_OFF';
+    }
+
+    /*
+     * 특별 영업일
+     */
+    if (
+      todaySpecial.scheduleType ===
+      'SPECIAL_OPEN'
+    ) {
+      return this.evaluateScheduleStatus(
+        currentMinutes,
+        todaySpecial.openTime,
+        todaySpecial.closeTime,
+        todaySpecial.breakStartTime,
+        todaySpecial.breakEndTime,
+      );
+    }
+  }
+
+  /*
+   * ==================================================
+   * 2. 전날 시작한 심야 영업이
+   * 오늘 새벽까지 이어지는지 확인
+   *
+   * 예:
+   * 화요일 18:00 ~ 수요일 02:00
+   *
+   * 수요일 01:00에도 OPEN이어야 한다.
+   * ==================================================
+   */
+  const previousDate =
+    new Date(
+      Date.UTC(
+        Number(year),
+        Number(month) - 1,
+        Number(day),
+      ),
+    );
+
+  previousDate.setUTCDate(
+    previousDate.getUTCDate() - 1,
+  );
+
+  const previousDateString =
+    previousDate
+      .toISOString()
+      .slice(0, 10);
+
+  const previousDayOfWeek =
+    dayOfWeek === 1
+      ? 7
+      : dayOfWeek - 1;
+
+  const previousSpecial =
+    specialHours.find(
+      (specialHour) =>
+        specialHour.targetDate
+          .toISOString()
+          .slice(0, 10) ===
+        previousDateString,
+    );
+
+  let previousSchedule:
+    | {
+        openTime: Date | null;
+        closeTime: Date | null;
+        breakStartTime:
+          Date | null;
+        breakEndTime:
+          Date | null;
+      }
+    | null = null;
+
+  /*
+   * 전날 특별 영업이 있었다면
+   * 그 시간을 우선 사용
+   */
+  if (
+    previousSpecial
+      ?.scheduleType ===
+    'SPECIAL_OPEN'
+  ) {
+    previousSchedule = {
+      openTime:
+        previousSpecial.openTime,
+
+      closeTime:
+        previousSpecial.closeTime,
+
+      breakStartTime:
+        previousSpecial
+          .breakStartTime,
+
+      breakEndTime:
+        previousSpecial
+          .breakEndTime,
+    };
+  } else if (
+    previousSpecial
+      ?.scheduleType !==
+    'CLOSED'
+  ) {
+    /*
+     * 전날 특별 휴무가 아니면
+     * 일반 주간 영업시간 확인
+     */
+    const previousHours =
+      operatingHours.find(
+        (hours) =>
+          hours.dayOfWeek ===
+          previousDayOfWeek,
+      );
+
+    if (
+      previousHours &&
+      !previousHours.isClosed
+    ) {
+      previousSchedule = {
+        openTime:
+          previousHours.openTime,
+
+        closeTime:
+          previousHours.closeTime,
+
+        breakStartTime:
+          previousHours
+            .breakStartTime,
+
+        breakEndTime:
+          previousHours
+            .breakEndTime,
+      };
+    }
+  }
+
+  if (
+    previousSchedule?.openTime &&
+    previousSchedule?.closeTime
+  ) {
+    const previousOpenMinutes =
+      this.dateTimeToMinutes(
+        previousSchedule.openTime,
+      );
+
+    const previousCloseMinutes =
+      this.dateTimeToMinutes(
+        previousSchedule.closeTime,
+      );
+
+    /*
+     * close < open이면 자정을 넘긴 영업
+     *
+     * 예:
+     * 18:00 -> 02:00
+     */
+    const isOvernight =
+      previousCloseMinutes <
+      previousOpenMinutes;
+
+    /*
+     * 전날 영업의 새벽 구간
+     */
+    if (
+      isOvernight &&
+      currentMinutes <
+        previousCloseMinutes
+    ) {
+      if (
+        this.isInBreakTime(
+          currentMinutes,
+          previousSchedule
+            .breakStartTime,
+          previousSchedule
+            .breakEndTime,
+        )
+      ) {
+        return 'BREAK_TIME';
+      }
+
+      return 'OPEN';
+    }
+  }
+
+  /*
+   * ==================================================
+   * 3. 오늘 일반 영업시간 확인
+   * ==================================================
+   */
+  const todayHours =
+    operatingHours.find(
+      (hours) =>
+        hours.dayOfWeek ===
+        dayOfWeek,
+    );
+
+  /*
+   * 오늘 영업시간 데이터 자체가 없음
+   */
+  if (!todayHours) {
+    return 'UNKNOWN';
+  }
+
+  /*
+   * DB에서 명시적으로 휴무 처리된 날
+   */
+  if (todayHours.isClosed) {
+  return 'DAY_OFF';
+}
+
+/*
+ * 24시간 영업
+ *
+ * 기존 isOpenDuring24Hours()를 사용해서
+ * 브레이크타임까지 반영한다.
+ */
+if (todayHours.is24Hours) {
+  const isOpen =
+    this.isOpenDuring24Hours(
+      currentMinutes,
+      todayHours.breakStartTime,
+      todayHours.breakEndTime,
+    );
+
+  if (isOpen === null) {
+    return 'UNKNOWN';
+  }
+
+  return isOpen
+    ? 'OPEN'
+    : 'BREAK_TIME';
+}
+
+/*
+ * 일반 영업 상태 계산
+ */
+return this.evaluateScheduleStatus(
+  currentMinutes,
+  todayHours.openTime,
+  todayHours.closeTime,
+  todayHours.breakStartTime,
+  todayHours.breakEndTime,
+);
+}
+
 private calculateIsOpenNow(
   operatingHours: Array<{
     dayOfWeek: number;
@@ -488,353 +871,31 @@ private calculateIsOpenNow(
     breakStartTime: Date | null;
     breakEndTime: Date | null;
   }>,
-): boolean | null {
-  const now = new Date();
-
-  /*
-   * 서버가 어느 지역에 있든
-   * 현재 시각은 Asia/Seoul 기준으로 계산
-   */
-  const parts =
-    new Intl.DateTimeFormat(
-      'en-US',
-      {
-        timeZone: 'Asia/Seoul',
-
-        year: 'numeric',
-        month: '2-digit',
-        day: '2-digit',
-
-        weekday: 'short',
-
-        hour: '2-digit',
-        minute: '2-digit',
-
-        hourCycle: 'h23',
-      },
-    ).formatToParts(now);
-
-  const getPart = (
-    type: string,
-  ) =>
-    parts.find(
-      (part) =>
-        part.type === type,
-    )?.value;
-
-  const year =
-    getPart('year');
-
-  const month =
-    getPart('month');
-
-  const day =
-    getPart('day');
-
-  const weekday =
-    getPart('weekday');
-
-  const hour =
-    Number(
-      getPart('hour'),
-    );
-
-  const minute =
-    Number(
-      getPart('minute'),
-    );
-
-  /*
-   * 현재 시간을 정상적으로
-   * 계산할 수 없는 경우 판단 불가
-   */
-  if (
-    !year ||
-    !month ||
-    !day ||
-    !weekday ||
-    Number.isNaN(hour) ||
-    Number.isNaN(minute)
-  ) {
-    return null;
-  }
-
-  const today =
-    `${year}-${month}-${day}`;
-
-  const currentMinutes =
-    hour * 60 +
-    minute;
-
-  /*
-   * 요일 번호
-   *
-   * 1 = 월요일
-   * ...
-   * 7 = 일요일
-   */
-  const dayMap: Record<
-    string,
-    number
-  > = {
-    Mon: 1,
-    Tue: 2,
-    Wed: 3,
-    Thu: 4,
-    Fri: 5,
-    Sat: 6,
-    Sun: 7,
-  };
-
-  const dayOfWeek =
-    dayMap[weekday];
-
-  if (!dayOfWeek) {
-    return null;
-  }
-
-  /*
-   * 어제 날짜 문자열 계산
-   *
-   * 자정을 넘겨 영업하는
-   * 전날 영업시간 확인에 사용
-   */
-  const todayDate =
-    new Date(
-      `${today}T00:00:00.000Z`,
-    );
-
-  const yesterday =
-    new Date(
-      todayDate.getTime() -
-        24 *
-          60 *
-          60 *
-          1000,
-    )
-      .toISOString()
-      .slice(0, 10);
-
-  const previousDayOfWeek =
-    dayOfWeek === 1
-      ? 7
-      : dayOfWeek - 1;
-
-  /*
-   * =========================================================
-   * 1. 오늘 특별 일정 확인
-   * =========================================================
-   *
-   * 특별 일정은 일반 주간 운영시간보다 우선한다.
-   */
-  const specialToday =
-    specialHours.find(
-      (specialHour) =>
-        specialHour.targetDate
-          .toISOString()
-          .slice(0, 10) ===
-        today,
-    );
-
-  /*
-   * 오늘이 임시 휴무 / 특별 휴무이면
-   * 무조건 영업 종료
-   */
-  if (
-    specialToday?.scheduleType ===
-    'CLOSED'
-  ) {
-    return false;
-  }
-
-  /*
-   * 오늘 특별 영업 일정이 있으면
-   * 그 일정만 기준으로 판단
-   */
-  if (
-    specialToday?.scheduleType ===
-    'SPECIAL_OPEN'
-  ) {
-    return this.isWithinOpeningHours(
-      currentMinutes,
-
-      specialToday.openTime,
-      specialToday.closeTime,
-
-      specialToday.breakStartTime,
-      specialToday.breakEndTime,
-
-      false,
-    );
-  }
-
-  /*
-   * =========================================================
-   * 2. 전날 특별 영업이 자정을 넘겼는지 확인
-   * =========================================================
-   *
-   * 예:
-   * 월요일 특별 영업 22:00 ~ 02:00
-   * 화요일 01:00 → 영업 중
-   */
-  const specialYesterday =
-    specialHours.find(
-      (specialHour) =>
-        specialHour.targetDate
-          .toISOString()
-          .slice(0, 10) ===
-        yesterday,
-    );
-
-  if (
-    specialYesterday?.scheduleType ===
-    'SPECIAL_OPEN'
-  ) {
-    const previousSpecialResult =
-      this.isWithinOpeningHours(
-        currentMinutes,
-
-        specialYesterday.openTime,
-        specialYesterday.closeTime,
-
-        specialYesterday.breakStartTime,
-        specialYesterday.breakEndTime,
-
-        true,
-      );
-
-    /*
-     * 전날 특별 영업이 현재까지
-     * 이어지고 있으면 영업 중
-     */
-    if (
-      previousSpecialResult ===
-      true
-    ) {
-      return true;
-    }
-  }
-
-  /*
-   * =========================================================
-   * 3. 전날 일반 영업시간의 자정 넘김 확인
-   * =========================================================
-   *
-   * 단, 전날에 특별 일정이 있었다면
-   * 특별 일정이 일반 영업시간을 덮어쓰므로
-   * 일반 영업시간은 사용하지 않는다.
-   */
-  if (!specialYesterday) {
-    const yesterdayHours =
-      operatingHours.find(
-        (hours) =>
-          hours.dayOfWeek ===
-          previousDayOfWeek,
-      );
-
-    if (
-      yesterdayHours &&
-      !yesterdayHours.isClosed &&
-      !yesterdayHours.is24Hours
-    ) {
-      const previousResult =
-        this.isWithinOpeningHours(
-          currentMinutes,
-
-          yesterdayHours.openTime,
-          yesterdayHours.closeTime,
-
-          yesterdayHours.breakStartTime,
-          yesterdayHours.breakEndTime,
-
-          true,
-        );
-
-      if (
-        previousResult ===
-        true
-      ) {
-        return true;
-      }
-    }
-  }
-
-  /*
-   * =========================================================
-   * 4. 오늘 일반 영업시간 확인
-   * =========================================================
-   */
-  const todayHours =
-    operatingHours.find(
-      (hours) =>
-        hours.dayOfWeek ===
-        dayOfWeek,
-    );
-
-  /*
-   * 오늘 운영시간 정보가 아예 없음
-   *
-   * 닫힌 것으로 단정하지 않고
-   * 판단 불가(null)
-   */
-  if (!todayHours) {
-    return null;
-  }
-
-  /*
-   * 명시적으로 휴무 등록됨
-   */
-  if (todayHours.isClosed) {
-    return false;
-  }
-
-  /*
-   * 24시간 영업
-   */
-  if (todayHours.is24Hours) {
-    return this.isOpenDuring24Hours(
-      currentMinutes,
-      todayHours.breakStartTime,
-      todayHours.breakEndTime,
-    );
-  }
-
-  /*
-   * 일반 영업시간으로 판단
-   */
-  return this.isWithinOpeningHours(
-    currentMinutes,
-
-    todayHours.openTime,
-    todayHours.closeTime,
-
-    todayHours.breakStartTime,
-    todayHours.breakEndTime,
-
-    false,
+): boolean {
+  return (
+    this.calculateOperatingStatus(
+      operatingHours,
+      specialHours,
+    ) === 'OPEN'
   );
 }
 
-private isWithinOpeningHours(
+private evaluateScheduleStatus(
   currentMinutes: number,
-
   openTime: Date | null,
   closeTime: Date | null,
-
   breakStartTime: Date | null,
   breakEndTime: Date | null,
-
-  fromPreviousDay: boolean,
-): boolean | null {
+): OperatingStatus {
   /*
-   * 영업 시작/종료 중 하나라도 없으면
-   * 판단 불가
+   * 시작/종료 시간이 없으면
+   * 영업 여부를 확정할 수 없음
    */
   if (
     !openTime ||
     !closeTime
   ) {
-    return null;
+    return 'UNKNOWN';
   }
 
   const openMinutes =
@@ -842,170 +903,163 @@ private isWithinOpeningHours(
       openTime,
     );
 
-  let closeMinutes =
+  const closeMinutes =
     this.dateTimeToMinutes(
       closeTime,
     );
 
   /*
-   * 시작 == 종료면
-   * 현재 데이터만으로
-   * 24시간 영업인지 판단할 수 없음
+   * 시작과 종료가 동일한 경우
+   * 현재 데이터만으로는
+   * 24시간 영업인지 잘못된 데이터인지
+   * 판단할 수 없으므로 UNKNOWN
    */
   if (
     openMinutes ===
     closeMinutes
   ) {
-    return null;
+    return 'UNKNOWN';
   }
 
   /*
-   * 종료시간이 시작시간보다 앞이면
-   * 자정을 넘긴 영업
+   * 일반 영업시간
    *
    * 예:
-   * 22:00 ~ 02:00
-   *
-   * 1320 ~ 120
-   * ↓
-   * 1320 ~ 1560
+   * 10:00 ~ 22:00
    */
-  const crossesMidnight =
-    closeMinutes <
-    openMinutes;
+  if (
+    closeMinutes >
+    openMinutes
+  ) {
+    /*
+     * 영업 시작 전
+     */
+    if (
+      currentMinutes <
+      openMinutes
+    ) {
+      return 'BEFORE_OPEN';
+    }
 
-  if (crossesMidnight) {
-    closeMinutes +=
-      24 * 60;
+    /*
+     * 영업 종료 후
+     */
+    if (
+      currentMinutes >=
+      closeMinutes
+    ) {
+      return 'CLOSED';
+    }
+
+    /*
+     * 영업시간 안이지만
+     * 브레이크타임
+     */
+    if (
+      this.isInBreakTime(
+        currentMinutes,
+        breakStartTime,
+        breakEndTime,
+      )
+    ) {
+      return 'BREAK_TIME';
+    }
+
+    return 'OPEN';
   }
 
   /*
-   * 전날부터 이어진 영업을 검사할 때는
-   * 현재 시각에 24시간을 더함
+   * 자정을 넘기는 영업시간
    *
-   * 화요일 01:00
-   * → 월요일 기준 1500분
+   * 예:
+   * 18:00 ~ 02:00
+   *
+   * 오늘 날짜의 영업은
+   * openTime 이후부터 시작한다.
+   * 새벽 구간은 위에서 전날 영업으로 처리한다.
    */
-  const comparableCurrentMinutes =
-    currentMinutes +
-    (
-      fromPreviousDay
-        ? 24 * 60
-        : 0
+  if (
+    currentMinutes <
+    openMinutes
+  ) {
+    return 'BEFORE_OPEN';
+  }
+
+  if (
+    this.isInBreakTime(
+      currentMinutes,
+      breakStartTime,
+      breakEndTime,
+    )
+  ) {
+    return 'BREAK_TIME';
+  }
+
+  return 'OPEN';
+}
+
+private isInBreakTime(
+  currentMinutes: number,
+  breakStartTime: Date | null,
+  breakEndTime: Date | null,
+): boolean {
+  if (
+    !breakStartTime ||
+    !breakEndTime
+  ) {
+    return false;
+  }
+
+  const breakStart =
+    this.dateTimeToMinutes(
+      breakStartTime,
+    );
+
+  const breakEnd =
+    this.dateTimeToMinutes(
+      breakEndTime,
     );
 
   /*
-   * 현재 영업시간 범위 밖
+   * 시작과 끝이 같으면
+   * 브레이크타임 없음으로 처리
    */
   if (
-    comparableCurrentMinutes <
-      openMinutes ||
-    comparableCurrentMinutes >=
-      closeMinutes
+    breakStart === breakEnd
   ) {
     return false;
   }
 
   /*
-   * 휴게시간 시작/종료가
-   * 한쪽만 있으면 정보 불완전
+   * 일반 브레이크
+   *
+   * 예:
+   * 15:00 ~ 17:00
    */
   if (
-    (
-      breakStartTime &&
-      !breakEndTime
-    ) ||
-    (
-      !breakStartTime &&
-      breakEndTime
-    )
+    breakEnd >
+    breakStart
   ) {
-    return null;
-  }
-
-  if (
-    breakStartTime &&
-    breakEndTime
-  ) {
-    let breakStart =
-      this.dateTimeToMinutes(
-        breakStartTime,
-      );
-
-    let breakEnd =
-      this.dateTimeToMinutes(
-        breakEndTime,
-      );
-
-    /*
-     * 자정 넘는 영업의
-     * 자정 이후 휴게시간 보정
-     *
-     * 영업:
-     * 22:00 ~ 02:00
-     *
-     * 휴게:
-     * 23:30 ~ 00:30
-     */
-    if (crossesMidnight) {
-      if (
-        breakStart <
-        openMinutes
-      ) {
-        breakStart +=
-          24 * 60;
-      }
-
-      if (
-        breakEnd <
-        openMinutes
-      ) {
-        breakEnd +=
-          24 * 60;
-      }
-    }
-
-    /*
-     * 휴게시간 자체가 자정을
-     * 넘는 경우
-     */
-    if (
-      breakEnd <=
-      breakStart
-    ) {
-      breakEnd +=
-        24 * 60;
-    }
-
-    /*
-     * 잘못 등록된 휴게시간
-     *
-     * false로 단정하지 않고
-     * 판단 불가 처리
-     */
-    if (
-      breakStart <
-        openMinutes ||
-      breakEnd >
-        closeMinutes
-    ) {
-      return null;
-    }
-
-    /*
-     * 현재 브레이크타임
-     */
-    if (
-      comparableCurrentMinutes >=
+    return (
+      currentMinutes >=
         breakStart &&
-      comparableCurrentMinutes <
+      currentMinutes <
         breakEnd
-    ) {
-      return false;
-    }
+    );
   }
 
-  return true;
+  /*
+   * 자정을 넘기는 브레이크
+   *
+   * 예:
+   * 23:30 ~ 00:30
+   */
+  return (
+    currentMinutes >=
+      breakStart ||
+    currentMinutes <
+      breakEnd
+  );
 }
 
 private isOpenDuring24Hours(
@@ -2030,6 +2084,11 @@ async getGapRankings(
               score.place.operatingHours,
               score.place.specialHours,
             ),
+          operatingStatus:
+            this.calculateOperatingStatus(
+              score.place.operatingHours,
+              score.place.specialHours,
+            ),
 
           imageUrl:
             score.place.images[0]
@@ -2349,6 +2408,11 @@ async getRecommendations(
                 .operatingHours,
               candidate.place
                 .specialHours,
+            ),
+          operatingStatus:
+            this.calculateOperatingStatus(
+              candidate.place.operatingHours,
+              candidate.place.specialHours,
             ),
 
           gapScore:
@@ -2672,6 +2736,11 @@ async getGapMap(
        */
       isOpenNow:
         this.calculateIsOpenNow(
+          score.place.operatingHours,
+          score.place.specialHours,
+        ),
+      operatingStatus:
+        this.calculateOperatingStatus(
           score.place.operatingHours,
           score.place.specialHours,
         ),
