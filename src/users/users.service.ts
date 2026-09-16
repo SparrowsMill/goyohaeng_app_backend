@@ -540,12 +540,18 @@ export class UsersService {
     (safePage - 1) * safeLimit;
 
   const where = {
-    userId: BigInt(userId),
+  userId: BigInt(userId),
 
-    place: {
-      status: 'ACTIVE',
+  place: {
+    status: 'ACTIVE',
+
+    coordinateValidation: {
+      is: {
+        status: 'VALID',
+      },
     },
-  };
+  },
+};
 
   const [favorites, total] =
     await Promise.all([

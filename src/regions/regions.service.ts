@@ -113,12 +113,18 @@ export class RegionsService {
         runId: latestRun.id,
 
         place: {
-          status: 'ACTIVE',
+  status: 'ACTIVE',
 
-          districtRegionId: {
-            not: null,
-          },
-        },
+  coordinateValidation: {
+    is: {
+      status: 'VALID',
+    },
+  },
+
+  districtRegionId: {
+    not: null,
+  },
+},
       },
 
       select: {
@@ -371,12 +377,18 @@ export class RegionsService {
             by: ['districtRegionId'],
 
             where: {
-              status: 'ACTIVE',
+  status: 'ACTIVE',
 
-              districtRegionId: {
-                in: districtIds,
-              },
-            },
+  coordinateValidation: {
+    is: {
+      status: 'VALID',
+    },
+  },
+
+  districtRegionId: {
+    in: districtIds,
+  },
+},
 
             _count: {
               _all: true,
@@ -420,12 +432,19 @@ export class RegionsService {
    * 해당 구의 장소 수만 집계
    */
   const spotCount =
-    await this.prisma.place.count({
-      where: {
-        status: 'ACTIVE',
-        districtRegionId: region.id,
+  await this.prisma.place.count({
+    where: {
+      status: 'ACTIVE',
+
+      coordinateValidation: {
+        is: {
+          status: 'VALID',
+        },
       },
-    });
+
+      districtRegionId: region.id,
+    },
+  });
 
   return {
     regionId: Number(region.id),
