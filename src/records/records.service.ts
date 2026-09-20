@@ -55,6 +55,92 @@ export class RecordsService {
     return `${year}-${month}-${day}`;
   }
 
+  private parseKstDateStart(
+    value: string,
+    fieldName: 'from' | 'to',
+  ): Date {
+    const parts =
+      value.split('-');
+
+    if (parts.length !== 3) {
+      throw new BadRequestException(
+        `${fieldName}은 올바른 날짜여야 합니다.`,
+      );
+    }
+
+    const year =
+      Number(parts[0]);
+
+    const month =
+      Number(parts[1]);
+
+    const day =
+      Number(parts[2]);
+
+    if (
+      !Number.isInteger(year) ||
+      !Number.isInteger(month) ||
+      !Number.isInteger(day) ||
+      year < 1 ||
+      year > 9999 ||
+      month < 1 ||
+      month > 12 ||
+      day < 1
+    ) {
+      throw new BadRequestException(
+        `${fieldName}에 올바른 날짜를 입력해주세요.`,
+      );
+    }
+
+    /*
+     * 존재하는 날짜인지 검증
+     *
+     * 예:
+     * 2026-02-31 -> 2026-03-03으로
+     * 자동 보정되는 것을 막는다.
+     */
+    const validationDate =
+      new Date(0);
+
+    validationDate.setUTCHours(
+      0,
+      0,
+      0,
+      0,
+    );
+
+    validationDate.setUTCFullYear(
+      year,
+      month - 1,
+      day,
+    );
+
+    if (
+      validationDate.getUTCFullYear() !==
+        year ||
+      validationDate.getUTCMonth() !==
+        month - 1 ||
+      validationDate.getUTCDate() !==
+        day
+    ) {
+      throw new BadRequestException(
+        `${fieldName}에 존재하지 않는 날짜가 입력되었습니다.`,
+      );
+    }
+
+    /*
+     * YYYY-MM-DD 00:00 KST
+     *
+     * KST = UTC+9이므로
+     * UTC 자정에서 9시간을 뺀다.
+     */
+    return new Date(
+      validationDate.getTime() -
+        9 * 60 * 60 * 1000,
+    );
+  }
+
+
   async create(
   userId: number,
   dto: CreateRecordDto,
@@ -451,6 +537,8 @@ async findAll(
   userId: number,
   page: number = 1,
   limit: number = 20,
+  from?: string,
+  to?: string,
 ) {
   const safePage =
     Math.max(page, 1);
@@ -465,12 +553,97 @@ async findAll(
     (safePage - 1) *
     safeLimit;
 
+  /*
+   * 기간 시작 / 종료
+   *
+   * from:
+   * 해당 날짜 00:00 KST 이상
+   *
+   * to:
+   * 해당 날짜의 다음 날
+   * 00:00 KST 미만
+   */
+  const fromDate =
+    from !== undefined
+      ? this.parseKstDateStart(
+          from,
+          'from',
+        )
+      : undefined;
+
+  const toDate =
+    to !== undefined
+      ? this.parseKstDateStart(
+          to,
+          'to',
+        )
+      : undefined;
+
+  /*
+   * 시작일이 종료일보다 늦으면
+   * 잘못된 요청
+   */
+  if (
+    fromDate !== undefined &&
+    toDate !== undefined &&
+    fromDate.getTime() >
+      toDate.getTime()
+  ) {
+    throw new BadRequestException(
+      'from은 to보다 늦을 수 없습니다.',
+    );
+  }
+
+  /*
+   * to 당일 전체를 포함하기 위해
+   *
+   * to 날짜 00:00 KST
+   * + 24시간
+   *
+   * 즉 다음 날 00:00 KST 미만으로 조회한다.
+   *
+   * KST는 DST가 없으므로
+   * 24시간을 더해도 안전하다.
+   */
+  const toExclusive =
+    toDate !== undefined
+      ? new Date(
+          toDate.getTime() +
+            24 * 60 * 60 * 1000,
+        )
+      : undefined;
+
+  /*
+   * 기간 조건이 없으면
+   * 기존 GET /records와 동일하게 동작한다.
+   *
+   * 기간 조건이 있는 경우
+   * visitedAt이 null인 기록은
+   * 기간에 포함될 수 없으므로 제외된다.
+   */
   const where = {
     userId:
       BigInt(userId),
 
     status:
       'PUBLISHED',
+
+    ...(fromDate !== undefined ||
+    toExclusive !== undefined
+      ? {
+          visitedAt: {
+            ...(fromDate !==
+              undefined && {
+              gte: fromDate,
+            }),
+
+            ...(toExclusive !==
+              undefined && {
+              lt: toExclusive,
+            }),
+          },
+        }
+      : {}),
   };
 
   const [posts, total] =

@@ -1,7 +1,6 @@
 import {
   Body,
   Controller,
-  DefaultValuePipe,
   Delete,
   Get,
   Param,
@@ -28,8 +27,11 @@ import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 
 import { CreateRecordDto } from './dto/create-record.dto';
 import { UpdateRecordDto } from './dto/update-record.dto';
+import { GetRecordsQueryDto } from './dto/get-records-query.dto';
 
 import { RecordsService } from './records.service';
+
+
 
 interface AuthenticatedUser {
   userId: number;
@@ -377,10 +379,10 @@ export class RecordsController {
   // 내 발자국 전체 조회
   // ==============================
 
-  @ApiOperation({
+   @ApiOperation({
     summary: '내 발자국 전체 조회',
     description:
-      '등록 장소 기록과 수동 장소명 기록 모두 조회합니다.',
+      '등록 장소 기록과 수동 장소명 기록 모두 조회합니다. from/to를 전달하면 방문 날짜(visitedAt)를 기준으로 KST 기간 조회가 가능합니다.',
   })
   @ApiOkResponse({
     description:
@@ -426,6 +428,7 @@ export class RecordsController {
 
             place: {
               id: 4155,
+
               name:
                 '남대문 종합상가',
             },
@@ -462,6 +465,10 @@ export class RecordsController {
       },
     },
   })
+  @ApiBadRequestResponse({
+    description:
+      'from/to 날짜 형식이 잘못되었거나, 존재하지 않는 날짜이거나, from이 to보다 늦은 경우',
+  })
   @ApiUnauthorizedResponse({
     description:
       '로그인이 필요함',
@@ -473,24 +480,15 @@ export class RecordsController {
       user: AuthenticatedUser;
     },
 
-    @Query(
-      'page',
-      new DefaultValuePipe(1),
-      ParseIntPipe,
-    )
-    page: number,
-
-    @Query(
-      'limit',
-      new DefaultValuePipe(20),
-      ParseIntPipe,
-    )
-    limit: number,
+    @Query()
+    query: GetRecordsQueryDto,
   ) {
     return this.recordsService.findAll(
       req.user.userId,
-      page,
-      limit,
+      query.page ?? 1,
+      query.limit ?? 20,
+      query.from,
+      query.to,
     );
   }
 }
